@@ -1,0 +1,65 @@
+<div class="min-h-screen flex items-center justify-center bg-[#50547e]">
+  <div class="bg-[#30355c] p-8 rounded-3xl shadow-2xl w-80 sm:w-96 text-white relative">
+
+    <button (click)="router.navigate(['/'])" class="absolute top-4 right-4 text-gray-300 hover:text-white text-lg font-bold cursor-pointer" aria-label="Fechar">
+      &times;
+    </button>
+
+    <h2 class="text-2xl font-bold mb-6 text-center">Registrar-se</h2>
+
+    <form (ngSubmit)="onSubmit()" #form="ngForm" class="flex flex-col space-y-4">
+      <input
+        [(ngModel)]="user.email"
+        name="email"
+        type="email"
+        placeholder="Email"
+        required
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+      <input
+        [(ngModel)]="user.password"
+        name="password"
+        type="password"
+        placeholder="Senha"
+        required
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+      <input
+        [(ngModel)]="user.username"
+        name="username"
+        placeholder="Nome de usuário"
+        required
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+      <input
+        [(ngModel)]="user.country"
+        name="country"
+        placeholder="País"
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+      <textarea
+        [(ngModel)]="user.bio"
+        name="bio"
+        placeholder="Bio"
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+        rows="3"
+      ></textarea>
+
+      <button
+        type="submit"
+        [disabled]="isSubmitting"
+        class="w-full bg-purple-700 hover:bg-purple-800 transition-colors py-2 rounded-xl font-semibold disabled:opacity-50 cursor-pointer"
+      >
+        {{ isSubmitting ? 'Registrando...' : 'Registrar' }}
+      </button>
+    </form>
+
+    <p class="text-sm text-gray-300 mt-4 text-center">
+      Já tem conta?
+      <a [routerLink]="['/login']" class="text-purple-400 hover:underline cursor-pointer">
+        Faça login
+      </a>
+    </p>
+
+  </div>
+</div>
