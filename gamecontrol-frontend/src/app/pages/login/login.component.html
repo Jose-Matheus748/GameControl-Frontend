@@ -1,5 +1,5 @@
-<div class="min-h-screen flex items-center justify-center bg-[#50547e]">
-  <div class="bg-[#30355c] p-8 rounded-3xl shadow-2xl w-80 sm:w-96 text-white relative">
+<div class="min-h-screen flex items-center justify-center bg-[#090f1b]">
+  <div class="font-orbitron bg-[#131f39] p-8 rounded-3xl shadow-2xl w-80 sm:w-96 text-white relative">
     <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
     <form (ngSubmit)="onSubmit()" class="flex flex-col space-y-4">
       <input
@@ -7,7 +7,7 @@
         name="email"
         type="email"
         placeholder="Email"
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
         required
       >
       <input
@@ -15,7 +15,7 @@
         name="password"
         type="password"
         placeholder="Senha"
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#50547e] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
         required
       >
       <button
@@ -26,13 +26,7 @@
         {{ isSubmitting ? 'Entrando...' : 'Entrar' }}
       </button>
     </form>
-    <button
-      class="absolute top-4 right-4 text-gray-300 hover:text-white text-lg font-bold cursor-pointer"
-      (click)="router.navigate(['/']);"
-      aria-label="Fechar"
-    >
-      &times;
-    </button>
+
     <p class="text-sm text-gray-300 mt-4 text-center">
       Não tem conta? <a [routerLink]="['/register']" class="text-purple-400 hover:underline cursor-pointer">Registre-se</a>
     </p>

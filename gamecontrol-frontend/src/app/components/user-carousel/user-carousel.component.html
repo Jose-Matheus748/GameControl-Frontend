@@ -1,0 +1,60 @@
+<div class="flex items-center justify-center gap-4 w-full max-w-7xl mx-auto mt-8 py-4">
+
+  <button
+    (click)="prev()"
+    [disabled]="index === 0"
+    class="text-3xl text-blue-500 disabled:text-gray-400 transition hover:scale-110 cursor-pointer"
+  >
+    ‹
+  </button>
+
+  <div class="overflow-hidden w-full">
+
+    <div
+      class="flex gap-3 transition-transform duration-500 ease-in-out"
+      [style.transform]="'translateX(-' + index * 190 + 'px)'"
+    >
+
+      <div
+        *ngFor="let user of userCards"
+        class="flex-shrink-0 w-[180px]"
+      >
+
+        <a
+          [routerLink]="['/profile', user.id]"
+          class="block"
+        >
+
+          <div class="bg-[#0e182f] rounded-2xl shadow-md hover:shadow-xl flex flex-col items-center justify-center aspect-[4/6] p-4 border border-white/30 hover:border-white hover:shadow-purple-500/30">
+
+            <div class="w-28 h-28 rounded-full p-[2px] bg-gradient-to-tr from-purple-400 via-pink-500 to-purple-600">
+              <img
+                [src]="user.image"
+                [alt]="user.nickname"
+                class="w-full h-full rounded-full object-cover border-2 border-[#0e182f]"
+              />
+            </div>
+
+            <span class="mt-4 text-lg font-orbitron text-white text-center truncate w-full">
+              {{ user.nickname }}
+            </span>
+
+            <a class="font-orbitron inline-block bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition cursor-pointer font-semibold py-2 px-4 rounded transition-colors">
+              Seguir
+            </a>
+          </div>
+
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <button
+    (click)="next()"
+    [disabled]="index >= userCards.length - visibleItems"
+    class="text-3xl text-blue-500 disabled:text-gray-400 transition hover:scale-110 cursor-pointer"
+  >
+    ›
+  </button>
+
+</div>

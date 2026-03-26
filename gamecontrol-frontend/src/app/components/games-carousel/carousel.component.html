@@ -1,0 +1,50 @@
+<div class="max-w-7xl flex items-center justify-center gap-4 w-full mx-auto mt-10 px-4 py-4">
+
+  <button
+    (click)="prev()"
+    [disabled]="index === 0"
+    class="text-4xl font-bold text-blue-500 disabled:text-gray-400 transition hover:scale-110 disabled:hover:scale-100 cursor-pointer"
+  >
+    ‹
+  </button>
+
+  <div class="overflow-hidden w-full">
+    <div
+      class="flex transition-transform duration-500 ease-in-out"
+      [style.transform]="'translateX(-' + index * 25 + '%)'"
+    >
+
+      <div
+        *ngFor="let game of gameCards"
+        class="w-1/4 flex-shrink-0 px-3 flex flex-col items-center"
+      >
+
+        <a [routerLink]="'/games/' + game.id" class="w-full">
+          <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1 overflow-hidden">
+
+            <img
+              [src]="getCoverUrl(game)"
+              [alt]="game.title"
+              class="w-full aspect-[2/3] object-cover hover:scale-105 transition duration-300"
+            />
+          </div>
+        </a>
+
+        <h3 class="font-orbitron mt-2 text-center text-white font-semibold truncate w-full">
+          {{ game.title }}
+        </h3>
+
+      </div>
+    
+    </div>
+  </div>
+
+  <button
+    (click)="next()"
+    [disabled]="index + 4 >= gameCards.length"
+    class="text-4xl font-bold text-blue-500 disabled:text-gray-400 transition hover:scale-110 disabled:hover:scale-100 cursor-pointer"
+  >
+    ›
+  </button>
+
+</div>
