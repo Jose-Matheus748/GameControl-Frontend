@@ -1,3 +1,71 @@
 <div *ngIf="loading" class="text-center text-white transition py-10 text-xl font-semibold">
   Carregando jogos...
 </div>
+
+<div *ngIf="!loading" class="w-full max-w-7xl mx-auto mt-10 px-4">
+  <div class="flex items-center justify-center gap-6 mb-6">
+    <button
+      (click)="prev()"
+      [disabled]="page === 0"
+      class="text 4xl font-bold text-pink-500 disabled:text-gray-400 hover:scale-110 disabled:hover:scale-100 transition cursor-pointer"
+    >
+      ‹
+    </button>
+
+    <p class="text-lg mt-2 font-medium text-white">Página {{ page + 1 }}</p>
+
+    <button
+      (click)="next()"
+      [disabled]="(page + 1) * pageSize >= games.length"
+      class="text-4xl font-bold text-pink-500 disabled:text-gray-400 hover:scale-110 disabled:hover:scale-100 transition cursor-pointer"
+    >
+      ›
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <div
+      *ngFor="let game of paginated"
+      class="bg-white rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1 overflow-hidden flex flex-col"
+    >
+      <img [src]="getCoverUrl(game)" alt="{{ game.title }}" class="w-full h-48 object-cover" />
+
+      <div class="p-4 flex flex-col flex-1">
+        <h3 class="text-lg font-bold text-gray-800 mb-1 truncate">
+          {{ game.title }}
+        </h3>
+
+        <p class="text-gray-600 text-sm flex-1 mb-3 line-clamp-3">
+          {{ game.description }}
+        </p>
+
+        <a
+          [routerLink]="'/games/' + game.id"
+          class="mt-auto inline-block text-center bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition cursor-pointer py-2 px-4"
+        >
+          Ver página do jogo
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-center gap-6 mt-8 pb-6">
+    <button
+      (click)="prev()"
+      [disabled]="page === 0"
+      class="text-4xl font-bold text-pink-500 disabled:text-gray-400 hover:scale-110 disabled:hover:scale-100 transition cursor-pointer"
+    >
+      ‹
+    </button>
+
+    <p class="text-lg mt-2 font-medium text-white">Página {{ page + 1 }}</p>
+
+    <button
+      (click)="next()"
+      [disabled]="(page + 1) * pageSize >= games.length"
+      class="text-4xl font-bold text-pink-500 disabled:text-gray-400 hover:scale-110 disabled:hover:scale-100 transition cursor-pointer"
+    >
+      ›
+    </button>
+  </div>
+</div>
