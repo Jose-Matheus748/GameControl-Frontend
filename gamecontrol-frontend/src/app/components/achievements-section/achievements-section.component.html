@@ -1,0 +1,15 @@
+<div class="w-full max-w-4xl mx-auto my-6">
+  <div class="w-full rounded-lg bg-gray-900/50 p-6 shadow-lg">
+    <h2 class="mb-6 text-2xl font-bold text-white">
+      Conquistas
+    </h2>
+
+    <div class="flex flex-wrap justify-center gap-4">
+      <app-achievement-badge *ngFor="let badge of achievements" [badge]="badge"></app-achievement-badge>
+    </div>
+
+    <div *ngIf="achievements.length === 0" class="text-center text-gray-400">
+      <p>Nenhuma conquista desbloqueada ainda. Continue jogando!</p>
+    </div>
+  </div>
+</div>

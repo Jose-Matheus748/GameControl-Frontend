@@ -4,11 +4,13 @@ import { LoginComponent } from './pages/login/login.component'
 import { RegisterComponent } from './pages/register/register.component';
 import { GameComponent } from './pages/game/game.component';
 import { GamesListComponent } from './pages/gamesList/games.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'profile/:id', component: ProfileComponent },
   { path: 'games/:id', component: GameComponent },
   { path: 'games', component: GamesListComponent },
   { path: '**', redirectTo: '' }
