@@ -5,11 +5,13 @@ import { RegisterComponent } from './pages/register/register.component';
 import { GameComponent } from './pages/game/game.component';
 import { GamesListComponent } from './pages/gamesList/games.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { UserComponent } from './pages/user/user.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'user/:id', component: UserComponent },
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'games/:id', component: GameComponent },
   { path: 'games', component: GamesListComponent },
