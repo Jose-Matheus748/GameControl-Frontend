@@ -1,0 +1,26 @@
+<div class="group relative flex h-28 w-28 cursor-pointer items-center justify-center">
+  <div 
+    class="absolute inset-0 h-full w-full bg-gray-800 transition-all duration-300 group-hover:bg-gray-900"
+    style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"
+  ></div>
+  <div 
+    class="absolute inset-0 h-full w-full bg-gradient-to-br from-pink-500 to-purple-600 opacity-50 transition-all duration-300 group-hover:opacity-100"
+    style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"
+  ></div>
+
+  <div class="relative z-10 text-white transition-transform duration-300 group-hover:-translate-y-4 group-hover:scale-75">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="drop-shadow-[0_0_5px_rgba(255,255,255,0.5 )]">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+      <path d="M4 22h16"/>
+      <path d="M10 14.66V22h4v-7.34"/>
+      <path d="M12 9v5.66"/>
+      <path d="M12 9a5 5 0 0 1 5 5v0a5 5 0 0 1-10 0v0a5 5 0 0 1 5-5z"/>
+    </svg>
+  </div>
+
+  <div class="absolute bottom-4 z-10 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+    <h3 class="text-sm font-bold text-white">{{ badge.name }}</h3>
+    <p class="text-xs text-gray-300">{{ badge.description }}</p>
+  </div>
+</div>
