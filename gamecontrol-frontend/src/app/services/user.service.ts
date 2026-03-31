@@ -5,12 +5,12 @@ import { Observable } from 'rxjs';
 export interface User {
   id?: number;
   email: string;
-  password: string;
-  username: string;
+  senha: string;
+  nomeUsuario: string;
   bio?: string;
   profilePictureUrl?: string;
   birthDate?: string;
-  country?: string;
+  pais?: string;
   role?: string;
 }
 
@@ -19,7 +19,7 @@ export interface User {
 })
 
 export class UserService {
-  private apiUrl = 'http://localhost:8080/user';
+  private apiUrl = 'http://localhost:8080/usuarios';
 
   constructor(private http: HttpClient) {}
 

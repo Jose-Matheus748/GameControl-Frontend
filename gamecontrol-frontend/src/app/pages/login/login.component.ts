@@ -15,21 +15,21 @@ import { RouterModule } from '@angular/router';
 
 export class LoginComponent {
   email = '';
-  password = '';
+  senha = '';
   isSubmitting = false;
 
   router = inject(Router);
   private authService = inject(AuthService);
 
   onSubmit() {
-    if (!this.email || !this.password) {
+    if (!this.email || !this.senha) {
       alert('Preencha todos os campos!');
       return;
     }
 
     this.isSubmitting = true;
 
-    const loginDTO: LoginDTO = { email: this.email, password: this.password };
+    const loginDTO: LoginDTO = { email: this.email, senha: this.senha };
 
     this.authService.login(loginDTO).subscribe({
       next: (res) => {
@@ -39,7 +39,7 @@ export class LoginComponent {
         console.log('Usuário logado:', res.user);
         console.log('Token JWT::', res.token);
 
-        alert(`Bem-vindo, ${res.user.username}!`);
+        alert(`Bem-vindo, ${res.user.nomeUsuario}!`);
 
         localStorage.setItem('token', res.token);
         if (res.user?.id != null) {

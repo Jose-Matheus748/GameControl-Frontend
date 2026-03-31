@@ -29,7 +29,7 @@ export class UserCarouselComponent implements OnInit {
       next: (users: User[]) => {
         this.userCards = users.map((user) => ({
           id: user.id!,
-          nickname: user.username,
+          nickname: user.nomeUsuario,
           image: user.profilePictureUrl || 'https://i.pravatar.cc/150?img=1',
         }));
 

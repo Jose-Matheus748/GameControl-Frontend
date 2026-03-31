@@ -37,7 +37,7 @@
           [routerLink]="['/user', authService.user()?.id]"
           class="hover:text-pink-400 cursor-pointer transition-colors text-xl"
         >
-          Olá, {{ authService.user()?.username }}
+          Olá, {{ authService.user()?.nomeUsuario }}
         </a>
         <a (click)="logout()" class="hover:text-pink-400 cursor-pointer transition-colors text-xl">
           Logout

@@ -15,10 +15,10 @@ import { RouterModule } from '@angular/router';
 export class RegisterComponent {
   user: User = {
     email: '',
-    password: '',
-    username: '',
+    senha: '',
+    nomeUsuario: '',
     bio: '',
-    country: ''
+    pais: ''
   };
 
   router = inject(Router);
@@ -28,7 +28,7 @@ export class RegisterComponent {
   constructor(private userService: UserService) {}
 
   onSubmit() {
-    if (!this.user.email || !this.user.password || !this.user.username) {
+    if (!this.user.email || !this.user.senha || !this.user.nomeUsuario) {
       alert('Preencha os campos obrigatórios!');
       return;
     }
@@ -37,7 +37,7 @@ export class RegisterComponent {
 
     this.userService.create(this.user).subscribe({
       next: (res) => {
-        alert(`Usuário ${res.username} criado com sucesso!`);
+        alert(`Usuário ${res.nomeUsuario} criado com sucesso!`);
         this.isSubmitting = false;
         this.router.navigate(['/']);
       },
