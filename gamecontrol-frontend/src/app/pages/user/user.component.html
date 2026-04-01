@@ -32,7 +32,7 @@
         Playlists
       </h3>
 
-      <ng-container *ngIf="playlists?.length; else noPlaylists">
+      <ng-container *ngIf="playlists.length; else noPlaylists">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <div
             *ngFor="let playlist of playlists"
