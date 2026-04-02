@@ -16,8 +16,8 @@ import { AchievementsSectionComponent } from "../../components/achievements-sect
 export class ProfileComponent implements OnInit {
   userData?: User;
   playlists: Playlist[] = [];
-  userId!: number;
-  loggedUserId: number | null = null;
+  userId!: string;
+  loggedUserId: string | null = null;
   isFollowing = false;
   followersCount = 0;
   followingCount = 0;
@@ -35,12 +35,12 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     if (typeof window !== 'undefined') {
       const storedId = localStorage.getItem('userId');
-      this.loggedUserId = storedId ? Number(storedId) : null;
+      this.loggedUserId = storedId;
     }
 
     this.route.params.subscribe((params) => {
-      this.userId = +params['id'];
-      this.isOwnProfile = this.loggedUserId === this.userId;
+      this.userId = params['id'];
+      this.isOwnProfile = this.loggedUserId != null && this.loggedUserId === this.userId;
       this.loadProfile();
     });
   }

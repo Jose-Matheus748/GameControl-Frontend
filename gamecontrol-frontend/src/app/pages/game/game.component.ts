@@ -20,7 +20,7 @@ export class GameComponent implements OnInit {
   comments: GameComment[] = [];
   newCommentContent: string = '';
 
-  get currentUserId(): number | undefined {
+  get currentUserId(): string | number | undefined {
     return this.authService.user()?.id;
   }
 
@@ -73,7 +73,7 @@ export class GameComponent implements OnInit {
   submitComment(): void {
     const userId = this.currentUserId;
 
-    if (!this.newCommentContent.trim() || !this.gameData?.id || userId === undefined) {
+    if (!this.newCommentContent.trim() || !this.gameData?.id || userId == null) {
       return;
     }
 
@@ -114,7 +114,11 @@ export class GameComponent implements OnInit {
   }
 
   canDelete(comment: GameComment): boolean {
-    return comment.user.id === this.currentUserId;
+    const loggedInUserId = this.currentUserId;
+    if (loggedInUserId == null || comment.user.id == null) {
+      return false;
+    }
+    return String(comment.user.id) === String(loggedInUserId);
   }
 
   formatDate(dateString: string): string {

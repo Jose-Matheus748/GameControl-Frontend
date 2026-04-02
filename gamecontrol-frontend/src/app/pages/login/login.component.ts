@@ -1,10 +1,9 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginDTO } from '../../models/login-dto.model';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -33,12 +32,6 @@ export class LoginComponent {
 
     this.authService.login(loginDTO).subscribe({
       next: (res) => {
-
-        // TODO: remover esses logs dps!
-        console.log('Resposta do login:', res);
-        console.log('Usuário logado:', res.user);
-        console.log('Token JWT::', res.token);
-
         alert(`Bem-vindo, ${res.user.username}!`);
 
         localStorage.setItem('token', res.token);
@@ -49,8 +42,7 @@ export class LoginComponent {
         this.isSubmitting = false;
         this.router.navigate(['/']);
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         alert('Email ou senha incorretos.');
         this.isSubmitting = false;
       }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface User {
-  id: number;
+  id: string | number;
   username: string;
 }
 
@@ -26,9 +26,9 @@ export class GameCommentsService {
     return this.http.get<GameComment[]>(`${this.apiUrl}/game/${gameId}`);
   }
 
-  createComment(userId: number, gameId: number, content: string): Observable<GameComment> {
+  createComment(userId: string | number, gameId: number, content: string): Observable<GameComment> {
     const params = {
-      userId: userId.toString(),
+      userId: String(userId),
       gameId: gameId.toString(),
       content: content,
     };
