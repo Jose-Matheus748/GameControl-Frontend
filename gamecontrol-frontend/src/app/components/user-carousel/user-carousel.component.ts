@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { User, UserService } from '../../services/user.service';
 
 export interface UserCard {
-  id: number;
+  id: string | number;
   image: string;
   nickname: string;
 }

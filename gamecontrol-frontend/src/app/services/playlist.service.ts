@@ -30,7 +30,7 @@ export class PlaylistService {
 
   constructor(private http: HttpClient) {}
 
-  getPlaylistsByUser(userId: number): Observable<Playlist[]> {
+  getPlaylistsByUser(userId: string | number): Observable<Playlist[]> {
     return this.http.get<Playlist[]>(`${this.apiUrl}/user/${userId}`);
   }
 
@@ -38,7 +38,7 @@ export class PlaylistService {
     return this.http.get<Playlist>(`${this.apiUrl}/${id}`);
   }
 
-  createPlaylist(userId: number, playlist: Playlist): Observable<Playlist> {
+  createPlaylist(userId: string | number, playlist: Playlist): Observable<Playlist> {
     return this.http.post<Playlist>(`${this.apiUrl}?userId=${userId}`, playlist);
   }
 

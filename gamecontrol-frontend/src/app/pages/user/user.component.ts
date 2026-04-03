@@ -17,8 +17,8 @@ import { AchievementsSectionComponent } from "../../components/achievements-sect
 })
 export class UserComponent implements OnInit {
   userData?: User;
-  userId!: number;
-  loggedUserId: number | null = null;
+  userId!: string;
+  loggedUserId: string | null = null;
   followersCount = 0;
   followingCount = 0;
   loading = true;
@@ -37,11 +37,11 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     if (typeof window !== 'undefined') {
       const storedId = localStorage.getItem('userId');
-      this.loggedUserId = storedId ? Number(storedId) : null;
+      this.loggedUserId = storedId;
     }
 
     this.route.params.subscribe((params) => {
-      this.userId = +params['id'];
+      this.userId = params['id'];
       this.loadUser();
     });
   }

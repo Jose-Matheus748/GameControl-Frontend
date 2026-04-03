@@ -1,9 +1,8 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User, UserService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -37,12 +36,11 @@ export class RegisterComponent {
 
     this.userService.create(this.user).subscribe({
       next: (res) => {
-        alert(`Usuário ${res.username} criado com sucesso!`);
+        alert(`Usuário ${res.username} criado com sucesso! Faça login para continuar.`);
         this.isSubmitting = false;
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         alert('Erro ao registrar usuário.');
         this.isSubmitting = false;
       }

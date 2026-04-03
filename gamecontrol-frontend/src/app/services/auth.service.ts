@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthResponse } from '../models/auth-response.model';
 import { LoginDTO } from '../models/login-dto.model';
-import { User } from './user.service';
+import { User, UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,10 @@ import { User } from './user.service';
 export class AuthService {
   user = signal<User | null>(null);
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+  ) {
     this.loadFromStorage();
   }
 
@@ -26,13 +29,15 @@ export class AuthService {
     const userId = localStorage.getItem('userId');
 
     if (token && userId) {
-      this.http.get<User>(`http://localhost:8080/user/${userId}`)
-        .subscribe(user => this.user.set(user));
+      this.userService.getById(userId).subscribe({
+        next: (user) => this.user.set(user),
+        error: () => this.logout(),
+      });
     }
   }
 
   login(loginDTO: LoginDTO): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`http://localhost:8080/login`, loginDTO)
+    return this.http.post<AuthResponse>(`http://localhost:8080/api/users/login`, loginDTO)
       .pipe(
         tap(res => {
           if (this.isBrowser() && res.user?.id != null) {
