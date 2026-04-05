@@ -31,11 +31,12 @@
           #form="ngForm"
           class="flex flex-col space-y-4"
         >
+
           <input
             [(ngModel)]="user.email"
             name="email"
             type="email"
-            placeholder="Email"
+            placeholder="Digite seu Email"
             required
             class="px-4 py-3 rounded-lg
                    bg-[#1f2937]
@@ -49,7 +50,7 @@
             [(ngModel)]="user.password"
             name="password"
             type="password"
-            placeholder="Senha"
+            placeholder="Digite sua senha"
             required
             class="px-4 py-3 rounded-lg
                    bg-[#1f2937]
@@ -62,7 +63,7 @@
           <input
             [(ngModel)]="user.username"
             name="username"
-            placeholder="Nome de usuário"
+            placeholder="Digite seu nome de usuário"
             required
             class="px-4 py-3 rounded-lg
                    bg-[#1f2937]
