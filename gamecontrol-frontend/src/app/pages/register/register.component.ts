@@ -16,8 +16,6 @@ export class RegisterComponent {
     email: '',
     password: '',
     username: '',
-    bio: '',
-    country: ''
   };
 
   router = inject(Router);
