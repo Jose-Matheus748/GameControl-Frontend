@@ -5,11 +5,12 @@ import { forkJoin } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
