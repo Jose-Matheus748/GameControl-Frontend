@@ -1,65 +1,122 @@
-<div class="min-h-screen flex items-center justify-center bg-[#090f1b]">
-  <div class="font-orbitron bg-[#131f39] p-8 rounded-3xl shadow-2xl w-80 sm:w-96 text-white relative">
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-    <button (click)="router.navigate(['/'])" class="absolute top-4 right-4 text-gray-300 hover:text-white text-lg font-bold cursor-pointer" aria-label="Fechar">
-      &times;
-    </button>
+  <img
+    src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop"
+    alt="Arcade background"
+    class="absolute inset-0 w-full h-full object-cover blur-[2px] scale-105"
+  />
 
-    <h2 class="text-2xl font-bold mb-6 text-center">Registrar-se</h2>
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-pink-950/60 via-[#050816]/85 to-cyan-950/60"
+  ></div>
+  <div class="relative z-10 w-full max-w-5xl px-6">
 
-    <form (ngSubmit)="onSubmit()" #form="ngForm" class="flex flex-col space-y-4">
-      <input
-        [(ngModel)]="user.email"
-        name="email"
-        type="email"
-        placeholder="Email"
-        required
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      />
-      <input
-        [(ngModel)]="user.password"
-        name="password"
-        type="password"
-        placeholder="Senha"
-        required
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      />
-      <input
-        [(ngModel)]="user.username"
-        name="username"
-        placeholder="Nome de usuário"
-        required
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      />
-      <input
-        [(ngModel)]="user.country"
-        name="country"
-        placeholder="País"
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      />
-      <textarea
-        [(ngModel)]="user.bio"
-        name="bio"
-        placeholder="Bio"
-        class="px-4 py-2 rounded-xl border border-gray-400 bg-[#090f1b] text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-        rows="3"
-      ></textarea>
+    <h1
+      class="font-orbitron text-4xl md:text-5xl font-bold text-white mb-8 drop-shadow-[0_0_10px_rgba(34,211,238,0.4)]"
+    >
+      Crie sua conta
+    </h1>
+  <div
+    class="relative z-10 w-full max-w-4xl mx-6 md:mx-10
+           bg-[#0b1220]/90 backdrop-blur-md
+           rounded-2xl shadow-2xl
+           border border-cyan-400/10
+           overflow-hidden"
+  >
+    <div class="grid md:grid-cols-2">
 
-      <button
-        type="submit"
-        [disabled]="isSubmitting"
-        class="w-full bg-purple-700 hover:bg-purple-800 transition-colors py-2 rounded-xl font-semibold disabled:opacity-50 cursor-pointer"
+      <div class="p-8 md:p-10 text-white">
+        <form
+          (ngSubmit)="onSubmit()"
+          #form="ngForm"
+          class="flex flex-col space-y-4"
+        >
+
+          <input
+            [(ngModel)]="user.email"
+            name="email"
+            type="email"
+            placeholder="Digite seu Email"
+            required
+            class="px-4 py-3 rounded-lg
+                   bg-[#1f2937]
+                   border border-cyan-400/20
+                   text-white placeholder-gray-400
+                   focus:outline-none
+                   focus:ring-2 focus:ring-cyan-400"
+          />
+
+          <input
+            [(ngModel)]="user.password"
+            name="password"
+            type="password"
+            placeholder="Digite sua senha"
+            required
+            class="px-4 py-3 rounded-lg
+                   bg-[#1f2937]
+                   border border-cyan-400/20
+                   text-white placeholder-gray-400
+                   focus:outline-none
+                   focus:ring-2 focus:ring-pink-500"
+          />
+
+          <input
+            [(ngModel)]="user.username"
+            name="username"
+            placeholder="Digite seu nome de usuário"
+            required
+            class="px-4 py-3 rounded-lg
+                   bg-[#1f2937]
+                   border border-cyan-400/20
+                   text-white placeholder-gray-400
+                   focus:outline-none
+                   focus:ring-2 focus:ring-cyan-400"
+          />
+          <button
+            type="submit"
+            [disabled]="isSubmitting"
+            class="mt-2 py-3 rounded-lg font-semibold text-white
+                   bg-pink-500
+                   hover:scale-[1.02]
+                   transition-all duration-300
+                   shadow-lg shadow-pink-500/20"
+          >
+            {{ isSubmitting ? 'Registrando...' : 'Criar conta' }}
+          </button>
+        </form>
+
+        <p class="text-sm text-gray-400 mt-6">
+          Já tem conta?
+          <a
+            [routerLink]="['/login']"
+            class="text-cyan-400 hover:text-pink-400 transition"
+          >
+            Faça login
+          </a>
+        </p>
+      </div>
+
+      <div
+        class="hidden md:flex flex-col
+               bg-gradient-to-br from-[#111827] to-[#0b1220]
+               text-center p-8"
       >
-        {{ isSubmitting ? 'Registrando...' : 'Registrar' }}
-      </button>
-    </form>
+        <h3
+          class="font-orbitron text-2xl text-cyan-400 mb-10
+                 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"
+        >
+          GameControl
+        </h3>
+        <div class="w-full max-w-sm text-white">
+          <ul class="space-y-4 text-gray-300">
+            <li>🎮 Monte sua biblioteca de jogos</li>
+            <li>💬 Comente e avalie seus favoritos</li>
+            <li>⭐ Salve jogos na sua playlist</li>
+            <li>🔥 Descubra novos lançamentos</li>
+          </ul>
+        </div>
+      </div>
 
-    <p class="text-sm text-gray-300 mt-4 text-center">
-      Já tem conta?
-      <a [routerLink]="['/login']" class="text-purple-400 hover:underline cursor-pointer">
-        Faça login
-      </a>
-    </p>
-
+    </div>
   </div>
 </div>

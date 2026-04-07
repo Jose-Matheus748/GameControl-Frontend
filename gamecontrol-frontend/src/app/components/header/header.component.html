@@ -20,13 +20,10 @@
       <!-- Usuário não está logado -->
       <ng-container *ngIf="!authService.user(); else logged">
         <a
-          [routerLink]="['/register']"
-          class="hover:text-pink-400 cursor-pointer transition-colors text-xl">
-          Registrar
-        </a>
-        <a
           [routerLink]="['/login']"
-          class="hover:text-pink-400 cursor-pointer transition-colors text-xl">
+          class="max-w-xs w-fullinline-block bg-pink-500 text-white font-bold py-2 px-6 rounded-lg text-lg
+                 hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
+        >
           Login
         </a>
       </ng-container>
