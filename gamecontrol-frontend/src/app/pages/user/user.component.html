@@ -10,10 +10,17 @@
     <!-- Perfil -->
     <div class="md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
       <img
-        [src]="userData.profilePictureUrl || 'assets/default-avatar.png'"
+        *ngIf="userData.profilePictureUrl; else defaultAvatar"
+        [src]="userData.profilePictureUrl"
         alt="Avatar"
         class="w-32 h-32 rounded-full border-4 border-gray-600 mb-4"
       />
+
+      <ng-template #defaultAvatar>
+        <mat-icon class="text-gray-300" style="font-size: 72px; width: 72px; height: 72px;">
+          account_circle
+        </mat-icon>
+      </ng-template>
 
       <h2 class="text-3xl font-bold">{{ userData.username }}</h2>
       <p class="text-gray-300 mt-2">
@@ -101,6 +108,3 @@
     <app-collab-form></app-collab-form>
   </div>
 </div>
-
-
-<app-achievements-section></app-achievements-section>

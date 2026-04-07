@@ -7,12 +7,13 @@ import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { CollabFormComponent } from "../../components/collab-form/collab-form.component";
 import { AddGameComponent } from "../../components/add-game/add-game.component";
-import { AchievementsSectionComponent } from "../../components/achievements-section/achievements-section.component";
+import { MatIconModule } from '@angular/material/icon'
+
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, CollabFormComponent, AddGameComponent, AchievementsSectionComponent],
+  imports: [CommonModule, CollabFormComponent, AddGameComponent, MatIconModule],
   templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {
