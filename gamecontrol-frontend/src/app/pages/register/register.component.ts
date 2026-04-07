@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User, UserService } from '../../services/user.service';
+import { Usuario, UsuarioService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
@@ -12,7 +12,7 @@ import { Router, RouterModule } from '@angular/router';
 })
 
 export class RegisterComponent {
-  user: User = {
+  user: Usuario = {
     email: '',
     password: '',
     username: '',
@@ -22,7 +22,7 @@ export class RegisterComponent {
 
   isSubmitting = false;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UsuarioService) {}
 
   onSubmit() {
     if (!this.user.email || !this.user.password || !this.user.username) {

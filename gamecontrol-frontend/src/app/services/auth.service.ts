@@ -3,17 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthResponse } from '../models/auth-response.model';
 import { LoginDTO } from '../models/login-dto.model';
-import { User, UserService } from './user.service';
+import { Usuario, UsuarioService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user = signal<User | null>(null);
+  user = signal<Usuario | null>(null);
 
   constructor(
     private http: HttpClient,
-    private userService: UserService,
+    private userService: UsuarioService,
   ) {
     this.loadFromStorage();
   }

@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { UserService, User } from '../../services/user.service';
+import { UsuarioService, Usuario } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { AchievementsSectionComponent } from "../../components/achievements-section/achievements-section.component";
@@ -14,7 +14,7 @@ import { AchievementsSectionComponent } from "../../components/achievements-sect
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
-  userData?: User;
+  userData?: Usuario;
   playlists: Playlist[] = [];
   userId!: string;
   loggedUserId: string | null = null;
@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private userService: UsuarioService,
     private followService: FollowService,
     private playlistService: PlaylistService,
     private cdr: ChangeDetectorRef
