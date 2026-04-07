@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { UserService, User } from '../../services/user.service';
+import { UsuarioService, Usuario } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { CollabFormComponent } from "../../components/collab-form/collab-form.component";
@@ -16,7 +16,7 @@ import { AchievementsSectionComponent } from "../../components/achievements-sect
   templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {
-  userData?: User;
+  userData?: Usuario;
   userId!: string;
   loggedUserId: string | null = null;
   followersCount = 0;
@@ -28,7 +28,7 @@ export class UserComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private userService: UsuarioService,
     private followService: FollowService,
     private playlistService: PlaylistService,
     private cdr: ChangeDetectorRef
@@ -79,8 +79,8 @@ export class UserComponent implements OnInit {
     if (!nome || !this.loggedUserId) return;
 
     const novaPlaylist: Playlist = {
-      name: nome,
-      description: 'Minha nova playlist 🎵',
+      nome: nome,
+      descricao: 'Minha nova playlist 🎵',
     };
 
     this.playlistService.createPlaylist(this.loggedUserId, novaPlaylist).subscribe({

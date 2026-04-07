@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { User, UserService } from '../../services/user.service';
+import { Usuario, UsuarioService } from '../../services/user.service';
 
 export interface UserCard {
   id: string | number;
@@ -20,13 +20,13 @@ export class UserCarouselComponent implements OnInit {
   index = 0;
 
   constructor(
-    private userService: UserService,
+    private usuarioService: UsuarioService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.userService.getAll().subscribe({
-      next: (users: User[]) => {
+    this.usuarioService.getAll().subscribe({
+      next: (users: Usuario[]) => {
         this.userCards = users.map((user) => ({
           id: user.id!,
           nickname: user.username,

@@ -51,9 +51,9 @@
             *ngFor="let playlist of playlists"
             class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-6 hover:bg-[#292929] transition duration-300"
           >
-            <h4 class="text-lg font-semibold text-white truncate">{{ playlist.name }}</h4>
+            <h4 class="text-lg font-semibold text-white truncate">{{ playlist.nome }}</h4>
             <p class="text-sm text-gray-400 mt-2 line-clamp-2">
-              {{ playlist.description || 'Sem descrição' }}
+              {{ playlist.descricao || 'Sem descrição' }}
             </p>
             <p class="text-xs text-gray-500 mt-3">
               {{ playlist.games?.length || 0 }} jogos

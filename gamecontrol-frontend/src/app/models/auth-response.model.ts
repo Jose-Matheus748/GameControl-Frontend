@@ -1,6 +1,6 @@
-import { User } from "../services/user.service";
+import { Usuario } from "../services/user.service";
 
 export interface AuthResponse {
-    user: User;
+    user: Usuario;
     token: string;
 }
