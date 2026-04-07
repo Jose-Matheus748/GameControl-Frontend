@@ -58,7 +58,7 @@ export class GameComponent implements OnInit {
       });
   }
 
-  loadComments(gameId: number): void {
+  loadComments(gameId: string | number): void {
     this.commentsService.getCommentsByGame(gameId).subscribe({
       next: (comments) => {
         this.comments = comments;
@@ -93,23 +93,21 @@ export class GameComponent implements OnInit {
     });
   }
 
-  deleteComment(commentId: number): void {
+  deleteComment(deletedCommentId: string | number): void {
     if (!confirm('Tem certeza que deseja deletar este comentário?')) {
       return;
     }
 
-    this.commentsService.deleteComment(commentId).subscribe({
-      next: (success) => {
-        if (success) {
-          this.comments = this.comments.filter(c => c.id !== commentId);
-          this.cdr.markForCheck();
-        } else {
-          console.error('Falha ao deletar comentário no backend.');
-        }
+    this.commentsService.deleteComment(deletedCommentId).subscribe({
+      next: () => {
+        this.comments = this.comments.filter(
+          (comment) => String(comment.id) !== String(deletedCommentId),
+        );
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erro ao deletar comentário:', err);
-      }
+      error: (error) => {
+        console.error('Erro ao deletar comentário:', error);
+      },
     });
   }
 
