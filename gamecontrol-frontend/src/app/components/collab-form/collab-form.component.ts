@@ -2,11 +2,17 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { LucideMessageCircle, LucideSend } from '@lucide/angular';
 
 @Component({
   selector: 'app-collab-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule,
+    LucideSend,
+    LucideMessageCircle
+  ],
   templateUrl: './collab-form.component.html',
 })
 export class CollabFormComponent {

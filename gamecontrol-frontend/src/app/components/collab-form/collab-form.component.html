@@ -1,45 +1,54 @@
 <div
-  class="bg-[#1e1e1e] text-white rounded-2xl p-8 max-w-md mx-auto mt-12 shadow-lg text-center"
+  class="max-w-6xl mx-auto bg-[#1e1e1e] text-white rounded-xl p-4 shadow-lg"
 >
-  <h2 class="text-2xl font-bold text-pink-400 mb-2">
-    🎮 Quer colaborar com o site?
-  </h2>
-  <p class="text-gray-300 mb-6">
-    Envie uma mensagem no nosso Discord!
-  </p>
+  <div class="p-4 md:p-6">
+    <div class="flex items-center gap-3 mb-1">
+      <div
+        class="w-8 h-8 rounded-full bg-[linear-gradient(135deg,_hsl(330,80%,60%),_hsl(270,60%,55%))] flex items-center justify-center"
+      >
+        <svg lucideMessageCircle class="w-4 h-4 text-white"></svg>
+      </div>
 
-  <form (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-    <input
-      type="email"
-      placeholder="Seu e-mail"
-      [(ngModel)]="email"
-      name="email"
-      required
-      class="w-full bg-[#2a2a2a] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-    />
+      <div>
+        <h2 class="font-semibold text-white">Quer colaborar com o site?</h2>
+        <p class="text-sm text-gray-400">Envie uma mensagem no nosso Discord!</p>
+      </div>
+    </div>
 
-    <textarea
-      placeholder="Digite sua mensagem..."
-      [(ngModel)]="message"
-      name="message"
-      rows="4"
-      required
-      class="w-full bg-[#2a2a2a] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500 transition resize-none"
-    ></textarea>
+    <form (ngSubmit)="onSubmit()" class="mt-5 space-y-4">
+      <input
+        type="email"
+        placeholder="Seu e-mail"
+        [(ngModel)]="email"
+        name="email"
+        required
+        class="w-full bg-[#272A35] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/50 transition"
+      />
 
-    <button
-      type="submit"
-      [disabled]="loading"
-      class="bg-pink-500 hover:bg-pink-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl shadow-md transition duration-300 cursor-pointer"
+      <textarea
+        placeholder="Digite sua mensagem..."
+        [(ngModel)]="message"
+        name="message"
+        rows="4"
+        required
+        class="w-full bg-[#272A35] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none resize-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/50 transition"
+      ></textarea>
+
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="w-full inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[linear-gradient(135deg,_hsl(330,80%,60%),_hsl(270,60%,55%))] text-white font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+      >
+        <svg lucideSend class="w-4 h-4 mr-2"></svg>
+        {{ loading ? 'Enviando...' : 'Enviar mensagem' }}
+      </button>
+    </form>
+
+    <p
+      *ngIf="success"
+      class="text-green-400 mt-4 text-sm font-medium"
     >
-      {{ loading ? 'Enviando...' : 'Enviar mensagem' }}
-    </button>
-  </form>
-
-  <p
-    *ngIf="success"
-    class="text-green-400 mt-4 text-sm font-medium animate-fadeIn"
-  >
-    ✅ Mensagem enviada com sucesso! Obrigado 💖
-  </p>
+      ✅ Mensagem enviada com sucesso! Obrigado 💖
+    </p>
+  </div>
 </div>
