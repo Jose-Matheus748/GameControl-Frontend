@@ -1,18 +1,33 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
-import { CollabFormComponent } from "../../components/collab-form/collab-form.component";
-import { AddGameComponent } from "../../components/add-game/add-game.component";
-import { LucideUserRound } from '@lucide/angular';
+import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
+import { AddGameComponent } from '../../components/add-game/add-game.component';
+import {
+  LucideUserRound,
+  LucideUsers,
+  LucideMapPin,
+  LucideCalendar,
+  LucideSquarePen,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, CollabFormComponent, AddGameComponent, LucideUserRound],
+  imports: [
+    CommonModule,
+    CollabFormComponent,
+    AddGameComponent,
+    LucideUserRound,
+    LucideUsers,
+    LucideMapPin,
+    LucideCalendar,
+    LucideSquarePen,
+  ],
   templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {
@@ -24,6 +39,10 @@ export class UserComponent implements OnInit {
   loading = true;
   isAdmin = false;
   addJogoAberto = false;
+
+  previewUrl: string | null = null;
+  selectedProfileFile: File | null = null;
+
   playlists: Playlist[] = [];
 
   constructor(
@@ -31,7 +50,7 @@ export class UserComponent implements OnInit {
     private userService: UsuarioService,
     private followService: FollowService,
     private playlistService: PlaylistService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -49,17 +68,37 @@ export class UserComponent implements OnInit {
   loadUser() {
     this.loading = true;
 
+    if (!this.userId) {
+      console.error('userId inválido:', this.userId);
+      this.loading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
     forkJoin({
       user: this.userService.getById(this.userId),
-      followers: this.followService.getFollowers(this.userId),
-      following: this.followService.getFollowing(this.userId),
-      playlists: this.playlistService.getPlaylistsByUser(this.userId),
+      followers: this.followService.getFollowers(this.userId).pipe(
+        catchError((err) => {
+          console.error('Erro ao carregar followers:', err);
+          return of([]);
+        }),
+      ),
+      following: this.followService.getFollowing(this.userId).pipe(
+        catchError((err) => {
+          console.error('Erro ao carregar following:', err);
+          return of([]);
+        }),
+      ),
+      playlists: this.playlistService.getPlaylistsByUser(this.userId).pipe(
+        catchError((err) => {
+          console.error('Erro ao carregar playlists:', err);
+          return of([]);
+        }),
+      ),
     }).subscribe({
       next: ({ user, followers, following, playlists }) => {
         this.userData = user;
-
         this.isAdmin = user.role === 'ADMIN';
-
         this.followersCount = followers.length;
         this.followingCount = following.length;
         this.playlists = playlists;
@@ -72,6 +111,32 @@ export class UserComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  onProfileImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+
+    if (!file.type.startsWith('image/')) {
+      console.error('Selecione um arquivo de imagem válido.');
+      return;
+    }
+
+    this.selectedProfileFile = file;
+
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+    }
+
+    this.previewUrl = URL.createObjectURL(file);
+
+    input.value = '';
+    this.cdr.detectChanges();
   }
 
   criarPlaylist() {
