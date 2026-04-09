@@ -7,16 +7,7 @@ import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
-import {
-  LucideUserRound,
-  LucideUsers,
-  LucideMapPin,
-  LucideCalendar,
-  LucideSquarePen,
-  LucideMusic,
-  LucidePlus,
-  LucideTrash2,
-} from '@lucide/angular';
+import { LucideUserRound, LucideUsers, LucideMapPin, LucideCalendar, LucideSquarePen, LucideMusic, LucidePlus, LucideTrash2, LucideSettings } from '@lucide/angular';
 
 @Component({
   selector: 'app-user',
@@ -29,11 +20,12 @@ import {
     LucideUsers,
     LucideMapPin,
     LucideCalendar,
-    LucideSquarePen,
+    LucideSettings,
     LucideMusic,
     LucidePlus,
-    LucideTrash2
-  ],
+    LucideTrash2,
+    LucideSettings
+],
   templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {

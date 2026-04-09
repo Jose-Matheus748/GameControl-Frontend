@@ -68,7 +68,7 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-5 mt-4 pt-4 border-t border-white/10 flex-wrap">
+          <div class="relative flex items-center gap-5 mt-4 pt-4 border-t border-white/10 flex-wrap">
             <div class="flex items-center gap-1.5 text-sm text-gray-400">
               <svg lucideUsers class="w-4 h-4 text-pink-500"></svg>
               <span class="font-medium text-white">{{ followersCount }}</span>
@@ -84,10 +84,14 @@
 
             <div class="ml-auto">
               <button
-                class="text-xs gap-1.5 px-3 py-2 rounded-md border border-white/10 text-gray-200 hover:border-pink-500/60 hover:text-white transition inline-flex items-center"
+                class="absolute right-0 -top-24 
+                       w-10 h-10 rounded-full 
+                       border border-white/10 text-gray-300 
+                       flex items-center justify-center shadow-md 
+                       hover:border-pink-500/60 hover:text-pink-400 hover:shadow-[0_0_12px_#EB479955] 
+                       transition-all"
               >
-                <svg lucideEdit class="w-3 h-3"></svg>
-                Editar Perfil
+                <svg lucideSettings class="w-4 h-4" style="stroke-width: 2"></svg>
               </button>
             </div>
           </div>
