@@ -163,6 +163,25 @@ export class UserComponent implements OnInit {
     });
   }
 
+  deletarPlaylist(playlistId: number): void {
+    const confirmar = confirm('Tem certeza de que deseja excluir esta playlist?');
+
+    if (!confirmar) return;
+
+    this.playlistService.deletePlaylist(playlistId).subscribe({
+      next: () => {
+        this.playlists = this.playlists.filter(
+          (playlist) => playlist.id !== playlistId
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir playlist:', err);
+        alert('Não foi possivel excluir a playlist.');
+      }
+    })
+  }
+
   toggleAddGame() {
     this.addJogoAberto = !this.addJogoAberto;
   }

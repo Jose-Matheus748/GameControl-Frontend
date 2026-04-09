@@ -125,6 +125,7 @@
                 <button
                   type="button"
                   class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400"
+                  (click)="deletarPlaylist(playlist.id!)"
                   title="Excluir playlist"
                   aria-label="Excluir playlist"
                 >
@@ -155,7 +156,7 @@
         </ng-container>
 
         <ng-template #noPlaylists>
-          <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="flex flex-col items-center justify-center py-4 text-center">
             <div
               class="w-16 h-16 rounded-xl bg-[#272A35]/80 border border-white/10 flex items-center justify-center mb-4"
             >
@@ -199,7 +200,7 @@
     </div>
 
     <!-- Formulário de colaboração -->
-    <aside class="w-full">
+    <aside class="w-full h-full">
       <app-collab-form></app-collab-form>
     </aside>
   </div>
