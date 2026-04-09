@@ -4,7 +4,7 @@
   <div class="p-4 md:p-6">
     <div class="flex items-center gap-3 mb-1">
       <div
-        class="w-8 h-8 rounded-full bg-[linear-gradient(135deg,_hsl(330,80%,60%),_hsl(270,60%,55%))] flex items-center justify-center"
+        class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center"
       >
         <svg lucideMessageCircle class="w-4 h-4 text-white"></svg>
       </div>
@@ -37,9 +37,14 @@
       <button
         type="submit"
         [disabled]="loading"
-        class="w-full inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[linear-gradient(135deg,_hsl(330,80%,60%),_hsl(270,60%,55%))] text-white font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+        class="w-full inline-flex 
+               items-center justify-center 
+               px-6 py-3 rounded-lg bg-pink-500 
+               shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] 
+               hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] 
+               transition-all duration-300"
       >
-        <svg lucideSend class="w-4 h-4 mr-2"></svg>
+        <svg lucideSend class="w-4 h-4 mr-2" style="stroke-width: 2.5"></svg>
         {{ loading ? 'Enviando...' : 'Enviar mensagem' }}
       </button>
     </form>

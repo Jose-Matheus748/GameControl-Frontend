@@ -15,6 +15,7 @@ import {
   LucideSquarePen,
   LucideMusic,
   LucidePlus,
+  LucideTrash2,
 } from '@lucide/angular';
 
 @Component({
@@ -30,7 +31,8 @@ import {
     LucideCalendar,
     LucideSquarePen,
     LucideMusic,
-    LucidePlus
+    LucidePlus,
+    LucideTrash2
   ],
   templateUrl: './user.component.html',
 })
