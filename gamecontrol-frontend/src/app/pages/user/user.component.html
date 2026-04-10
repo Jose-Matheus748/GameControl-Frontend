@@ -23,12 +23,7 @@
 
             <ng-template #defaultAvatar>
               <div
-                class="w-24 h-24 
-                       rounded-full bg-slate-900/90 
-                       flex justify-center items-center 
-                       shadow-[0_0_20px_#EB479933] 
-                       ring-2 ring-cyan-500/15 transition-all 
-                       group-hover:ring-[#EB4799]/90"
+                class="w-24 h-24 rounded-full bg-slate-900/90 flex justify-center items-center shadow-[0_0_20px_#EB479933] ring-2 ring-cyan-500/15 transition-all group-hover:ring-[#EB4799]/90"
               >
                 <svg
                   lucideUserRound
@@ -73,7 +68,9 @@
             </div>
           </div>
 
-          <div class="relative flex items-center gap-5 mt-4 pt-4 border-t border-cyan-500/20 flex-wrap">
+          <div
+            class="relative flex items-center gap-5 mt-4 pt-4 border-t border-cyan-500/20 flex-wrap"
+          >
             <div class="flex items-center gap-1.5 text-sm text-gray-400">
               <svg lucideUsers class="w-4 h-4 text-pink-500"></svg>
               <span class="font-medium text-white">{{ followersCount }}</span>
@@ -91,13 +88,8 @@
             <div class="ml-auto">
               <button
                 title="Configurações do perfil"
-                aria-label="Configurações do perfil" 
-                class="absolute right-0 -top-24 
-                       w-10 h-10 rounded-full 
-                       border border-cyan-500/20 text-cyan-500/90 
-                       flex items-center justify-center shadow-md 
-                       hover:border-pink-500/60 hover:text-pink-400 hover:shadow-[0_0_12px_#EB479955] 
-                       transition-all"
+                aria-label="Configurações do perfil"
+                class="absolute right-0 -top-24 w-10 h-10 rounded-full border border-cyan-500/20 text-cyan-500/90 flex items-center justify-center shadow-md hover:border-pink-500/60 hover:text-pink-400 hover:shadow-[0_0_12px_#EB479955] transition-all"
               >
                 <svg lucideSettings class="w-4 h-4" style="stroke-width: 2"></svg>
               </button>
@@ -111,9 +103,9 @@
   <!-- Grid inferior -->
   <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_450px] gap-4 items-stretch">
     <!-- Playlists -->
-    <section class="w-full h-full 
-                  bg-slate-900/90 border border-cyan-500/20 
-                  text-white rounded-xl p-4 shadow-lg">
+    <section
+      class="w-full h-full bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl p-4 shadow-lg"
+    >
       <div class="p-4 md:p-6">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
           <h2 class="text-lg font-semibold text-white">Playlists</h2>
@@ -123,10 +115,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             <div
               *ngFor="let playlist of playlists"
-              class="group border border-slate-700 
-                    bg-slate-950/70 rounded-xl p-4 
-                    hover:border-pink-500/40 
-                      transition-all"
+              class="group border border-slate-700 bg-slate-950/70 rounded-xl p-4 hover:border-pink-500/40 transition-all"
             >
               <div class="flex items-start justify-between gap-3">
                 <div class="flex-1 min-w-0">
@@ -141,7 +130,7 @@
 
                 <button
                   type="button"
-                  class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-500/10 text-cyan-500/90 hover:text-red-400"
                   (click)="deletarPlaylist(playlist.id!)"
                   title="Excluir playlist"
                   aria-label="Excluir playlist"
@@ -158,12 +147,7 @@
 
           <div class="mt-6 flex justify-center">
             <button
-              class="inline-flex items-center 
-                     px-4 py-2 rounded-lg 
-                     bg-pink-500 text-white font-medium 
-                     shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] 
-                     hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988]
-                     transition-all duration-300"
+              class="inline-flex items-center px-4 py-2 rounded-lg bg-pink-500 text-white font-medium shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all duration-300"
               (click)="criarPlaylist()"
             >
               <svg lucidePlus class="w-4 h-4 mr-2" style="stroke-width: 3.5"></svg>
@@ -187,12 +171,7 @@
             </p>
 
             <button
-              class="inline-flex items-center 
-                     px-4 py-2 rounded-lg 
-                     bg-pink-500 text-white font-medium 
-                     shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] 
-                     hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988]
-                     transition-all duration-300"
+              class="inline-flex items-center px-4 py-2 rounded-lg bg-pink-500 text-white font-medium shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all duration-300"
               (click)="criarPlaylist()"
             >
               <svg lucidePlus class="w-4 h-4 mr-2"></svg>

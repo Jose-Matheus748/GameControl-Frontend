@@ -1,5 +1,4 @@
 <div class="relative min-h-screen flex items-center justify-center overflow-hidden">
-
   <img
     src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop"
     alt="Arcade background"
@@ -10,113 +9,77 @@
     class="absolute inset-0 bg-gradient-to-r from-pink-950/60 via-[#050816]/85 to-cyan-950/60"
   ></div>
   <div class="relative z-10 w-full max-w-5xl px-6">
-
     <h1
       class="font-orbitron text-4xl md:text-5xl font-bold text-white mb-8 drop-shadow-[0_0_10px_rgba(34,211,238,0.4)]"
     >
       Crie sua conta
     </h1>
-  <div
-    class="relative z-10 w-full max-w-4xl mx-6 md:mx-10
-           bg-[#0b1220]/90 backdrop-blur-md
-           rounded-2xl shadow-2xl
-           border border-cyan-400/10
-           overflow-hidden"
-  >
-    <div class="grid md:grid-cols-2">
+    <div
+      class="relative z-10 w-full max-w-4xl mx-6 md:mx-10 bg-[#0b1220]/90 backdrop-blur-md rounded-2xl shadow-2xl border border-cyan-400/10 overflow-hidden"
+    >
+      <div class="grid md:grid-cols-2">
+        <div class="p-8 md:p-10 text-white">
+          <form (ngSubmit)="onSubmit()" #form="ngForm" class="flex flex-col space-y-4">
+            <input
+              [(ngModel)]="user.email"
+              name="email"
+              type="email"
+              placeholder="Digite seu Email"
+              required
+              class="px-4 py-3 rounded-lg bg-[#1f2937] border border-cyan-400/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            />
 
-      <div class="p-8 md:p-10 text-white">
-        <form
-          (ngSubmit)="onSubmit()"
-          #form="ngForm"
-          class="flex flex-col space-y-4"
+            <input
+              [(ngModel)]="user.password"
+              name="password"
+              type="password"
+              placeholder="Digite sua senha"
+              required
+              class="px-4 py-3 rounded-lg bg-[#1f2937] border border-cyan-400/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
+            />
+
+            <input
+              [(ngModel)]="user.username"
+              name="username"
+              placeholder="Digite seu nome de usuário"
+              required
+              class="px-4 py-3 rounded-lg bg-[#1f2937] border border-cyan-400/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            />
+            <button
+              type="submit"
+              [disabled]="isSubmitting"
+              class="mt-2 py-3 rounded-lg font-semibold text-white bg-pink-500 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-pink-500/20"
+            >
+              {{ isSubmitting ? 'Registrando...' : 'Criar conta' }}
+            </button>
+          </form>
+
+          <p class="text-sm text-gray-400 mt-6">
+            Já tem conta?
+            <a [routerLink]="['/login']" class="text-cyan-400 hover:text-pink-400 transition">
+              Faça login
+            </a>
+          </p>
+        </div>
+
+        <div
+          class="hidden md:flex flex-col bg-gradient-to-br from-[#111827] to-[#0b1220] text-center p-8"
         >
-
-          <input
-            [(ngModel)]="user.email"
-            name="email"
-            type="email"
-            placeholder="Digite seu Email"
-            required
-            class="px-4 py-3 rounded-lg
-                   bg-[#1f2937]
-                   border border-cyan-400/20
-                   text-white placeholder-gray-400
-                   focus:outline-none
-                   focus:ring-2 focus:ring-cyan-400"
-          />
-
-          <input
-            [(ngModel)]="user.password"
-            name="password"
-            type="password"
-            placeholder="Digite sua senha"
-            required
-            class="px-4 py-3 rounded-lg
-                   bg-[#1f2937]
-                   border border-cyan-400/20
-                   text-white placeholder-gray-400
-                   focus:outline-none
-                   focus:ring-2 focus:ring-pink-500"
-          />
-
-          <input
-            [(ngModel)]="user.username"
-            name="username"
-            placeholder="Digite seu nome de usuário"
-            required
-            class="px-4 py-3 rounded-lg
-                   bg-[#1f2937]
-                   border border-cyan-400/20
-                   text-white placeholder-gray-400
-                   focus:outline-none
-                   focus:ring-2 focus:ring-cyan-400"
-          />
-          <button
-            type="submit"
-            [disabled]="isSubmitting"
-            class="mt-2 py-3 rounded-lg font-semibold text-white
-                   bg-pink-500
-                   hover:scale-[1.02]
-                   transition-all duration-300
-                   shadow-lg shadow-pink-500/20"
+          <h3
+            class="font-orbitron text-2xl text-cyan-400 mb-10 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"
           >
-            {{ isSubmitting ? 'Registrando...' : 'Criar conta' }}
-          </button>
-        </form>
-
-        <p class="text-sm text-gray-400 mt-6">
-          Já tem conta?
-          <a
-            [routerLink]="['/login']"
-            class="text-cyan-400 hover:text-pink-400 transition"
-          >
-            Faça login
-          </a>
-        </p>
-      </div>
-
-      <div
-        class="hidden md:flex flex-col
-               bg-gradient-to-br from-[#111827] to-[#0b1220]
-               text-center p-8"
-      >
-        <h3
-          class="font-orbitron text-2xl text-cyan-400 mb-10
-                 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"
-        >
-          GameControl
-        </h3>
-        <div class="w-full max-w-sm text-white">
-          <ul class="space-y-4 text-gray-300">
-            <li>🎮 Monte sua biblioteca de jogos</li>
-            <li>💬 Comente e avalie seus favoritos</li>
-            <li>⭐ Salve jogos na sua playlist</li>
-            <li>🔥 Descubra novos lançamentos</li>
-          </ul>
+            GameControl
+          </h3>
+          <div class="w-full max-w-sm text-white">
+            <ul class="space-y-4 text-gray-300">
+              <li>🎮 Monte sua biblioteca de jogos</li>
+              <li>💬 Comente e avalie seus favoritos</li>
+              <li>⭐ Salve jogos na sua playlist</li>
+              <li>🔥 Descubra novos lançamentos</li>
+            </ul>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
