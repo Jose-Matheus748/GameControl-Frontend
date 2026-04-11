@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Game, GameService } from "../../services/games.service";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-games-list',
@@ -12,42 +13,54 @@ import { RouterModule } from "@angular/router";
 
 export class GamesListComponent implements OnInit {
     games: Game[] = [];
+    filteredGames: Game[] = [];
     paginated: Game[] = [];
     loading = true;
     page = 0;
-    pageSize = 8;
+    pageSize = 49;
 
     constructor (
         private gameService: GameService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
-        this.gameService.getAll().subscribe({
-            next: (data) => {
-                this.games = data;
-                this.updatePage();
-                this.loading = false;
-                this.cdr.detectChanges();
-            },
-            error: (err) => {
-                console.error('Erro ao carregar jogos', err);
-                this.loading = false;
-                this.cdr.detectChanges();
-            }
-        });
+      this.gameService.getAll().subscribe({
+        next: (data) => {
+          this.games = data;
+
+          this.route.queryParams.subscribe(params => {
+            const search = params['search']?.toLowerCase() || '';
+
+            this.filteredGames = this.games.filter(game =>
+              game.title.toLowerCase().includes(search)
+            );
+
+            this.page = 0;
+            this.updatePage();
+            this.loading = false;
+            this.cdr.detectChanges();
+          });
+        },
+        error: (err) => {
+          console.error('Erro ao carregar jogos', err);
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
     }
 
     updatePage() {
-        const start = this.page * this.pageSize;
-        const end = start + this.pageSize;
+      const start = this.page * this.pageSize;
+      const end = start + this.pageSize;
 
-        this.paginated = this.games.slice(start, end);
-        this.cdr.detectChanges();
+      this.paginated = this.filteredGames.slice(start, end);
+      this.cdr.detectChanges();
     }
 
     next() {
-        if ((this.page + 1) * this.pageSize < this.games.length) {
+        if ((this.page + 1) * this.pageSize < this.filteredGames.length) {
             this.page++;
             this.updatePage();
         }

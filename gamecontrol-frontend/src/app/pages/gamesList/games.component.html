@@ -28,12 +28,19 @@
 
     <button
       (click)="next()"
-      [disabled]="(page + 1) * pageSize >= games.length"
+      [disabled]="(page + 1) * pageSize >= filteredGames.length"
       class="text-5xl font-bold text-cyan-400 disabled:text-gray-600
              hover:scale-110 transition duration-300 cursor-pointer"
     >
       ›
     </button>
+  </div>
+
+  <div
+    *ngIf="!loading && filteredGames.length === 0"
+    class="text-center text-white text-2xl font-orbitron mt-20"
+  >
+    Nenhum jogo encontrado.
   </div>
 
   <!-- Grid dos jogos -->
@@ -88,7 +95,7 @@
 
     <button
       (click)="next()"
-      [disabled]="(page + 1) * pageSize >= games.length"
+      [disabled]="(page + 1) * pageSize >= filteredGames.length"
       class="text-5xl font-bold text-cyan-400 disabled:text-gray-600
              hover:scale-110 transition duration-300 cursor-pointer"
     >

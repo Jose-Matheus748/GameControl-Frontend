@@ -10,6 +10,12 @@
       </a>
     </div>
 
+    <div class="flex-1 flex justify-center">
+      <app-searchbar
+        (search)="onSearchGames($event)">
+      </app-searchbar>
+    </div>
+
     <div class="font-orbitron flex items-center gap-8 text-white text-sm font-medium">
       <a
         [routerLink]="['/games']"
