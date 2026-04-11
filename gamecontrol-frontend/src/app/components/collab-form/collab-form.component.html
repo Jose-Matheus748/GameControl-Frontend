@@ -1,11 +1,9 @@
 <div
-  class="max-w-6xl mx-auto bg-[#1e1e1e] text-white rounded-xl p-4 shadow-lg"
+  class="max-w-6xl mx-auto bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl p-4 shadow-lg"
 >
   <div class="p-4 md:p-6">
     <div class="flex items-center gap-3 mb-1">
-      <div
-        class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center"
-      >
+      <div class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center">
         <svg lucideMessageCircle class="w-4 h-4 text-white"></svg>
       </div>
 
@@ -22,7 +20,7 @@
         [(ngModel)]="email"
         name="email"
         required
-        class="w-full bg-[#272A35] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/50 transition"
+        class="w-full bg-slate-950/70 border border-cyan-500/20 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/50 transition"
       />
 
       <textarea
@@ -31,28 +29,20 @@
         name="message"
         rows="4"
         required
-        class="w-full bg-[#272A35] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none resize-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/50 transition"
+        class="w-full bg-slate-950/70 border border-cyan-500/20 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none resize-none focus:border-pink-500/70 focus:ring-1 focus:ring-pink-500/50 transition"
       ></textarea>
 
       <button
         type="submit"
         [disabled]="loading"
-        class="w-full inline-flex 
-               items-center justify-center 
-               px-6 py-3 rounded-lg bg-pink-500 
-               shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] 
-               hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] 
-               transition-all duration-300"
+        class="w-full inline-flex items-center justify-center px-6 py-3 rounded-lg bg-pink-500 shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all duration-300"
       >
         <svg lucideSend class="w-4 h-4 mr-2" style="stroke-width: 2.5"></svg>
         {{ loading ? 'Enviando...' : 'Enviar mensagem' }}
       </button>
     </form>
 
-    <p
-      *ngIf="success"
-      class="text-green-400 mt-4 text-sm font-medium"
-    >
+    <p *ngIf="success" class="text-green-400 mt-4 text-sm font-medium">
       ✅ Mensagem enviada com sucesso! Obrigado 💖
     </p>
   </div>
