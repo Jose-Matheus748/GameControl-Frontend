@@ -3,7 +3,8 @@
     type="text"
     placeholder="Buscar jogos..."
     [(ngModel)]="searchTerm"
-    (input)="onSearch()"
+    (input)="onInputChange()"
+    (keydown.enter)="onEnterSearch()"
     class="w-full bg-[#111827] border border-gray-700/80 text-white rounded-2xl
            pl-12 pr-5 py-3
            shadow-lg shadow-pink-500/10
