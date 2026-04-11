@@ -21,6 +21,14 @@
         <div class="p-8 md:p-10 text-white">
           <form (ngSubmit)="onSubmit()" #form="ngForm" class="flex flex-col space-y-4">
             <input
+              [(ngModel)]="user.username"
+              name="username"
+              placeholder="Digite seu nome de usuário"
+              required
+              class="px-4 py-3 rounded-lg bg-[#1f2937] border border-cyan-400/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
+            />
+
+            <input
               [(ngModel)]="user.email"
               name="email"
               type="email"
@@ -36,14 +44,6 @@
               placeholder="Digite sua senha"
               required
               class="px-4 py-3 rounded-lg bg-[#1f2937] border border-cyan-400/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
-            />
-
-            <input
-              [(ngModel)]="user.username"
-              name="username"
-              placeholder="Digite seu nome de usuário"
-              required
-              class="px-4 py-3 rounded-lg bg-[#1f2937] border border-cyan-400/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
             <button
               type="submit"
