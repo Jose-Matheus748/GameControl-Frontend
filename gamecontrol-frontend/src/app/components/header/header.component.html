@@ -1,51 +1,66 @@
 <header class="bg-[#090f1b] border border-gray-800/85 p-6 shadow">
-  <div class="max-w-8xl mx-40 flex justify-between items-center">
-    <div class="flex items-center gap-2">
+  <div class="w-full px-8 grid grid-cols-3 items-center">
+
+    <!-- ESQUERDA -->
+    <div class="flex items-center gap-2 justify-start">
       <a [routerLink]="['/']" class="flex items-center gap-2">
         <img src="assets/logo3.svg" alt="Logo" class="h-10 w-10" />
+
         <div class="font-orbitron font-bold text-xl group cursor-pointer">
-        <span class="text-white group-hover:text-pink-300 transition-colors"> Game</span>
-        <span class="text-pink-500 group-hover:text-pink-300 transition-colors">Control </span>
+          <span class="text-white group-hover:text-pink-300 transition-colors">
+            Game
+          </span>
+          <span class="text-pink-500 group-hover:text-pink-300 transition-colors">
+            Control
+          </span>
         </div>
       </a>
     </div>
 
-    <div class="flex-1 flex justify-center">
+    <!-- CENTRO -->
+    <div class="flex justify-center">
       <app-searchbar
         (search)="onSearchGames($event)">
       </app-searchbar>
     </div>
 
-    <div class="font-orbitron flex items-center gap-8 text-white text-sm font-medium">
+    <!-- DIREITA -->
+    <div class="font-orbitron flex items-center justify-end gap-8 text-white text-sm font-medium">
       <a
         [routerLink]="['/games']"
         class="hover:text-pink-400 cursor-pointer transition-colors text-xl">
         Ver Jogos
       </a>
 
-      <!-- Usuário não está logado -->
       <ng-container *ngIf="!authService.user(); else logged">
         <a
           [routerLink]="['/login']"
-          class="max-w-xs w-fullinline-block bg-pink-500 text-white font-bold py-2 px-6 rounded-lg text-lg
+          class="bg-pink-500 text-white font-bold py-2 px-6 rounded-lg text-lg
                  hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
         >
           Login
         </a>
       </ng-container>
 
-      <!-- Usuário está logado -->
       <ng-template #logged>
         <a
           [routerLink]="['/user', authService.user()?.id]"
-          class="hover:text-pink-400 cursor-pointer transition-colors text-xl"
+          class="flex items-center gap-2 px-4 py-2 rounded-full
+                 border border-cyan-500/20
+                 bg-slate-900/70
+                 text-sm text-white
+                 hover:border-pink-500/40
+                 hover:text-pink-400
+                 transition-all duration-300"
         >
-          Olá, {{ authService.user()?.username }}
-        </a>
-        <a (click)="logout()" class="hover:text-pink-400 cursor-pointer transition-colors text-xl">
-          Logout
+          <svg lucideUserRound class="w-4 h-4 text-cyan-400"></svg>
+
+          <span class="font-medium">
+            {{ authService.user()?.username }}
+          </span>
         </a>
       </ng-template>
     </div>
+
   </div>
 </header>

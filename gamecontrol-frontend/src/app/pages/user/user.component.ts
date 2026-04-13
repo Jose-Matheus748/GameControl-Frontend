@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
@@ -7,19 +7,19 @@ import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
-import { LucideUserRound, LucideUsers, LucideMapPin, LucideCalendar, LucideSquarePen, LucideMusic, LucidePlus, LucideTrash2, LucideSettings } from '@lucide/angular';
+import { LucideUserRound, LucideUsers, LucideMapPin, LucideSquarePen, LucideMusic, LucidePlus, LucideTrash2, LucideSettings } from '@lucide/angular';
 
 @Component({
   selector: 'app-user',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     CollabFormComponent,
     AddGameComponent,
     LucideUserRound,
     LucideUsers,
     LucideMapPin,
-    LucideCalendar,
     LucideSettings,
     LucideMusic,
     LucidePlus,
