@@ -1,15 +1,21 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Usuario, UsuarioService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { Usuario, UsuarioService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
-import { LucideDoorOpen } from '@lucide/angular';
-import { LucideUserRound } from '@lucide/angular';
+
+import { LucideDoorOpen, LucideUserRound } from '@lucide/angular';
+
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideDoorOpen, LucideUserRound],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideDoorOpen,
+    LucideUserRound,
+  ],
   templateUrl: './user-settings.component.html'
 })
 export class SettingsComponent implements OnInit {
@@ -23,39 +29,87 @@ export class SettingsComponent implements OnInit {
   };
 
   selectedFile?: File;
-  currentUserId: string = '';
+  currentUserId = '';
   previewUrl: string | null = null;
+  loading = true;
 
   private userService = inject(UsuarioService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.initializeUser();
+  }
+
+  private initializeUser(): void {
+    if (typeof window === 'undefined') {
+      this.loading = false;
+      return;
+    }
+
     const currentUser = this.authService.user();
 
-    if (currentUser) {
-      this.userData = { ...currentUser };
-      this.currentUserId = currentUser.id!.toString();
-    } else {
-      this.router.navigate(['/login']);
+    if (currentUser?.id) {
+      this.setUserData(currentUser);
+      return;
     }
+
+    const storedUserId = localStorage.getItem('userId');
+
+    if (!storedUserId) {
+      this.redirectToLogin();
+      return;
+    }
+
+    this.currentUserId = storedUserId;
+    this.fetchUser();
   }
 
-  onImageSelected(event: Event) {
+  private fetchUser(): void {
+    this.loading = true;
+
+    this.userService.getById(this.currentUserId).subscribe({
+      next: (user) => {
+        this.setUserData(user);
+        this.authService.user.set(user);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar usuário:', err);
+        this.redirectToLogin();
+      }
+    });
+  }
+
+  private setUserData(user: Usuario): void {
+    this.currentUserId = user.id?.toString() ?? '';
+    this.userData = { ...user };
+    this.loading = false;
+
+    this.cdr.detectChanges();
+  }
+
+  private redirectToLogin(): void {
+    this.loading = false;
+    this.cdr.detectChanges();
+    this.router.navigate(['/login']);
+  }
+
+  onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
-    if (input.files?.length) {
-      this.selectedFile = input.files[0];
+    if (!input.files?.length) return;
 
-      if (this.previewUrl) {
-        URL.revokeObjectURL(this.previewUrl);
-      }
+    this.selectedFile = input.files[0];
 
-      this.previewUrl = URL.createObjectURL(this.selectedFile);
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
     }
+
+    this.previewUrl = URL.createObjectURL(this.selectedFile);
   }
 
-  saveChanges() {
+  saveChanges(): void {
     const payload = {
       username: this.userData.username,
       bio: this.userData.bio,
@@ -64,10 +118,8 @@ export class SettingsComponent implements OnInit {
 
     this.userService.update(this.currentUserId, payload).subscribe({
       next: (updatedUser) => {
-        this.userData = updatedUser;
-
+        this.setUserData(updatedUser);
         this.authService.user.set(updatedUser);
-
         alert('Perfil atualizado com sucesso!');
       },
       error: (err) => {
@@ -76,7 +128,7 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
