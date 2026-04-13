@@ -7,7 +7,7 @@ import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
-import { LucideUserRound, LucideUsers, LucideMapPin, LucideSquarePen, LucideMusic, LucidePlus, LucideTrash2, LucideSettings } from '@lucide/angular';
+import { LucideUserRound, LucideUsers, LucideMapPin, LucideSquarePen, LucideMusic, LucidePlus, LucideTrash2, LucideSettings, LucideGamepad2 } from '@lucide/angular';
 
 @Component({
   selector: 'app-user',
@@ -21,10 +21,11 @@ import { LucideUserRound, LucideUsers, LucideMapPin, LucideSquarePen, LucideMusi
     LucideUsers,
     LucideMapPin,
     LucideSettings,
-    LucideMusic,
+    LucideGamepad2,
     LucidePlus,
     LucideTrash2,
-    LucideSettings
+    LucideSettings,
+    LucideGamepad2
 ],
   templateUrl: './user.component.html',
 })

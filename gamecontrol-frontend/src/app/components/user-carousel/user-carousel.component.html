@@ -1,33 +1,25 @@
 <div class="flex items-center justify-center gap-4 w-full max-w-7xl mx-auto mt-8 py-4">
-
   <button
     (click)="prev()"
     [disabled]="index === 0"
-    class="text-3xl text-blue-500 disabled:text-gray-400 transition hover:scale-110 cursor-pointer"
+    class="shrink-0 left-0 top-1/2 -translate-y-1/2 z-20 text-3xl text-blue-500 disabled:text-gray-400 transition hover:scale-110 cursor-pointer"
   >
     ‹
   </button>
 
-  <div class="overflow-hidden w-full">
-
+  <div class="overflow-hidden w-full px-4">
     <div
-      class="flex gap-3 transition-transform duration-500 ease-in-out"
+      class="flex gap-3 py-2 transition-transform duration-500 ease-in-out"
       [style.transform]="'translateX(-' + index * 190 + 'px)'"
     >
-
-      <div
-        *ngFor="let user of userCards"
-        class="flex-shrink-0 w-[180px]"
-      >
-
-        <a
-          [routerLink]="['/profile', user.id]"
-          class="block"
-        >
-
-          <div class="bg-[#0e182f] rounded-2xl shadow-md hover:shadow-xl flex flex-col items-center justify-center aspect-[4/6] p-4 border border-white/30 hover:border-white hover:shadow-purple-500/30">
-
-            <div class="w-28 h-28 rounded-full p-[2px] bg-gradient-to-tr from-purple-400 via-pink-500 to-purple-600">
+      <div *ngFor="let user of userCards" class="flex-shrink-0 w-[180px]">
+        <a [routerLink]="['/profile', user.id]" class="block">
+          <div
+            class="bg-[#0e182f] rounded-2xl shadow-[0_0_2px_#EB479966,0_0_6px_#EB479944] hover:shadow-[0_0_4px_#EB4799AA,0_0_8px_#EB479988] flex flex-col items-center justify-center aspect-[4/6] p-4 ring-1 border-cyan-500/25 hover:ring-[#EB4799]/90 transition-all duration-300"
+          >
+            <div
+              class="w-28 h-28 rounded-full p-[2px] bg-gradient-to-tr from-purple-400 via-pink-500 to-purple-600"
+            >
               <img
                 [src]="user.image"
                 [alt]="user.nickname"
@@ -35,15 +27,16 @@
               />
             </div>
 
-            <span class="mt-4 text-lg font-orbitron text-white text-center truncate w-full">
+            <span class="mt-4 mb-3 text-lg font-orbitron text-white text-center truncate w-full">
               {{ user.nickname }}
             </span>
 
-            <a class="font-orbitron inline-block bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition cursor-pointer font-semibold py-2 px-4 rounded transition-colors">
+            <a
+              class="inline-block bg-pink-500 text-white rounded-lg shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_14px_#EB4799AA,0_0_26px_#EB479988] cursor-pointer font-orbitron font-semibold py-2 px-4 transition-all duration-300"
+            >
               Seguir
             </a>
           </div>
-
         </a>
       </div>
     </div>
@@ -56,5 +49,4 @@
   >
     ›
   </button>
-
 </div>
