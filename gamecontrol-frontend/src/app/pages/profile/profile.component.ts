@@ -5,11 +5,12 @@ import { forkJoin } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
+import { LucideGamepad2, LucideUserRound, LucideUsers } from '@lucide/angular';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideUserRound, LucideUsers, LucideGamepad2],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
