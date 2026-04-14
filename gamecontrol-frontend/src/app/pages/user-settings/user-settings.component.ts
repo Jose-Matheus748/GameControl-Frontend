@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Usuario, UsuarioService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
-
 import { LucideDoorOpen, LucideUserRound } from '@lucide/angular';
 
 @Component({
@@ -121,9 +120,11 @@ export class SettingsComponent implements OnInit {
         this.setUserData(updatedUser);
         this.authService.user.set(updatedUser);
         alert('Perfil atualizado com sucesso!');
+        this.router.navigate(['/user', this.currentUserId]);
       },
       error: (err) => {
         console.error('Erro ao atualizar perfil:', err);
+        alert('Não foi possível atualizar o perfil!');
       }
     });
   }
