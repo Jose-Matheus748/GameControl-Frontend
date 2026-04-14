@@ -6,6 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { GameComment, GameCommentsService } from '../../services/gameComments.service';
 import { AuthService } from '../../services/auth.service';
+import { GenreService, Genre } from '../../services/genre.service';
 
 @Component({
   selector: 'app-game',
@@ -19,6 +20,7 @@ export class GameComponent implements OnInit {
   errorMessage = '';
   comments: GameComment[] = [];
   newCommentContent: string = '';
+  genreNames: string[] = [];
 
   get currentUserId(): string | number | undefined {
     return this.authService.user()?.id;
@@ -33,6 +35,7 @@ export class GameComponent implements OnInit {
     private gameService: GameService,
     private commentsService: GameCommentsService,
     private authService: AuthService,
+    private genreService: GenreService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -47,6 +50,10 @@ export class GameComponent implements OnInit {
           this.gameData = game;
           this.loading = false;
           this.loadComments(game.id!);
+
+          if (game.genreIds?.length) {
+            this.loadGenres(game.genreIds);
+          }
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -66,6 +73,21 @@ export class GameComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao carregar comentários:', err);
+      }
+    });
+  }
+
+  loadGenres(genreIds: string[]): void {
+    this.genreService.getAll().subscribe({
+      next: (genres) => {
+        this.genreNames = genres
+          .filter(genre => genreIds.includes(genre.id))
+          .map(genre => genre.name);
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar gêneros:', err);
       }
     });
   }
