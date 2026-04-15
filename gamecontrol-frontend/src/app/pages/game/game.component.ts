@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { GameComment, GameCommentsService } from '../../services/gameComments.service';
 import { AuthService } from '../../services/auth.service';
 import { GenreService, Genre } from '../../services/genre.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -22,6 +23,9 @@ export class GameComponent implements OnInit {
   newCommentContent: string = '';
   genreNames: string[] = [];
 
+  stars = Array(5).fill(0);
+  averageRating = 4;
+
   get currentUserId(): string | number | undefined {
     return this.authService.user()?.id;
   }
@@ -36,7 +40,8 @@ export class GameComponent implements OnInit {
     private commentsService: GameCommentsService,
     private authService: AuthService,
     private genreService: GenreService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -149,5 +154,15 @@ export class GameComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  goToReviews(): void {
+    if (!this.gameData?.id) return;
+    
+    this.router.navigate(['/games', this.gameData.id, 'reviews']);
+  }
+  
+  addToPlaylist(): void {
+    console.log('Adicionar jogo à playlist');
   }
 }
