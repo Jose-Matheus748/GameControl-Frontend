@@ -11,7 +11,7 @@ export interface Game {
   releaseDate?: string;
   coverImageUrl?: string;
   externalLink: string;
-  genres?: string;
+  genreIds?: string[];
 }
 
 @Injectable({
