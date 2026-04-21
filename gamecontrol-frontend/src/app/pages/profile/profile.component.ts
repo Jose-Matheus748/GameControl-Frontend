@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { UsuarioService, Usuario } from '../../services/user.service';
+import { UsuarioService } from '../../services/user.service';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { LucideGamepad2, LucideUserRound, LucideUsers } from '@lucide/angular';
+import { Usuario } from '../../models/usuario.model';
 
 @Component({
   selector: 'app-profile',

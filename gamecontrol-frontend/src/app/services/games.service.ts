@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Game {
-  id?: number;
+  id?: string;
   title: string;
   description?: string;
   developer?: string;
@@ -26,7 +26,7 @@ export class GameService {
     return this.http.get<Game[]>(`${this.apiUrl}`);
   }
 
-  getById(id: number): Observable<Game> {
+  getById(id: string): Observable<Game> {
     return this.http.get<Game>(`${this.apiUrl}/${id}`);
   }
 
@@ -34,11 +34,11 @@ export class GameService {
     return this.http.post<Game>(`${this.apiUrl}`, formData);
   }
 
-  update(id: number, game: Game): Observable<Game> {
+  update(id: string, game: Game): Observable<Game> {
     return this.http.put<Game>(`${this.apiUrl}/${id}`, game);
   }
 
-  delete(id: number): Observable<string> {
+  delete(id: string): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
 }

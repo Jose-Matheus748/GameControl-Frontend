@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Usuario } from './user.service';
+import { Usuario } from '../models/usuario.model';
 
 export interface Game {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   coverImageUrl?: string;
@@ -15,7 +15,7 @@ export interface Game {
 }
 
 export interface Playlist {
-  id?: number;
+  id?: string;
   nome: string;
   descricao?: string;
   usuario?: Usuario;
@@ -30,31 +30,31 @@ export class PlaylistService {
 
   constructor(private http: HttpClient) {}
 
-  getPlaylistsByUser(usuarioId: string | number): Observable<Playlist[]> {
+  getPlaylistsByUser(usuarioId: string): Observable<Playlist[]> {
     return this.http.get<Playlist[]>(`${this.apiUrl}/usuario/${usuarioId}`);
   }
 
-  getById(id: number): Observable<Playlist> {
+  getById(id: string): Observable<Playlist> {
     return this.http.get<Playlist>(`${this.apiUrl}/${id}`);
   }
 
-  createPlaylist(usuarioId: string | number, playlist: Playlist): Observable<Playlist> {
+  createPlaylist(usuarioId: string, playlist: Playlist): Observable<Playlist> {
     return this.http.post<Playlist>(`${this.apiUrl}?usuarioId=${usuarioId}`, playlist);
   }
 
-  updatePlaylist(id: number, playlist: Playlist): Observable<Playlist> {
+  updatePlaylist(id: string, playlist: Playlist): Observable<Playlist> {
     return this.http.put<Playlist>(`${this.apiUrl}/${id}`, playlist);
   }
 
-  deletePlaylist(id: number): Observable<void> {
+  deletePlaylist(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  addGameToPlaylist(playlistId: number, gameId: number): Observable<Playlist> {
+  addGameToPlaylist(playlistId: string, gameId: string): Observable<Playlist> {
     return this.http.post<Playlist>(`${this.apiUrl}/${playlistId}/jogos/${gameId}`, {});
   }
 
-  removeGameFromPlaylist(playlistId: number, gameId: number): Observable<Playlist> {
+  removeGameFromPlaylist(playlistId: string, gameId: string): Observable<Playlist> {
     return this.http.delete<Playlist>(`${this.apiUrl}/${playlistId}/jogos/${gameId}`);
   }
 }

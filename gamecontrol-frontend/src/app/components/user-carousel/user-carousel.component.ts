@@ -1,7 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Usuario, UsuarioService } from '../../services/user.service';
+import { UsuarioService } from '../../services/user.service';
+import { Usuario } from '../../models/usuario.model';
 
 export interface UserCard {
   id: string | number;

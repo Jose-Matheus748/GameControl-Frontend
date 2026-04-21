@@ -2,7 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
-import { UsuarioService, Usuario } from '../../services/user.service';
+import { UsuarioService } from '../../services/user.service';
+import { Usuario } from '../../models/usuario.model';
 import { FollowService } from '../../services/follow.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
@@ -156,7 +157,7 @@ export class UserComponent implements OnInit {
     });
   }
 
-  deletarPlaylist(playlistId: number): void {
+  deletarPlaylist(playlistId: string): void {
     const confirmar = confirm('Tem certeza de que deseja excluir esta playlist?');
 
     if (!confirmar) return;

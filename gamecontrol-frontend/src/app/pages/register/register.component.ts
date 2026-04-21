@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Usuario, UsuarioService } from '../../services/user.service';
+import { UsuarioService } from '../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LoginDTO } from '../../models/login-dto.model';
+import { CreateUsuarioDTO } from '../../models/usuario.model';
 
 @Component({
   selector: 'app-register',
@@ -12,9 +13,8 @@ import { LoginDTO } from '../../models/login-dto.model';
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './register.component.html'
 })
-
 export class RegisterComponent {
-  user: Usuario = {
+  user: CreateUsuarioDTO = {
     email: '',
     password: '',
     username: '',
@@ -36,38 +36,31 @@ export class RegisterComponent {
     this.isSubmitting = true;
 
     this.userService.create(this.user).subscribe({
-        next: () => {
-          const loginDTO: LoginDTO = {
-            email: this.user.email,
-            password: this.user.password
-          };
-        
-          this.authService.login(loginDTO).subscribe({
-            next: (res) => {
-              localStorage.setItem('token', res.token);
-            
-              if (res.user?.id != null) {
-                localStorage.setItem('userId', res.user.id.toString());
-              }
-            
-              alert(`Bem-vindo, ${res.user.username}!`);
-            
-              this.isSubmitting = false;
-              this.router.navigate(['/']);
-            },
-            error: () => {
-              alert('Conta criada, mas houve erro no login automático.');
-              this.isSubmitting = false;
-              this.router.navigate(['/login']);
-            }
-          });
-        },
-        error: () => {
-          alert('Erro ao registrar usuário.');
-          this.isSubmitting = false;
-        }
-      });
-    }
+      next: () => {
+        const loginDTO: LoginDTO = {
+          email: this.user.email,
+          password: this.user.password
+        };
+
+        this.authService.login(loginDTO).subscribe({
+          next: (res) => {
+            alert(`Bem-vindo, ${res.user.username}!`);
+            this.isSubmitting = false;
+            this.router.navigate(['/']);
+          },
+          error: () => {
+            alert('Conta criada, mas houve erro no login automático.');
+            this.isSubmitting = false;
+            this.router.navigate(['/login']);
+          }
+        });
+      },
+      error: () => {
+        alert('Erro ao registrar usuário.');
+        this.isSubmitting = false;
+      }
+    });
+  }
 
   onClose() {
     this.router.navigate(['/']);

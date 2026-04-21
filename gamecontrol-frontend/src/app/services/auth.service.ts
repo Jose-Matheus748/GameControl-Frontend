@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthResponse } from '../models/auth-response.model';
 import { LoginDTO } from '../models/login-dto.model';
-import { Usuario, UsuarioService } from './user.service';
+import { UsuarioService } from './user.service';
+import { Usuario } from '../models/usuario.model';
 
 @Injectable({
   providedIn: 'root'

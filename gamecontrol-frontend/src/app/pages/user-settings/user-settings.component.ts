@@ -2,7 +2,8 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Usuario, UsuarioService } from '../../services/user.service';
+import { UsuarioService } from '../../services/user.service';
+import { Usuario, UpdateUsuarioDTO } from '../../models/usuario.model';
 import { AuthService } from '../../services/auth.service';
 import { LucideDoorOpen, LucideUserRound } from '@lucide/angular';
 
@@ -18,9 +19,7 @@ import { LucideDoorOpen, LucideUserRound } from '@lucide/angular';
   templateUrl: './user-settings.component.html'
 })
 export class SettingsComponent implements OnInit {
-  userData: Usuario = {
-    email: '',
-    password: '',
+  userData: UpdateUsuarioDTO = {
     username: '',
     bio: '',
     country: '',
@@ -28,7 +27,6 @@ export class SettingsComponent implements OnInit {
   };
 
   selectedFile?: File;
-  currentUserId = '';
   previewUrl: string | null = null;
   loading = true;
 
@@ -36,6 +34,10 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+
+  get currentUserId(): string | undefined {
+    return this.authService.user()?.id;
+  }
 
   ngOnInit(): void {
     this.initializeUser();
@@ -49,7 +51,7 @@ export class SettingsComponent implements OnInit {
 
     const currentUser = this.authService.user();
 
-    if (currentUser?.id) {
+    if (currentUser && currentUser.id) {
       this.setUserData(currentUser);
       return;
     }
@@ -61,14 +63,13 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
-    this.currentUserId = storedUserId;
-    this.fetchUser();
+    this.fetchUser(storedUserId);
   }
 
-  private fetchUser(): void {
+  private fetchUser(userId: string): void {
     this.loading = true;
 
-    this.userService.getById(this.currentUserId).subscribe({
+    this.userService.getById(userId).subscribe({
       next: (user) => {
         this.setUserData(user);
         this.authService.user.set(user);
@@ -81,10 +82,20 @@ export class SettingsComponent implements OnInit {
   }
 
   private setUserData(user: Usuario): void {
-    this.currentUserId = user.id?.toString() ?? '';
-    this.userData = { ...user };
+    if (!user.id) {
+      console.error('Usuário sem ID!');
+      this.redirectToLogin();
+      return;
+    }
+  
+    this.userData = {
+      username: user.username,
+      bio: user.bio,
+      country: user.country,
+      profilePictureUrl: user.profilePictureUrl
+    };
+  
     this.loading = false;
-
     this.cdr.detectChanges();
   }
 
@@ -109,18 +120,26 @@ export class SettingsComponent implements OnInit {
   }
 
   saveChanges(): void {
+    const userId = this.currentUserId;
+
+    if (!userId) {
+      console.error('ID do usuário não encontrado');
+      this.redirectToLogin();
+      return;
+    }
+
     const payload = {
       username: this.userData.username,
       bio: this.userData.bio,
       country: this.userData.country
     };
 
-    this.userService.update(this.currentUserId, payload).subscribe({
+    this.userService.update(userId, payload).subscribe({
       next: (updatedUser) => {
         this.setUserData(updatedUser);
         this.authService.user.set(updatedUser);
         alert('Perfil atualizado com sucesso!');
-        this.router.navigate(['/user', this.currentUserId]);
+        this.router.navigate(['/user', userId]);
       },
       error: (err) => {
         console.error('Erro ao atualizar perfil:', err);

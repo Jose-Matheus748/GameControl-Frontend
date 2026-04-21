@@ -47,7 +47,7 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.route.params
       .pipe(switchMap((params) => {
-        const gameId = +params['id'];
+        const gameId = params['id'];
         return this.gameService.getById(gameId);
       }))
       .subscribe({
@@ -158,10 +158,10 @@ export class GameComponent implements OnInit {
 
   goToReviews(): void {
     if (!this.gameData?.id) return;
-    
+
     this.router.navigate(['/games', this.gameData.id, 'reviews']);
   }
-  
+
   addToPlaylist(): void {
     console.log('Adicionar jogo à playlist');
   }
