@@ -68,19 +68,29 @@
           <div
             class="relative flex items-center gap-5 mt-4 pt-4 border-t border-cyan-500/20 flex-wrap"
           >
-            <div class="flex items-center gap-1.5 text-sm text-gray-400">
-              <svg lucideUsers class="w-4 h-4 text-pink-500"></svg>
+            <button
+              type="button"
+              class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-pink-300 transition-colors cursor-pointer rounded-lg px-1 -mx-1 py-0.5 text-left"
+              (click)="openSocialModal('followers')"
+              title="Ver seguidores"
+            >
+              <svg lucideUsers class="w-4 h-4 text-pink-500 shrink-0"></svg>
               <span class="font-medium text-white">{{ followersCount }}</span>
-              seguidores
-            </div>
+              <span>seguidores</span>
+            </button>
 
             <span class="text-cyan-500/20">•</span>
 
-            <div class="flex items-center gap-1.5 text-sm text-gray-400">
-              <svg lucideUsers class="w-4 h-4 text-pink-500"></svg>
+            <button
+              type="button"
+              class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-pink-300 transition-colors cursor-pointer rounded-lg px-1 -mx-1 py-0.5 text-left"
+              (click)="openSocialModal('following')"
+              title="Ver seguindo"
+            >
+              <svg lucideUsers class="w-4 h-4 text-pink-500 shrink-0"></svg>
               <span class="font-medium text-white">{{ followingCount }}</span>
-              seguindo
-            </div>
+              <span>seguindo</span>
+            </button>
 
             <div class="ml-auto">
               <button
@@ -202,5 +212,97 @@
     <aside class="w-full h-full">
       <app-collab-form></app-collab-form>
     </aside>
+  </div>
+</div>
+
+<!-- Modal seguidores / seguindo -->
+<div
+  *ngIf="socialModalOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+  (click)="closeSocialModal()"
+  role="presentation"
+>
+  <div
+    class="w-full max-w-md max-h-[min(80vh,520px)] flex flex-col rounded-2xl border border-cyan-500/25 bg-slate-900 shadow-2xl shadow-cyan-950/40"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="socialModalTab === 'followers' ? 'Seguidores' : 'Seguindo'"
+  >
+    <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20 shrink-0">
+      <h3 class="text-lg font-semibold text-white">Rede</h3>
+      <button
+        type="button"
+        class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        (click)="closeSocialModal()"
+        aria-label="Fechar"
+      >
+        <span class="text-xl leading-none">&times;</span>
+      </button>
+    </div>
+
+    <div class="flex border-b border-cyan-500/15 shrink-0">
+      <button
+        type="button"
+        class="flex-1 py-3 text-sm font-medium transition-colors cursor-pointer"
+        [ngClass]="
+          socialModalTab === 'followers'
+            ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
+            : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'
+        "
+        (click)="socialModalTab = 'followers'"
+      >
+        Seguidores
+        <span class="text-gray-500 font-normal">({{ followersCount }})</span>
+      </button>
+      <button
+        type="button"
+        class="flex-1 py-3 text-sm font-medium transition-colors cursor-pointer"
+        [ngClass]="
+          socialModalTab === 'following'
+            ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
+            : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'
+        "
+        (click)="socialModalTab = 'following'"
+      >
+        Seguindo
+        <span class="text-gray-500 font-normal">({{ followingCount }})</span>
+      </button>
+    </div>
+
+    <div class="overflow-y-auto flex-1 min-h-0 px-2 py-2">
+      <div *ngIf="socialModalLoading" class="py-12 text-center text-gray-400 text-sm">Carregando nomes…</div>
+
+      <ng-container *ngIf="!socialModalLoading">
+        <ul *ngIf="socialListIds.length; else emptySocial" class="divide-y divide-cyan-500/10">
+          <li *ngFor="let uid of socialListIds" class="px-3">
+            <a
+              [routerLink]="['/profile', uid]"
+              class="flex items-center gap-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left no-underline"
+              (click)="closeSocialModal()"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-slate-800 border border-cyan-500/20 flex items-center justify-center shrink-0"
+              >
+                <svg lucideUserRound class="w-5 h-5 text-cyan-500/80"></svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-white truncate">{{ displayUsernameForId(uid) }}</p>
+                <p class="text-xs text-gray-500 truncate font-mono">{{ uid }}</p>
+              </div>
+            </a>
+          </li>
+        </ul>
+        <ng-template #emptySocial>
+          <div class="py-14 text-center text-gray-500 text-sm">
+            {{
+              socialModalTab === 'followers'
+                ? 'Ninguém segue este perfil ainda.'
+                : 'Este perfil ainda não segue ninguém.'
+            }}
+          </div>
+        </ng-template>
+      </ng-container>
+    </div>
   </div>
 </div>

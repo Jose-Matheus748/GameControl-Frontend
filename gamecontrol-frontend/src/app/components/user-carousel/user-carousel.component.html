@@ -1,3 +1,4 @@
+@let userCards = (userCards$ | async) ?? [];
 <div class="flex items-center justify-center gap-4 w-full max-w-7xl mx-auto mt-8 py-4">
   <button
     (click)="prev()"
@@ -43,7 +44,7 @@
   </div>
 
   <button
-    (click)="next()"
+    (click)="next(userCards.length)"
     [disabled]="index >= userCards.length - visibleItems"
     class="text-3xl text-blue-500 disabled:text-gray-400 transition hover:scale-110 cursor-pointer"
   >

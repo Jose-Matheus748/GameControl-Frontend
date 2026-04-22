@@ -22,17 +22,25 @@ export interface Playlist {
   games?: Game[];
 }
 
+export const PLAYLISTS_API_BASE = 'http://localhost:8080/api/usuario-playlists';
+
+export function fetchPlaylistsByUserId(
+  http: HttpClient,
+  usuarioId: string | number
+): Observable<Playlist[]> {
+  return http.get<Playlist[]>(`${PLAYLISTS_API_BASE}/usuario/${usuarioId}`);
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class PlaylistService {
-  private apiUrl = 'http://localhost:8080/api/usuario-playlists';
+  private readonly apiUrl = PLAYLISTS_API_BASE;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
-  getPlaylistsByUser(usuarioId: string | number): Observable<Playlist[]> {
-    return this.http.get<Playlist[]>(`${this.apiUrl}/usuario/${usuarioId}`);
-  }
+  getPlaylistsByUser = (usuarioId: string | number): Observable<Playlist[]> =>
+    fetchPlaylistsByUserId(this.http, usuarioId);
 
   getById(id: number): Observable<Playlist> {
     return this.http.get<Playlist>(`${this.apiUrl}/${id}`);

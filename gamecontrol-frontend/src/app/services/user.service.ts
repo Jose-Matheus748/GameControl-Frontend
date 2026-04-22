@@ -4,14 +4,16 @@ import { Observable } from 'rxjs';
 
 export interface Usuario {
   id?: string | number;
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   username: string;
   bio?: string;
   profilePictureUrl?: string;
   birthDate?: string;
   country?: string;
   role?: string;
+  followers?: string[];
+  following?: string[];
 }
 
 @Injectable({
@@ -41,6 +43,25 @@ export class UsuarioService {
 
   delete(id: number): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+  }
+
+  followUser(followerId: string | number, followedId: string | number): Observable<string> {
+    const encodedFollowerId = encodeURIComponent(String(followerId));
+    const encodedFollowedId = encodeURIComponent(String(followedId));
+    return this.http.post(
+      `${this.apiUrl}/${encodedFollowerId}/follow/${encodedFollowedId}`,
+      {},
+      { responseType: 'text' },
+    );
+  }
+
+  unfollowUser(followerId: string | number, followedId: string | number): Observable<string> {
+    const encodedFollowerId = encodeURIComponent(String(followerId));
+    const encodedFollowedId = encodeURIComponent(String(followedId));
+    return this.http.delete(
+      `${this.apiUrl}/${encodedFollowerId}/follow/${encodedFollowedId}`,
+      { responseType: 'text' },
+    );
   }
 
 }
