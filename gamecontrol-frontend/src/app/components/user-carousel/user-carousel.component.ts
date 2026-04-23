@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { catchError, map, of } from 'rxjs';
 import { Usuario, UsuarioService } from '../../services/user.service';
 
 export interface UserCard {
@@ -15,37 +16,28 @@ export interface UserCard {
   imports: [CommonModule, RouterModule],
   templateUrl: './user-carousel.component.html',
 })
-export class UserCarouselComponent implements OnInit {
-  userCards: UserCard[] = [];
+export class UserCarouselComponent {
+  private readonly usuarioService = inject(UsuarioService);
+
   index = 0;
-
-  constructor(
-    private usuarioService: UsuarioService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit() {
-    this.usuarioService.getAll().subscribe({
-      next: (users: Usuario[]) => {
-        this.userCards = users.map((user) => ({
-          id: user.id!,
-          nickname: user.username,
-          image: user.profilePictureUrl || 'https://i.pravatar.cc/150?img=1',
-        }));
-
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erro ao carregar usuários', err);
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
   visibleItems = 5;
 
-  next() {
-    if (this.index < this.userCards.length - this.visibleItems) {
+  userCards$ = this.usuarioService.getAll().pipe(
+    map((users: Usuario[]) =>
+      users.map((user) => ({
+        id: user.id!,
+        nickname: user.username,
+        image: user.profilePictureUrl || 'https://i.pravatar.cc/150?img=1',
+      }))
+    ),
+    catchError((err) => {
+      console.error('Erro ao carregar usuários', err);
+      return of<UserCard[]>([]);
+    })
+  );
+
+  next(length: number) {
+    if (this.index < length - this.visibleItems) {
       this.index++;
     }
   }
@@ -54,9 +46,5 @@ export class UserCarouselComponent implements OnInit {
     if (this.index > 0) {
       this.index--;
     }
-  }
-
-  get visible() {
-    return this.userCards.slice(this.index, this.index + 6);
   }
 }

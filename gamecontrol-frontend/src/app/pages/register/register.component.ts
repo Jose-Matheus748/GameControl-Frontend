@@ -28,7 +28,9 @@ export class RegisterComponent {
   constructor(private userService: UsuarioService) {}
 
   onSubmit() {
-    if (!this.user.email || !this.user.password || !this.user.username) {
+    const email = this.user.email;
+    const password = this.user.password;
+    if (!email || !password || !this.user.username) {
       alert('Preencha os campos obrigatórios!');
       return;
     }
@@ -37,10 +39,7 @@ export class RegisterComponent {
 
     this.userService.create(this.user).subscribe({
         next: () => {
-          const loginDTO: LoginDTO = {
-            email: this.user.email,
-            password: this.user.password
-          };
+          const loginDTO: LoginDTO = { email, password };
         
           this.authService.login(loginDTO).subscribe({
             next: (res) => {

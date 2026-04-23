@@ -1,16 +1,15 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
-import { FollowService } from '../../services/follow.service';
-import { PlaylistService, Playlist } from '../../services/playlist.service';
-import { LucideGamepad2, LucideUserRound, LucideUsers } from '@lucide/angular';
+import { Playlist, fetchPlaylistsByUserId } from '../../services/playlist.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, LucideUserRound, LucideUsers, LucideGamepad2],
+  imports: [CommonModule, RouterModule],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
@@ -24,11 +23,15 @@ export class ProfileComponent implements OnInit {
   loading = true;
   isOwnProfile = false;
 
+  socialModalOpen = false;
+  socialModalTab: 'followers' | 'following' = 'followers';
+  socialModalLoading = false;
+  usernameById: Record<string, string> = {};
+
   constructor(
     private route: ActivatedRoute,
     private userService: UsuarioService,
-    private followService: FollowService,
-    private playlistService: PlaylistService,
+    private http: HttpClient,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -50,20 +53,23 @@ export class ProfileComponent implements OnInit {
 
     forkJoin({
       user: this.userService.getById(this.userId),
-      followers: this.followService.getFollowers(this.userId),
-      following: this.followService.getFollowing(this.userId),
-      playlists: this.playlistService.getPlaylistsByUser(this.userId)
+      playlists: fetchPlaylistsByUserId(this.http, this.userId).pipe(
+        catchError((err) => {
+          console.error('Erro ao carregar playlists:', err);
+          return of([]);
+        }),
+      ),
     }).subscribe({
-      next: ({ user, followers, following, playlists }) => {
+      next: ({ user, playlists }) => {
         this.userData = user;
+        const followers = user.followers ?? [];
+        const following = user.following ?? [];
         this.followersCount = followers.length;
         this.followingCount = following.length;
         this.playlists = playlists;
 
         this.isFollowing =
-          this.loggedUserId != null
-            ? followers.some((f) => f.id === this.loggedUserId)
-            : false;
+          this.loggedUserId != null ? followers.includes(this.loggedUserId) : false;
 
         this.loading = false;
         this.cdr.detectChanges();
@@ -75,6 +81,46 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  openSocialModal(tab: 'followers' | 'following'): void {
+    this.socialModalTab = tab;
+    this.socialModalOpen = true;
+    this.socialModalLoading = true;
+    this.userService.getAll().subscribe({
+      next: (users) => {
+        const map: Record<string, string> = {};
+        for (const u of users) {
+          if (u.id != null) {
+            map[String(u.id)] = u.username?.trim() || String(u.id);
+          }
+        }
+        this.usernameById = map;
+        this.socialModalLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.socialModalLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  closeSocialModal(): void {
+    this.socialModalOpen = false;
+  }
+
+  displayUsernameForId(id: string): string {
+    return this.usernameById[id] ?? id;
+  }
+
+  get socialListIds(): string[] {
+    if (!this.userData) {
+      return [];
+    }
+    const ids =
+      this.socialModalTab === 'followers' ? this.userData.followers : this.userData.following;
+    return [...(ids ?? [])];
+  }
+
   toggleFollow() {
     if (this.loggedUserId == null) {
       alert('Você precisa estar logado para seguir usuários!');
@@ -82,19 +128,28 @@ export class ProfileComponent implements OnInit {
     }
 
     if (this.isFollowing) {
-      this.followService.unfollowUser(this.loggedUserId, this.userId).subscribe({
+      this.userService.unfollowUser(this.loggedUserId, this.userId).subscribe({
         next: () => {
           this.isFollowing = false;
           this.followersCount = Math.max(0, this.followersCount - 1);
+          if (this.userData?.followers && this.loggedUserId) {
+            this.userData.followers = this.userData.followers.filter((x) => x !== this.loggedUserId);
+          }
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Erro ao deixar de seguir:', err)
+        error: (err) => console.error('Erro ao unfollow:', err)
       });
     } else {
-      this.followService.followUser(this.loggedUserId, this.userId).subscribe({
+      this.userService.followUser(this.loggedUserId, this.userId).subscribe({
         next: () => {
           this.isFollowing = true;
           this.followersCount++;
+          if (this.userData && this.loggedUserId) {
+            const list = this.userData.followers ?? [];
+            if (!list.includes(this.loggedUserId)) {
+              this.userData.followers = [...list, this.loggedUserId];
+            }
+          }
           this.cdr.detectChanges();
         },
         error: (err) => console.error('Erro ao seguir usuário:', err)

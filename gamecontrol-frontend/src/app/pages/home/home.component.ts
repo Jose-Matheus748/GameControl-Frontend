@@ -1,4 +1,3 @@
-import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { HeroBannerComponent } from '../../components/hero-banner/hero-banner.component';
 import { HrDividerComponent } from '../../components/hr-divider/hr-divider.component';
@@ -9,7 +8,7 @@ import { UserCarouselComponent } from '../../components/user-carousel/user-carou
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ HttpClientModule, HeroBannerComponent, HrDividerComponent, CarouselComponent, GameOfWeekComponent, UserCarouselComponent ],
+  imports: [HeroBannerComponent, HrDividerComponent, CarouselComponent, GameOfWeekComponent, UserCarouselComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })

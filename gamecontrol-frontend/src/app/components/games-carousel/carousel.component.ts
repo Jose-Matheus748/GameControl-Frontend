@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Game, GameService } from '../../services/games.service';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-carousel',
@@ -19,7 +19,6 @@ export class CarouselComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
-    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -36,14 +35,11 @@ export class CarouselComponent implements OnInit {
         }));
 
         this.loading = false;
-
-        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao buscar jogos:', err);
         this.errorMessage = 'Erro ao carregar os jogos 😞';
         this.loading = false;
-        this.cdr.detectChanges();
       },
     });
   }

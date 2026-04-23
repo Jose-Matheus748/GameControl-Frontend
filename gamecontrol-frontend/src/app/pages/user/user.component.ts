@@ -1,13 +1,21 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
-import { FollowService } from '../../services/follow.service';
-import { PlaylistService, Playlist } from '../../services/playlist.service';
+import { Playlist, PLAYLISTS_API_BASE, fetchPlaylistsByUserId } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
-import { LucideUserRound, LucideUsers, LucideMapPin, LucideSquarePen, LucideMusic, LucidePlus, LucideTrash2, LucideSettings, LucideGamepad2 } from '@lucide/angular';
+import {
+  LucideUserRound,
+  LucideUsers,
+  LucideMapPin,
+  LucidePlus,
+  LucideTrash2,
+  LucideSettings,
+  LucideGamepad2,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-user',
@@ -24,9 +32,7 @@ import { LucideUserRound, LucideUsers, LucideMapPin, LucideSquarePen, LucideMusi
     LucideGamepad2,
     LucidePlus,
     LucideTrash2,
-    LucideSettings,
-    LucideGamepad2
-],
+  ],
   templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {
@@ -44,22 +50,35 @@ export class UserComponent implements OnInit {
 
   playlists: Playlist[] = [];
 
+  socialModalOpen = false;
+  socialModalTab: 'followers' | 'following' = 'followers';
+  socialModalLoading = false;
+  usernameById: Record<string, string> = {};
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private userService: UsuarioService,
-    private followService: FollowService,
-    private playlistService: PlaylistService,
+    private http: HttpClient,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    if (typeof window !== 'undefined') {
-      const storedId = localStorage.getItem('userId');
-      this.loggedUserId = storedId;
+    if (typeof globalThis !== 'undefined' && globalThis.localStorage) {
+      this.loggedUserId = globalThis.localStorage.getItem('userId');
     }
 
-    this.route.params.subscribe((params) => {
-      this.userId = params['id'];
+    this.route.paramMap.subscribe((pm) => {
+      const fromRoute = pm.get('id')?.trim() ?? '';
+      const fromStorage =
+        typeof globalThis !== 'undefined' && globalThis.localStorage
+          ? globalThis.localStorage.getItem('userId')?.trim() ?? ''
+          : '';
+      this.userId = fromRoute || fromStorage;
+      if (!this.userId) {
+        void this.router.navigate(['/login']);
+        return;
+      }
       this.loadUser();
     });
   }
@@ -76,30 +95,18 @@ export class UserComponent implements OnInit {
 
     forkJoin({
       user: this.userService.getById(this.userId),
-      followers: this.followService.getFollowers(this.userId).pipe(
-        catchError((err) => {
-          console.error('Erro ao carregar followers:', err);
-          return of([]);
-        }),
-      ),
-      following: this.followService.getFollowing(this.userId).pipe(
-        catchError((err) => {
-          console.error('Erro ao carregar following:', err);
-          return of([]);
-        }),
-      ),
-      playlists: this.playlistService.getPlaylistsByUser(this.userId).pipe(
+      playlists: fetchPlaylistsByUserId(this.http, this.userId).pipe(
         catchError((err) => {
           console.error('Erro ao carregar playlists:', err);
           return of([]);
         }),
       ),
     }).subscribe({
-      next: ({ user, followers, following, playlists }) => {
+      next: ({ user, playlists }) => {
         this.userData = user;
         this.isAdmin = user.role === 'ADMIN';
-        this.followersCount = followers.length;
-        this.followingCount = following.length;
+        this.followersCount = (user.followers ?? []).length;
+        this.followingCount = (user.following ?? []).length;
         this.playlists = playlists;
         this.loading = false;
         this.cdr.detectChanges();
@@ -110,6 +117,46 @@ export class UserComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  openSocialModal(tab: 'followers' | 'following'): void {
+    this.socialModalTab = tab;
+    this.socialModalOpen = true;
+    this.socialModalLoading = true;
+    this.userService.getAll().subscribe({
+      next: (users) => {
+        const map: Record<string, string> = {};
+        for (const u of users) {
+          if (u.id != null) {
+            map[String(u.id)] = u.username?.trim() || String(u.id);
+          }
+        }
+        this.usernameById = map;
+        this.socialModalLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.socialModalLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  closeSocialModal(): void {
+    this.socialModalOpen = false;
+  }
+
+  displayUsernameForId(id: string): string {
+    return this.usernameById[id] ?? id;
+  }
+
+  get socialListIds(): string[] {
+    if (!this.userData) {
+      return [];
+    }
+    const ids =
+      this.socialModalTab === 'followers' ? this.userData.followers : this.userData.following;
+    return [...(ids ?? [])];
   }
 
   onProfileImageSelected(event: Event): void {
@@ -147,7 +194,8 @@ export class UserComponent implements OnInit {
       descricao: 'Minha nova playlist 🎵',
     };
 
-    this.playlistService.createPlaylist(this.loggedUserId, novaPlaylist).subscribe({
+    const url = `${PLAYLISTS_API_BASE}?usuarioId=${encodeURIComponent(this.loggedUserId)}`;
+    this.http.post<Playlist>(url, novaPlaylist).subscribe({
       next: (playlist) => {
         this.playlists.push(playlist);
         this.cdr.detectChanges();
@@ -161,7 +209,7 @@ export class UserComponent implements OnInit {
 
     if (!confirmar) return;
 
-    this.playlistService.deletePlaylist(playlistId).subscribe({
+    this.http.delete<void>(`${PLAYLISTS_API_BASE}/${playlistId}`).subscribe({
       next: () => {
         this.playlists = this.playlists.filter(
           (playlist) => playlist.id !== playlistId
