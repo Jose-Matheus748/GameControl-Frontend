@@ -30,6 +30,10 @@ export class GameService {
     return this.http.get<Game>(`${this.apiUrl}/${id}`);
   }
 
+  getCarousel(): Observable<Game[]> {
+    return this.http.get<Game[]>(`${this.apiUrl}/recentes`);
+  }
+
   uploadGame(formData: FormData): Observable<Game> {
     return this.http.post<Game>(`${this.apiUrl}`, formData);
   }

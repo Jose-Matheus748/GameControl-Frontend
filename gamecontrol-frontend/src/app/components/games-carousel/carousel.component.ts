@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Game, GameService } from '../../services/games.service';
 import { Component, OnInit } from '@angular/core';
+import { retry, delay } from 'rxjs/operators';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-carousel',
@@ -19,28 +21,25 @@ export class CarouselComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
+      private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-
-    this.gameService.getAll().subscribe({
+    this.gameService.getCarousel()
+    .pipe(
+      delay(100),
+      retry(2)
+    )
+    .subscribe({
       next: (games) => {
-        const limitedGames = games.slice(0, 12);
-
-        this.gameCards = limitedGames.map((game) => ({
-          ...game,
-          image: game.coverImageUrl || 'https://via.placeholder.com/300x200?text=Sem+Imagem',
-          link: `/games/${game.id}`,
-          description: game.description || 'Sem descrição disponível',
-        }));
-
+        this.gameCards = games;
+        this.index = 0;
         this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erro ao buscar jogos:', err);
-        this.errorMessage = 'Erro ao carregar os jogos 😞';
-        this.loading = false;
-      },
+
+        setTimeout(() => {
+          this.cdr.detectChanges();
+        }, 0);
+      }
     });
   }
 
