@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideHeart, LucideImagePlus, LucideMessageCircle, LucideRepeat2, LucideShare2, LucideSparkles, LucideUserRound, LucideSquareArrowOutUpRight } from '@lucide/angular';
+import { LucideHeart, LucideMessageCircle, LucideRepeat2, LucideShare2, LucideSparkles, LucideUserRound, LucideSquareArrowOutUpRight } from '@lucide/angular';
 
 import { ToastService } from '../../services/toast.service';
 
@@ -13,12 +13,10 @@ interface Usuario {
 interface PostType {
   id: number;
   content: string;
-  imageUrl?: string;
   game?: string;
   createdAt: string;
   likes: number;
   comments: number;
-  reposts: number;
   liked: boolean;
 }
 
@@ -30,21 +28,17 @@ interface PostType {
     FormsModule,
     LucideHeart,
     LucideMessageCircle,
-    LucideRepeat2,
-    LucideShare2,
-    LucideImagePlus,
     LucideUserRound,
     LucideSparkles,
     LucideSquareArrowOutUpRight
 ],
-  templateUrl: './post-user-page.html',
+  templateUrl: './post-user-page.html'
 })
 export class PostUserPageComponent implements OnChanges {
   @Input() user: Usuario | null = null;
 
   posts: PostType[] = [];
   textoCriacaoDoPost = '';
-  attachedImage: string | null = null;
 
   readonly maximoDeCaracteresNoPost = 280;
 
@@ -97,16 +91,13 @@ export class PostUserPageComponent implements OnChanges {
       const novoPost: PostType = {
         id: Date.now(),
         content: this.textoCriacaoDoPost,
-        imageUrl: this.attachedImage || undefined,
         createdAt: new Date().toISOString(),
         likes: 0,
         comments: 0,
-        reposts: 0,
         liked: false,
       };
       this.posts = [novoPost, ...this.posts];
       this.textoCriacaoDoPost = '';
-      this.attachedImage = null;
       this.toast.sucesso('Sua galera ja pode ver 🚀', 'Post publicado!');
     } catch (error) {
       console.error('Erro ao publicar post:', error);
@@ -137,36 +128,10 @@ export class PostUserPageComponent implements OnChanges {
     });
   }
 
-  // Método que simula anexar uma imagem ao post
-  // Atualmente ele usa uma imagem aleatória do picsum.photos
-  fakeAttach(): void {
-    // Cria uma URL de imagem aleatória usando Date.now() como seed
-    const url = `https://picsum.photos/seed/post${Date.now()}/800/500`;
-
-    // Salva a imagem como anexo do post em criação
-    this.attachedImage = url;
-
-    // Mostra mensagem informando que a imagem foi anexada
-    this.toast.info('Visualização adicionada ao post.', 'Imagem anexada');
-  }
-
-  // Remove a imagem anexada antes de publicar o post
-  removeAttachedImage(): void {
-    this.attachedImage = null;
-  }
-
   comentariosEmBreve(): void {
     this.toast.info('Comentários em breve.');
   }
-
-  repostar(): void {
-    this.toast.sucesso('Repostado!');
-  }
-
-  compartilhar(): void {
-    this.toast.info('Link copiado!');
-  }
-
+  
   // Método que converte a data do post em tempo relativo
   // Exemplo: "agora", "35m", "4h", "3d"
   timeAgo(iso: string): string {
@@ -227,9 +192,6 @@ export class PostUserPageComponent implements OnChanges {
         // Quantidade inicial de comentários
         comments: 23,
 
-        // Quantidade inicial de reposts
-        reposts: 8,
-
         // Indica que o usuário ainda não curtiu esse post
         liked: false,
       },
@@ -239,8 +201,6 @@ export class PostUserPageComponent implements OnChanges {
         content:
           'Opinião impopular: Hollow Knight: Silksong vai ser GOTY 🐝✨ podem printar esse post.',
 
-        // Imagem mockada do post
-        imageUrl: 'https://picsum.photos/seed/silksongpost/800/500',
 
         game: 'Hollow Knight: Silksong',
 
@@ -249,7 +209,6 @@ export class PostUserPageComponent implements OnChanges {
 
         likes: 318,
         comments: 47,
-        reposts: 26,
 
         // Este post começa como já curtido
         liked: true,
@@ -265,7 +224,6 @@ export class PostUserPageComponent implements OnChanges {
 
         likes: 56,
         comments: 12,
-        reposts: 2,
         liked: false,
       },
       {
@@ -274,8 +232,6 @@ export class PostUserPageComponent implements OnChanges {
         // Usa template string para incluir o username dentro do texto
         content: `Bom dia! Hoje tem live de Clair Obscur: Expedition 33 lá no canal 🎥 @${username} esperando vocês 💖`,
 
-        imageUrl: 'https://picsum.photos/seed/expedition33post/800/500',
-
         game: 'Clair Obscur: Expedition 33',
 
         // Data simulada: 3 dias atrás
@@ -283,7 +239,6 @@ export class PostUserPageComponent implements OnChanges {
 
         likes: 89,
         comments: 9,
-        reposts: 4,
         liked: false,
       },
     ];
