@@ -7,6 +7,7 @@ import { UsuarioService, Usuario } from '../../services/user.service';
 import { Playlist, PLAYLISTS_API_BASE, fetchPlaylistsByUserId } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
+import { PlaylistSectionComponent } from "../../components/playlist-section/playlist-section";
 import {
   LucideUserRound,
   LucideUsers,
@@ -29,10 +30,8 @@ import {
     LucideUsers,
     LucideMapPin,
     LucideSettings,
-    LucideGamepad2,
-    LucidePlus,
-    LucideTrash2,
-  ],
+    PlaylistSectionComponent
+],
   templateUrl: './user.component.html',
 })
 export class UserComponent implements OnInit {
