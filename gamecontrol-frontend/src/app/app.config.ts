@@ -17,6 +17,11 @@ export const appConfig: ApplicationConfig = {
       timeOut: 2500,
       closeButton: true,
       preventDuplicates: true,
+
+      /** Para impedir empilhamento de Toaster */
+      maxOpened: 1,
+      autoDismiss: true,
+      newestOnTop: true
     }),
   ],
 };
