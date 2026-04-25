@@ -1,20 +1,31 @@
-<div
+<main
   class="bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl shadow-lg overflow-hidden h-full"
 >
   <!-- Cabeçalho -->
-  <div class="flex items-center gap-3 px-5 py-4 border-b border-cyan-500/15">
-    <div
-      class="w-9 h-9 rounded-full bg-pink-500/15 flex items-center justify-center ring-1 ring-pink-500/40"
-    >
-      <svg lucideSparkles class="w-4 h-4 text-pink-400"></svg>
+  <section class="relative items-center gap-4 px-5 py-4 border-b border-cyan-500/15">
+    <!-- Lado esquerdo: ícone + textos -->
+    <div class="flex items-center gap-3 pr-10">
+      <div
+        class="w-9 h-9 rounded-full bg-pink-500/15 flex items-center justify-center ring-1 ring-pink-500/40"
+      >
+        <svg lucideSparkles class="w-4 h-4 text-pink-400"></svg>
+      </div>
+      <div>
+        <h2 class="font-semibold text-white">Feed do jogador</h2>
+        <p class="text-xs text-gray-400">Compartilhe suas conquistas e opiniões</p>
+      </div>
     </div>
 
-    <div>
-      <h2 class="font-semibold text-white">Feed do jogador</h2>
-
-      <p class="text-xs text-gray-400">Compartilhe suas conquistas e opiniões</p>
-    </div>
-  </div>
+    <!-- Canto superior direito: Ícone de direcionamento para PostHomePage -->
+     <button
+        type="button"
+        class="absolute top-2 right-2 w-9 h-9 flex items-center justify-center bg-transparent rounded-full text-white hover:text-pink-400 transition"
+        title="Ação do feed"
+        aria-label="Ação do feed"
+     >
+        <svg lucideSquareArrowOutUpRight class="w-4 h-4"></svg>
+     </button>
+  </section>
 
   <!-- Criador de post -->
   <form class="px-5 py-4 border-b border-cyan-500/15" (ngSubmit)="publicar()">
@@ -196,4 +207,4 @@
       </div>
     </li>
   </ul>
-</div>
+</main>

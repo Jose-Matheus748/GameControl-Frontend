@@ -1,15 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  LucideHeart,
-  LucideImagePlus,
-  LucideMessageCircle,
-  LucideRepeat2,
-  LucideShare2,
-  LucideSparkles,
-  LucideUserRound,
-} from '@lucide/angular';
+import { LucideHeart, LucideImagePlus, LucideMessageCircle, LucideRepeat2, LucideShare2, LucideSparkles, LucideUserRound, LucideSquareArrowOutUpRight } from '@lucide/angular';
 
 import { ToastService } from '../../services/toast.service';
 
@@ -43,7 +35,8 @@ interface PostType {
     LucideImagePlus,
     LucideUserRound,
     LucideSparkles,
-  ],
+    LucideSquareArrowOutUpRight
+],
   templateUrl: './post-user-page.html',
 })
 export class PostUserPageComponent implements OnChanges {
@@ -211,6 +204,7 @@ export class PostUserPageComponent implements OnChanges {
     return post.id;
   }
 
+  // Método criarPosts com dados mockados
   private criarPosts(username: string): PostType[] {
     return [
       {
