@@ -1,3 +1,5 @@
+<div *ngIf="gameCards.length > 0" class="max-w-7xl flex items-center justify-center gap-4 w-full mx-auto mt-10 px-4 py-4">
+
 <div class="max-w-7xl flex items-center justify-center gap-4 w-full mx-auto mt-10 px-4 py-4">
 
   <button
@@ -11,7 +13,7 @@
   <div class="overflow-hidden w-full">
     <div
       class="flex transition-transform duration-500 ease-in-out"
-      [style.transform]="'translateX(-' + index * 25 + '%)'"
+      [style.transform]="'translateX(-' + (index * 25) + '%)'"
     >
 
       <div
@@ -35,7 +37,7 @@
         </h3>
 
       </div>
-    
+
     </div>
   </div>
 
@@ -47,4 +49,5 @@
     ›
   </button>
 
+</div>
 </div>
