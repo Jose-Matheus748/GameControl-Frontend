@@ -4,18 +4,17 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
-import { Playlist, PLAYLISTS_API_BASE, fetchPlaylistsByUserId } from '../../services/playlist.service';
+import {
+  Playlist,
+  PLAYLISTS_API_BASE,
+  fetchPlaylistsByUserId,
+} from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
-import {
-  LucideUserRound,
-  LucideUsers,
-  LucideMapPin,
-  LucidePlus,
-  LucideTrash2,
-  LucideSettings,
-  LucideGamepad2,
-} from '@lucide/angular';
+import { ToastService } from '../../services/toast.service';
+import { PlaylistSectionComponent } from '../../components/playlist-section/playlist-section';
+import { LucideUserRound, LucideUsers, LucideMapPin, LucideSettings } from '@lucide/angular';
+import { PostUserPageComponent } from "../../components/post-user-page/post-user-page";
 
 @Component({
   selector: 'app-user',
@@ -23,17 +22,15 @@ import {
   imports: [
     CommonModule,
     RouterModule,
-    CollabFormComponent,
     AddGameComponent,
     LucideUserRound,
     LucideUsers,
     LucideMapPin,
     LucideSettings,
-    LucideGamepad2,
-    LucidePlus,
-    LucideTrash2,
-  ],
-  templateUrl: './user.component.html',
+    PlaylistSectionComponent,
+    PostUserPageComponent
+],
+  templateUrl: './user.component.html'
 })
 export class UserComponent implements OnInit {
   userData?: Usuario;
@@ -61,6 +58,7 @@ export class UserComponent implements OnInit {
     private userService: UsuarioService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
+    private toast: ToastService,
   ) {}
 
   ngOnInit() {
@@ -72,7 +70,7 @@ export class UserComponent implements OnInit {
       const fromRoute = pm.get('id')?.trim() ?? '';
       const fromStorage =
         typeof globalThis !== 'undefined' && globalThis.localStorage
-          ? globalThis.localStorage.getItem('userId')?.trim() ?? ''
+          ? (globalThis.localStorage.getItem('userId')?.trim() ?? '')
           : '';
       this.userId = fromRoute || fromStorage;
       if (!this.userId) {
@@ -169,7 +167,7 @@ export class UserComponent implements OnInit {
     const file = input.files[0];
 
     if (!file.type.startsWith('image/')) {
-      console.error('Selecione um arquivo de imagem válido.');
+      this.toast.erro('Selecione um arquivo de imagem válido.');
       return;
     }
 
@@ -198,6 +196,7 @@ export class UserComponent implements OnInit {
     this.http.post<Playlist>(url, novaPlaylist).subscribe({
       next: (playlist) => {
         this.playlists.push(playlist);
+        this.toast.sucesso('Playlist criada!');
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao criar playlist:', err),
@@ -211,16 +210,15 @@ export class UserComponent implements OnInit {
 
     this.http.delete<void>(`${PLAYLISTS_API_BASE}/${playlistId}`).subscribe({
       next: () => {
-        this.playlists = this.playlists.filter(
-          (playlist) => playlist.id !== playlistId
-        );
+        this.playlists = this.playlists.filter((playlist) => playlist.id !== playlistId);
+        this.toast.sucesso('Playlist excluída com sucesso!');
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao excluir playlist:', err);
-        alert('Não foi possivel excluir a playlist.');
-      }
-    })
+        this.toast.erro('Não foi possivel excluir a playlist.');
+      },
+    });
   }
 
   toggleAddGame() {

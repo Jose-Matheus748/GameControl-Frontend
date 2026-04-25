@@ -1,9 +1,82 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+@import 'ngx-toastr/toastr';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-    font-family: "Orbitron", sans-serif;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* PERSONALIZAÇÃO DO TOAST */
+
+.toast-container 
+.ngx-toastr {
+  border-radius: 14px !important;
+  padding: 16px 18px !important;
+  box-shadow: none !important; /* Retirando sombra padrão do Toaster */
+  border: 1px solid rgba(34, 211, 238, 0.25) !important;
+  font-family: 'Orbitron', sans-serif !important;
+}
+
+/* Toast de sucesso */
+.toast-container 
+.toast-success {
+  background-image: none !important;
+  background-color: #0a1609 !important;
+  color: #ffffff !important;
+  border-left: 4px solid #22c55e !important;
+  padding-left: 16px !important;
+}
+
+.toast-success
+.toast-title {
+    color: #22da66 !important;
+}
+
+/** Toast de Erro*/
+.toast-container
+.toast-error {
+  background-image: none !important;
+  background-color: #200b0b !important;
+  color: #ffffff !important;
+  border-left: 4px solid #c52222 !important;
+  padding-left: 16px !important;
+}
+
+.toast-error
+.toast-title {
+    color: #d82525 !important;
+}
+
+/** Toast de Info */
+.toast-container
+.toast-info {
+  background-image: none !important;
+  background-color: #20200b !important;
+  color: #ffffff !important;
+  border-left: 4px solid #c5b522 !important;
+  padding-left: 16px !important;
+}
+
+/* Título do toast */
+.toast-container 
+.toast-title {
+  font-weight: 700 !important;
+  font-size: 14px !important;
+}
+
+/* Mensagem do toast */
+.toast-container 
+.toast-message {
+  color: #e5e7eb !important;
+  font-size: 13px !important;
+}
+
+/* Botão de fechar */
+.toast-container 
+.toast-close-button {
+  color: #ffffff !important;
+  opacity: 0.9 !important;
 }

@@ -1,0 +1,79 @@
+<!-- Componente da seção de Playlists -->
+<section
+  class="w-full h-full bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl p-4 shadow-lg"
+>
+  <div class="p-3">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <h2 class="text-lg font-semibold text-white">Playlists</h2>
+    </div>
+
+    <ng-container *ngIf="playlists.length > 0; else noPlaylists">
+      <div class="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4">
+        <div
+          *ngFor="let playlist of playlists"
+          class="group border border-slate-700 bg-slate-950/70 rounded-xl p-4 hover:border-pink-500/40 transition-all"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-white truncate">
+                {{ playlist.nome }}
+              </h3>
+
+              <p class="text-sm text-gray-400 mt-2 line-clamp-2">
+                {{ playlist.descricao || 'Sem descrição.' }}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-red-500/10 text-cyan-500/90 hover:text-red-400"
+              (click)="onDeletarPlaylist(playlist.id!)"
+              title="Excluir playlist"
+              aria-label="Excluir playlist"
+            >
+              <svg lucideTrash2 class="w-4 h-4"></svg>
+            </button>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between text-xs text-gray-500">
+            <span>{{ playlist.games?.length || 0 }} jogos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-center">
+        <button
+          class="inline-flex items-center px-4 py-2 rounded-lg bg-pink-500 text-white font-medium shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all duration-300"
+          (click)="onCriarPlaylist()"
+        >
+          <svg lucidePlus class="w-4 h-4 mr-2" style="stroke-width: 3.5"></svg>
+          Criar playlist
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #noPlaylists>
+      <div class="flex flex-col items-center justify-center py-4 text-center">
+        <div
+          class="w-16 h-16 rounded-xl bg-[#272A35]/80 border border-white/10 flex items-center justify-center mb-4"
+        >
+          <svg lucideGamepad2 class="w-7 h-7 text-gray-400"></svg>
+        </div>
+
+        <p class="font-medium text-white mb-1">Nenhuma playlist ainda</p>
+
+        <p class="text-sm text-gray-400 mb-6 max-w-[240px]">
+          Crie sua primeira playlist e organize seus jogos favoritos!
+        </p>
+
+        <button
+          class="inline-flex items-center px-4 py-2 rounded-lg bg-pink-500 text-white font-medium shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all duration-300"
+          (click)="onCriarPlaylist()"
+        >
+          <svg lucidePlus class="w-4 h-4 mr-2"></svg>
+          Criar playlist
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</section>
