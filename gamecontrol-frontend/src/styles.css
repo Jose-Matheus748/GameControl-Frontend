@@ -50,6 +50,16 @@ body {
     color: #d82525 !important;
 }
 
+/** Toast de Info */
+.toast-container
+.toast-info {
+  background-image: none !important;
+  background-color: #20200b !important;
+  color: #ffffff !important;
+  border-left: 4px solid #c5b522 !important;
+  padding-left: 16px !important;
+}
+
 /* Título do toast */
 .toast-container 
 .toast-title {

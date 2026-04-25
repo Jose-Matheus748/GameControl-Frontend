@@ -14,6 +14,7 @@ import { AddGameComponent } from '../../components/add-game/add-game.component';
 import { ToastService } from '../../services/toast.service';
 import { PlaylistSectionComponent } from '../../components/playlist-section/playlist-section';
 import { LucideUserRound, LucideUsers, LucideMapPin, LucideSettings } from '@lucide/angular';
+import { PostUserPageComponent } from "../../components/post-user-page/post-user-page";
 
 @Component({
   selector: 'app-user',
@@ -21,15 +22,15 @@ import { LucideUserRound, LucideUsers, LucideMapPin, LucideSettings } from '@luc
   imports: [
     CommonModule,
     RouterModule,
-    CollabFormComponent,
     AddGameComponent,
     LucideUserRound,
     LucideUsers,
     LucideMapPin,
     LucideSettings,
     PlaylistSectionComponent,
-  ],
-  templateUrl: './user.component.html',
+    PostUserPageComponent
+],
+  templateUrl: './user.component.html'
 })
 export class UserComponent implements OnInit {
   userData?: Usuario;
