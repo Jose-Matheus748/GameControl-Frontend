@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -37,6 +37,7 @@ export class PostUserPageComponent implements OnInit {
   posts: UserPostDTO[] = [];
   textoCriacaoDoPost = '';
   carregandoPosts = false;
+  enviandoPost = false;
 
   readonly maximoDeCaracteresNoPost = 280;
   likedPostIds = new Set<string>();
@@ -44,6 +45,7 @@ export class PostUserPageComponent implements OnInit {
   constructor(
     private toast: ToastService,
     private postService: PostService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -71,9 +73,10 @@ export class PostUserPageComponent implements OnInit {
 
     this.postService.listarTodos().subscribe({
       next: (posts) => {
-        this.posts = posts.sort((postA, postB) => {
+        this.posts = [...posts].sort((postA, postB) => {
           return new Date(postB.createdAt).getTime() - new Date(postA.createdAt).getTime();
         });
+        
 
         this.carregandoPosts = false;
       },
@@ -98,6 +101,8 @@ export class PostUserPageComponent implements OnInit {
       return;
     }
 
+    this.enviandoPost = true;
+
     this.postService
       .criarPost({
         userId: this.userId,
@@ -105,13 +110,21 @@ export class PostUserPageComponent implements OnInit {
       })
       .subscribe({
         next: (postCriado) => {
-          this.posts = [postCriado, ...this.posts];
-          this.textoCriacaoDoPost = '';
-          this.toast.sucesso('Sua galera já pode ver 🚀', 'Post publicado!');
+          setTimeout(() => {
+            this.posts = [postCriado, ...this.posts];
+            this.textoCriacaoDoPost = '';
+            this.enviandoPost = false;
+
+            this.toast.sucesso('Sua galera já pode ver 🚀', 'Post publicado!');
+          }, 0);
         },
         error: (error) => {
           console.error('Erro ao publicar post:', error);
-          this.toast.erro('Não foi possível publicar o post.');
+
+          setTimeout(() => {
+            this.enviandoPost = false;
+            this.toast.erro('Não foi possível publicar o post.');
+          }, 0);
         },
       });
   }

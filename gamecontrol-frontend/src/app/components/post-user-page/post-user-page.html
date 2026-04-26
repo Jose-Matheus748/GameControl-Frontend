@@ -64,10 +64,10 @@
 
             <button
               type="submit"
-              [disabled]="!textoCriacaoDoPost.trim()"
+              [disabled]="enviandoPost || !textoCriacaoDoPost.trim()"
               class="px-4 py-1.5 rounded-full bg-pink-500 text-white text-sm font-semibold shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
             >
-              Postar
+              {{ enviandoPost ? 'Postando...' : 'Postar' }}
             </button>
           </div>
         </div>

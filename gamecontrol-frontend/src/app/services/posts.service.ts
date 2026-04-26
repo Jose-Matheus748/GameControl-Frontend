@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 export interface UserPostDTO {
   id: string;
@@ -23,9 +23,11 @@ export interface CreateUserPostRequest {
 export class PostService {
   private readonly apiUrl = 'http://localhost:8080/api/posts';
 
+  private postsCache$?: Observable<UserPostDTO[]>;
+
   constructor(private http: HttpClient) {}
 
-  listarTodos(): Observable<UserPostDTO[]> {
+  listarTodos(forceRefresh = false): Observable<UserPostDTO[]> {
     return this.http.get<UserPostDTO[]>(this.apiUrl);
   }
 
@@ -34,10 +36,14 @@ export class PostService {
   }
 
   criarPost(dados: CreateUserPostRequest): Observable<UserPostDTO> {
-    return this.http.post<UserPostDTO>(this.apiUrl, dados);
+    return this.http.post<UserPostDTO>(this.apiUrl, dados).pipe(tap(() => this.limparCache()));
   }
 
   deletarPost(postId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${postId}`);
+    return this.http.delete<void>(`${this.apiUrl}/${postId}`).pipe(tap(() => this.limparCache()));
+  }
+
+  limparCache(): void {
+    this.postsCache$ = undefined;
   }
 }
