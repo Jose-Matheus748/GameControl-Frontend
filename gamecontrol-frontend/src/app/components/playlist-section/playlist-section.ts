@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { LucideGamepad2, LucidePlus, LucideTrash2 } from '@lucide/angular';
 import { Playlist } from '../../services/playlist.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-playlist-section',
@@ -11,6 +12,8 @@ import { Playlist } from '../../services/playlist.service';
 })
 export class PlaylistSectionComponent {
   private _playlists: Playlist[] = [];
+
+  constructor(private router: Router) {}
 
   @Input()
   set playlists(value: Playlist[] | null | undefined) {
@@ -22,7 +25,7 @@ export class PlaylistSectionComponent {
   }
 
   @Output() criarPlaylist = new EventEmitter<void>();
-  @Output() deletarPlaylist = new EventEmitter<number>();
+  @Output() deletarPlaylist = new EventEmitter<string>();
 
   onCriarPlaylist(): void {
     try {
@@ -32,7 +35,13 @@ export class PlaylistSectionComponent {
     }
   }
 
-  onDeletarPlaylist(id?: number): void {
+  openPlaylist(id: string) {
+    this.router.navigate(['/playlists', id]);
+  }
+
+  onDeletarPlaylist(event: MouseEvent, id?: string): void {
+    event.stopPropagation();
+
     try {
       if (!id) {
         console.warn('Tentativa de deletar playlist sem ID válido');
@@ -41,7 +50,7 @@ export class PlaylistSectionComponent {
 
       this.deletarPlaylist.emit(id)
     } catch (error) {
-      console.error('Erro ao emitir evento de exclusão de playlist:', error);      
+      console.error('Erro ao emitir evento de exclusão de playlist:', error);
     }
   }
 }
