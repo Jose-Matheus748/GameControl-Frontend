@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -10,9 +10,9 @@ import {
   LucideSquareArrowOutUpRight,
 } from '@lucide/angular';
 
+import { Usuario } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
 import { PostService, UserPostDTO } from '../../services/posts.service';
-import { Usuario } from '../../services/user.service';
 
 @Component({
   selector: 'app-post-user-page',
@@ -30,7 +30,7 @@ import { Usuario } from '../../services/user.service';
   ],
   templateUrl: './post-user-page.html',
 })
-export class PostUserPageComponent implements OnChanges {
+export class PostUserPageComponent implements OnInit {
   @Input() user: Usuario | null = null;
   @Input() userId: string | null = null;
 
@@ -39,8 +39,6 @@ export class PostUserPageComponent implements OnChanges {
   carregandoPosts = false;
 
   readonly maximoDeCaracteresNoPost = 280;
-
-  private ultimoUserIdCarregado: string | null = null;
   likedPostIds = new Set<string>();
 
   constructor(
@@ -48,10 +46,8 @@ export class PostUserPageComponent implements OnChanges {
     private postService: PostService,
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['userId'] && this.userId && this.userId !== this.ultimoUserIdCarregado) {
-      this.carregarPostsDoUsuario(this.userId);
-    }
+  ngOnInit(): void {
+    this.carregarTodosOsPosts();
   }
 
   get restantes(): number {
@@ -70,11 +66,10 @@ export class PostUserPageComponent implements OnChanges {
     this.textoCriacaoDoPost = value.slice(0, this.maximoDeCaracteresNoPost);
   }
 
-  carregarPostsDoUsuario(userId: string): void {
+  carregarTodosOsPosts(): void {
     this.carregandoPosts = true;
-    this.ultimoUserIdCarregado = userId;
 
-    this.postService.listarPorUsuario(userId).subscribe({
+    this.postService.listarTodos().subscribe({
       next: (posts) => {
         this.posts = posts.sort((postA, postB) => {
           return new Date(postB.createdAt).getTime() - new Date(postA.createdAt).getTime();
@@ -83,8 +78,8 @@ export class PostUserPageComponent implements OnChanges {
         this.carregandoPosts = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar posts do usuário:', error);
-        this.toast.erro('Não foi possível carregar os posts do usuário.');
+        console.error('Erro ao carregar todos os posts:', error);
+        this.toast.erro('Não foi possível carregar os posts.');
         this.carregandoPosts = false;
       },
     });
