@@ -189,3 +189,52 @@
 <div *ngIf="errorMessage" class="text-red-400 text-center py-10">
   <p class="text-2xl">{{ errorMessage }}</p>
 </div>
+
+<div *ngIf="showPlaylistModal"
+     class="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+
+  <div class="bg-slate-900 border border-cyan-500/30 rounded-xl w-full max-w-md p-6">
+
+    <h2 class="text-xl font-orbitron text-white mb-4">
+      Adicionar à playlist
+    </h2>
+
+    <!-- LISTA -->
+    <div class="max-h-80 overflow-y-auto space-y-3">
+
+      <div *ngFor="let playlist of userPlaylists"
+           (click)="togglePlaylist(playlist.id!)"
+           class="text-white flex items-center justify-between p-3 rounded-lg
+                  bg-slate-800 hover:bg-slate-700 cursor-pointer">
+
+        <span>{{ playlist.nome }}</span>
+
+        <input type="checkbox"
+               [checked]="selectedPlaylists.has(playlist.id!)"
+               class="accent-pink-500 pointer-events-none"/>
+      </div>
+
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="flex justify-end gap-3 mt-6">
+
+      <button
+        (click)="showPlaylistModal = false"
+        class="text-white px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-700">
+        Cancelar
+      </button>
+
+      <button
+        (click)="savePlaylists()"
+        [disabled]="saving"
+        class="px-6 py-3 bg-pink-500 hover:bg-pink-600
+         disabled:bg-gray-600 disabled:cursor-not-allowed
+         text-white font-bold rounded-lg transition-all"
+        >
+          {{ saving ? 'Salvando...' : 'Salvar' }}
+      </button>
+
+    </div>
+  </div>
+</div>

@@ -1,14 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
-import {
-  Playlist,
-  PLAYLISTS_API_BASE,
-  fetchPlaylistsByUserId,
-} from '../../services/playlist.service';
+import { Playlist, PLAYLISTS_API_BASE, PlaylistService } from '../../services/playlist.service';
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
 import { ToastService } from '../../services/toast.service';
@@ -56,6 +52,7 @@ export class UserComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UsuarioService,
+    private playlistService: PlaylistService,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private toast: ToastService,
@@ -93,12 +90,7 @@ export class UserComponent implements OnInit {
 
     forkJoin({
       user: this.userService.getById(this.userId),
-      playlists: fetchPlaylistsByUserId(this.http, this.userId).pipe(
-        catchError((err) => {
-          console.error('Erro ao carregar playlists:', err);
-          return of([]);
-        }),
-      ),
+      playlists: this.playlistService.getPlaylistsByUser(this.userId)
     }).subscribe({
       next: ({ user, playlists }) => {
         this.userData = user;
@@ -203,7 +195,7 @@ export class UserComponent implements OnInit {
     });
   }
 
-  deletarPlaylist(playlistId: number): void {
+  deletarPlaylist(playlistId: string): void {
     const confirmar = confirm('Tem certeza de que deseja excluir esta playlist?');
 
     if (!confirmar) return;

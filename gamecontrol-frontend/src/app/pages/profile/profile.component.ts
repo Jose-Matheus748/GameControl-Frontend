@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
-import { Playlist, fetchPlaylistsByUserId } from '../../services/playlist.service';
+import { Playlist, PlaylistService } from '../../services/playlist.service';
 
 @Component({
   selector: 'app-profile',
@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private userService: UsuarioService,
-    private http: HttpClient,
+    private playlistService: PlaylistService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -53,31 +53,12 @@ export class ProfileComponent implements OnInit {
 
     forkJoin({
       user: this.userService.getById(this.userId),
-      playlists: fetchPlaylistsByUserId(this.http, this.userId).pipe(
+      playlists: this.playlistService.getPlaylistsByUser(this.userId).pipe(
         catchError((err) => {
           console.error('Erro ao carregar playlists:', err);
           return of([]);
         }),
       ),
-    }).subscribe({
-      next: ({ user, playlists }) => {
-        this.userData = user;
-        const followers = user.followers ?? [];
-        const following = user.following ?? [];
-        this.followersCount = followers.length;
-        this.followingCount = following.length;
-        this.playlists = playlists;
-
-        this.isFollowing =
-          this.loggedUserId != null ? followers.includes(this.loggedUserId) : false;
-
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erro ao carregar perfil:', err);
-        this.loading = false;
-      }
     });
   }
 

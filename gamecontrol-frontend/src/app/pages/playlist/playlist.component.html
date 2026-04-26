@@ -1,0 +1,82 @@
+<div *ngIf="loading"
+     class="w-full min-h-screen flex items-center justify-center bg-[#050816]">
+  <p class="text-white text-3xl font-orbitron animate-pulse">
+    Carregando playlist...
+  </p>
+</div>
+
+<div *ngIf="!loading"
+     class="w-full min-h-screen bg-[#050816] px-6 md:px-16 lg:px-24 py-10">
+
+  <!-- INFO DA PLAYLIST -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-orbitron text-white mb-2">
+      {{ playlist?.nome }}
+    </h1>
+
+    <p class="text-gray-400 max-w-2xl">
+      {{ playlist?.descricao || 'Sem descrição.' }}
+    </p>
+
+    <p class="text-sm text-cyan-400 mt-2">
+      {{ games.length }} jogos
+    </p>
+  </div>
+
+  <!-- PAGINAÇÃO -->
+  <div class="flex items-center justify-center gap-6 mb-10">
+    <button (click)="prev()"
+            [disabled]="page === 0"
+            class="text-5xl text-pink-500 disabled:text-gray-600">
+      ‹
+    </button>
+
+    <p class="text-white font-orbitron">
+      Página {{ page + 1 }}
+    </p>
+
+    <button (click)="next()"
+            [disabled]="(page + 1) * pageSize >= games.length"
+            class="text-5xl text-cyan-400 disabled:text-gray-600">
+      ›
+    </button>
+  </div>
+
+  <!-- LISTA VAZIA -->
+  <div *ngIf="games.length === 0"
+       class="text-center text-white text-2xl mt-20">
+    Essa playlist ainda não tem jogos 😢
+  </div>
+
+  <!-- GRID -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
+
+    <div *ngFor="let game of paginated"
+         class="group flex flex-col items-center">
+
+      <a [routerLink]="'/games/' + game.id" class="w-full">
+
+        <div class="bg-[#111827] rounded-2xl overflow-hidden
+                    shadow-lg shadow-pink-500/10
+                    hover:shadow-pink-500/30
+                    hover:-translate-y-2 transition">
+
+          <img [src]="getCoverUrl(game)"
+               class="w-full aspect-[2/3] object-cover
+                      group-hover:scale-105 transition"/>
+        </div>
+      </a>
+
+      <h3 class="mt-3 text-center text-white text-sm truncate w-full">
+        {{ game.title }}
+      </h3>
+
+      <!-- BOTÃO REMOVER -->
+      <button
+        (click)="playlist?.id && removeGame(game.id!)"
+        class="text-xs text-red-400 mt-1 hover:text-red-600 transition">
+        Remover
+      </button>
+    </div>
+  </div>
+</div>
