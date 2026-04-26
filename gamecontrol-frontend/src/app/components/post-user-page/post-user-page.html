@@ -114,15 +114,8 @@
           </div>
 
           <p class="mt-1 text-sm text-gray-100 whitespace-pre-wrap leading-relaxed">
-            {{ post.content }}
+            {{ post.text }}
           </p>
-
-          <span
-            *ngIf="post.game"
-            class="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-300 text-xs font-medium border border-pink-500/30"
-          >
-            🎮 {{ post.game }}
-          </span>
 
           <div class="flex items-center justify-start mt-3 gap-5 max-w-md text-gray-400">
             <button
@@ -133,17 +126,17 @@
               <span class="p-1.5 rounded-full group-hover:bg-cyan-500/10">
                 <svg lucideMessageCircle class="w-4 h-4"></svg>
               </span>
-              {{ post.comments }}
+              {{ quantidadeComentarios(post) }}
             </button>
 
             <button
               type="button"
               class="group flex items-center gap-1.5 text-xs transition-colors"
-              [ngClass]="post.liked ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'"
-              (click)="toggleLike(post.id)"
+              [ngClass]="postEstaCurtido(post.id) ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'"
+              (click)="toggleLikeLocal(post)"
             >
               <span class="p-1.5 rounded-full group-hover:bg-pink-500/10">
-                <svg lucideHeart class="w-4 h-4" [ngClass]="post.liked ? 'fill-current' : ''"></svg>
+                <svg lucideHeart class="w-4 h-4" [ngClass]="postEstaCurtido(post.id) ? 'fill-current' : ''"></svg>
               </span>
               {{ post.likes }}
             </button>

@@ -111,7 +111,10 @@
   <!-- Grid inferior -->
   <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_450px] gap-4 items-stretch">
     <!-- Chamada ao componente de postagens do usuário -->
-    <app-post-user-page [user]="userData"></app-post-user-page>
+    <app-post-user-page 
+      [user]="userData"
+      [userId]="userId"
+    ></app-post-user-page>
 
     <!-- Modal de adicionar jogo ao catálogo  -->
     <div class="mt-20 flex flex-col text-center" *ngIf="isAdmin">
