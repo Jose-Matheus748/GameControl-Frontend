@@ -17,14 +17,14 @@
     </div>
 
     <!-- Canto superior direito: Ícone de direcionamento para PostHomePage -->
-     <button
-        type="button"
+     <a
+        [routerLink]="['/posts']"
         class="absolute top-2 right-2 w-9 h-9 flex items-center justify-center bg-transparent rounded-full text-white hover:text-pink-400 transition"
         title="Ação do feed"
         aria-label="Ação do feed"
      >
         <svg lucideSquareArrowOutUpRight class="w-4 h-4"></svg>
-     </button>
+     </a>
   </section>
 
   <!-- Criador de post -->

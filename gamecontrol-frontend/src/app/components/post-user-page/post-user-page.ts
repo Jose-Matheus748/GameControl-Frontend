@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideHeart, LucideMessageCircle, LucideRepeat2, LucideShare2, LucideSparkles, LucideUserRound, LucideSquareArrowOutUpRight } from '@lucide/angular';
+import { RouterLink } from '@angular/router';
+import {
+  LucideHeart,
+  LucideMessageCircle,
+  LucideSparkles,
+  LucideUserRound,
+  LucideSquareArrowOutUpRight,
+} from '@lucide/angular';
 
 import { ToastService } from '../../services/toast.service';
 
@@ -30,9 +37,10 @@ interface PostType {
     LucideMessageCircle,
     LucideUserRound,
     LucideSparkles,
-    LucideSquareArrowOutUpRight
-],
-  templateUrl: './post-user-page.html'
+    LucideSquareArrowOutUpRight,
+    RouterLink,
+  ],
+  templateUrl: './post-user-page.html',
 })
 export class PostUserPageComponent implements OnChanges {
   @Input() user: Usuario | null = null;
@@ -131,7 +139,7 @@ export class PostUserPageComponent implements OnChanges {
   comentariosEmBreve(): void {
     this.toast.info('Comentários em breve.');
   }
-  
+
   // Método que converte a data do post em tempo relativo
   // Exemplo: "agora", "35m", "4h", "3d"
   timeAgo(iso: string): string {
@@ -200,7 +208,6 @@ export class PostUserPageComponent implements OnChanges {
 
         content:
           'Opinião impopular: Hollow Knight: Silksong vai ser GOTY 🐝✨ podem printar esse post.',
-
 
         game: 'Hollow Knight: Silksong',
 
