@@ -8,6 +8,7 @@ import { GameComment, GameCommentsService } from '../../services/gameComments.se
 import { AuthService } from '../../services/auth.service';
 import { GenreService, Genre } from '../../services/genre.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
+import { ReviewService } from '../../services/review.service';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -28,7 +29,7 @@ export class GameComponent implements OnInit {
   userPlaylists: Playlist[] = [];
   selectedPlaylists = new Set<string>();
   stars = Array(5).fill(0);
-  averageRating = 4;
+  averageRating = 0;
   saving = false;
 
   get currentUserId(): string | undefined {
@@ -48,6 +49,7 @@ export class GameComponent implements OnInit {
     private genreService: GenreService,
     private cdr: ChangeDetectorRef,
     private playlistService: PlaylistService,
+    private reviewService: ReviewService,
     private router: Router
   ) {}
 
@@ -62,6 +64,7 @@ export class GameComponent implements OnInit {
           this.gameData = game;
           this.loading = false;
           this.loadComments(game.id!);
+          this.loadAverage(game.id!);
 
           if (game.genreIds?.length) {
             this.loadGenres(game.genreIds);
@@ -179,7 +182,6 @@ export class GameComponent implements OnInit {
 
         const gameId = String(this.gameData?.id);
 
-        // 🔥 agora usa jogosIds
         this.selectedPlaylists = new Set(
           playlists
             .filter(p => p.jogosIds?.includes(gameId))
@@ -203,32 +205,32 @@ export class GameComponent implements OnInit {
 
   savePlaylists() {
     if (!this.gameData?.id) return;
-    
+
     const gameId = String(this.gameData.id);
-    
+
     const requests = this.userPlaylists.map(p => {
       const playlistId = p.id!;
       const isSelected = this.selectedPlaylists.has(playlistId);
       const alreadyHas = p.jogosIds?.includes(gameId);
-    
+
       if (isSelected && !alreadyHas) {
         return this.playlistService.addGameToPlaylist(playlistId, gameId);
       }
-    
+
       if (!isSelected && alreadyHas) {
         return this.playlistService.removeGameFromPlaylist(playlistId, gameId);
       }
-    
+
       return null;
     }).filter(r => r !== null);
-  
+
     if (requests.length === 0) {
       this.showPlaylistModal = false;
       return;
     }
-  
+
     this.saving = true;
-  
+
     forkJoin(requests).subscribe({
       next: () => {
         this.showPlaylistModal = false;
@@ -238,7 +240,16 @@ export class GameComponent implements OnInit {
       },
       complete: () => {
         this.saving = false;
-        this.cdr.detectChanges(); // 🔥 garante atualização da UI
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadAverage(gameId: number) {
+    this.reviewService.getAverage(String(gameId)).subscribe({
+      next: (avg) => {
+        this.averageRating = avg;
+        this.cdr.detectChanges();
       }
     });
   }
