@@ -123,8 +123,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <div
             *ngFor="let playlist of playlists"
-            class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-6 hover:bg-[#292929] transition duration-300"
-          >
+            [routerLink]="['/playlists', playlist.id]"
+            class="bg-[#1e1e1e] border border-gray-700 rounded-xl p-6 hover:bg-[#292929] transition duration-300 cursor-pointer">
+          
             <h4 class="text-lg font-semibold text-white truncate">{{ playlist.nome }}</h4>
             <p class="text-sm text-gray-400 mt-2 line-clamp-2">
               {{ playlist.descricao || 'Sem descrição' }}

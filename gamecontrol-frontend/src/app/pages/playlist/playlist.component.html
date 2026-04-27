@@ -10,17 +10,38 @@
 
   <!-- INFO DA PLAYLIST -->
   <div class="mb-12">
-    <h1 class="text-4xl font-orbitron text-white mb-2">
-      {{ playlist?.nome }}
-    </h1>
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-4xl font-orbitron text-white mb-2">
+          {{ playlist?.nome }}
+        </h1>
 
-    <p class="text-gray-400 max-w-2xl">
-      {{ playlist?.descricao || 'Sem descrição.' }}
-    </p>
+        <p class="text-gray-400 max-w-2xl">
+          {{ playlist?.descricao || 'Sem descrição.' }}
+        </p>
 
-    <p class="text-sm text-cyan-400 mt-2">
-      {{ games.length }} jogos
-    </p>
+        <p class="text-sm text-cyan-400 mt-2">
+          {{ games.length }} jogos
+        </p>
+      </div>
+
+      <!-- BOTÃO EDITAR -->
+      <button *ngIf="isOwner"
+        (click)="startEdit()"
+        title="Editar playlist"
+        class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg
+               border border-cyan-500/40 text-cyan-400
+               hover:bg-cyan-500/10 hover:border-cyan-400
+               hover:shadow-[0_0_12px_rgba(6,182,212,0.4)]
+               transition-all duration-200 mt-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 
   <!-- PAGINAÇÃO -->
@@ -55,7 +76,6 @@
          class="group flex flex-col items-center">
 
       <a [routerLink]="'/games/' + game.id" class="w-full">
-
         <div class="bg-[#111827] rounded-2xl overflow-hidden
                     shadow-lg shadow-pink-500/10
                     hover:shadow-pink-500/30
@@ -71,11 +91,99 @@
         {{ game.title }}
       </h3>
 
-      <!-- BOTÃO REMOVER -->
-      <button
+      <button *ngIf="isOwner"
         (click)="playlist?.id && removeGame(game.id!)"
         class="text-xs text-red-400 mt-1 hover:text-red-600 transition">
         Remover
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE EDIÇÃO -->
+<div *ngIf="editing"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+     (click)="cancelEdit()"
+     role="presentation">
+
+  <div class="w-full max-w-md flex flex-col rounded-2xl border border-cyan-500/25
+              bg-slate-900 shadow-2xl shadow-cyan-950/40"
+       (click)="$event.stopPropagation()"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Editar playlist">
+
+    <!-- CABEÇALHO -->
+    <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20">
+      <h3 class="text-lg font-orbitron font-semibold text-white tracking-wide">
+        Editar playlist
+      </h3>
+      <button
+        type="button"
+        class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        (click)="cancelEdit()"
+        aria-label="Fechar">
+        <span class="text-xl leading-none">&times;</span>
+      </button>
+    </div>
+
+    <!-- CORPO -->
+    <div class="px-5 py-5 flex flex-col gap-4">
+
+      <!-- NOME -->
+      <div>
+        <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
+          Nome
+        </label>
+        <input
+          [(ngModel)]="editNome"
+          type="text"
+          maxlength="60"
+          class="w-full p-3 bg-slate-800 border border-slate-600/50 rounded-lg text-white
+                 focus:outline-none focus:border-cyan-500/70
+                 focus:shadow-[0_0_10px_rgba(6,182,212,0.2)] transition-all"
+          placeholder="Nome da playlist"
+        />
+      </div>
+
+      <!-- DESCRIÇÃO -->
+      <div>
+        <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
+          Descrição
+        </label>
+        <textarea
+          [(ngModel)]="editDescricao"
+          rows="3"
+          maxlength="200"
+          class="w-full p-3 bg-slate-800 border border-slate-600/50 rounded-lg text-white
+                 focus:outline-none focus:border-cyan-500/70
+                 focus:shadow-[0_0_10px_rgba(6,182,212,0.2)] resize-none transition-all"
+          placeholder="Descrição da playlist (opcional)"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- RODAPÉ -->
+    <div class="flex justify-end gap-3 px-5 py-4 border-t border-cyan-500/15">
+      <button
+        (click)="cancelEdit()"
+        [disabled]="saving"
+        class="px-5 py-2 rounded-lg text-gray-400 border border-slate-600
+               hover:border-slate-400 hover:text-gray-200
+               disabled:opacity-30 disabled:cursor-not-allowed
+               transition-all duration-200">
+        Cancelar
+      </button>
+
+      <button
+        (click)="saveEdit()"
+        [disabled]="saving || !editNome.trim()"
+        class="px-6 py-2 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-bold
+               shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944]
+               hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988]
+               disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none
+               transition-all duration-300">
+        {{ saving ? 'Salvando...' : 'Salvar' }}
       </button>
     </div>
   </div>

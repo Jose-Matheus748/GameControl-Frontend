@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { GameService, Game } from '../../services/games.service';
 import { catchError, of, forkJoin } from 'rxjs';
@@ -8,7 +9,7 @@ import { catchError, of, forkJoin } from 'rxjs';
 @Component({
   selector: 'app-playlist-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule], // ✅ FormsModule para [(ngModel)]
   templateUrl: './playlist.component.html',
 })
 export class PlaylistDetailComponent implements OnInit {
@@ -16,11 +17,16 @@ export class PlaylistDetailComponent implements OnInit {
   playlist?: Playlist;
   games: Game[] = [];
   paginated: Game[] = [];
-
+  isOwner = false;
   loading = true;
 
   page = 0;
   pageSize = 20;
+
+  editing = false;
+  editNome = '';
+  editDescricao = '';
+  saving = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,15 +43,16 @@ export class PlaylistDetailComponent implements OnInit {
       next: (data) => {
         this.playlist = data;
 
+        const loggedUserId = localStorage.getItem('userId');
+        this.isOwner = !!loggedUserId && loggedUserId === data.usuarioId;
+
         const ids = data.jogosIds || [];
 
         if (ids.length === 0) {
           this.games = [];
           this.updatePage();
           this.loading = false;
-
           this.cdr.detectChanges();
-
           return;
         }
 
@@ -110,6 +117,45 @@ export class PlaylistDetailComponent implements OnInit {
     }
   }
 
+  startEdit() {
+    if (!this.playlist) return;
+    this.editNome = this.playlist.nome;
+    this.editDescricao = this.playlist.descricao || '';
+    this.editing = true;
+  }
+
+  cancelEdit() {
+    this.editing = false;
+    this.editNome = '';
+    this.editDescricao = '';
+  }
+
+  saveEdit() {
+    if (!this.playlist?.id || !this.editNome.trim()) return;
+
+    this.saving = true;
+
+    const updated: Playlist = {
+      ...this.playlist,
+      nome: this.editNome.trim(),
+      descricao: this.editDescricao.trim()
+    };
+
+    this.playlistService.updatePlaylist(this.playlist.id, updated).subscribe({
+      next: (result) => {
+        this.playlist = result;
+        this.editing = false;
+        this.saving = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar playlist', err);
+        this.saving = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   removeGame(gameId: number) {
     if (!this.playlist?.id) return;
 
@@ -121,7 +167,6 @@ export class PlaylistDetailComponent implements OnInit {
 
           const ids = updated.jogosIds || [];
 
-          // 🔥 TRATAMENTO CRÍTICO
           if (ids.length === 0) {
             this.games = [];
             this.updatePage();

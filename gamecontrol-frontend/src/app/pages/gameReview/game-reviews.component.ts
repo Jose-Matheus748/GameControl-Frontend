@@ -1,16 +1,17 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GameService, Game } from '../../services/games.service';
 import { FormsModule } from '@angular/forms';
 import { ReviewService, Review } from '../../services/review.service';
 import { AuthService } from '../../services/auth.service';
 import { forkJoin } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-reviews',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './game-reviews.component.html'
 })
 export class GameReviewsComponent implements OnInit {
@@ -30,7 +31,8 @@ export class GameReviewsComponent implements OnInit {
     private gameService: GameService,
     private reviewService: ReviewService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef  // ✅ injetado
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -58,7 +60,7 @@ export class GameReviewsComponent implements OnInit {
         this.reviews = reviews;
         this.averageRating = average;
         this.loading = false;
-        this.cdr.detectChanges(); // ✅ força o Angular a atualizar a view
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro na página:', err);
@@ -161,6 +163,11 @@ export class GameReviewsComponent implements OnInit {
     this.newComment = this.userReview.description;
   }
 
+  goToGame() {
+    if (!this.game?.id) return;
+    this.router.navigate(['/games', this.game.id]);
+  }
+
   calculateAverageLocal() {
     if (this.reviews.length === 0) {
       this.averageRating = 0;
@@ -168,6 +175,11 @@ export class GameReviewsComponent implements OnInit {
     }
 
     const sum = this.reviews.reduce((acc, r) => acc + r.rating, 0);
-    this.averageRating = Math.round(sum / this.reviews.length);
+    this.averageRating = Math.round((sum / this.reviews.length) * 10) / 10; // ← 1 casa decimal
+  }
+
+  get displayRating(): string {
+    const rounded = Math.round(this.averageRating * 10) / 10;
+    return Number.isInteger(rounded) ? rounded.toString() : rounded.toFixed(1);
   }
 }

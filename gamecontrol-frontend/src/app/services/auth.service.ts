@@ -10,30 +10,54 @@ import { Usuario, UsuarioService } from './user.service';
 })
 export class AuthService {
   user = signal<Usuario | null>(null);
+  isReady = signal(false);
+
+  private authReady: Promise<void>;
 
   constructor(
     private http: HttpClient,
     private userService: UsuarioService,
   ) {
-    this.loadFromStorage();
+    this.authReady = this.loadFromStorage();
   }
 
   private isBrowser(): boolean {
     return typeof window !== 'undefined';
   }
 
-  private loadFromStorage() {
-    if (!this.isBrowser()) return;
+  private loadFromStorage(): Promise<void> {
+    return new Promise((resolve) => {
+      if (!this.isBrowser()) {
+        this.isReady.set(true);
+        resolve();
+        return;
+      }
 
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
 
-    if (token && userId) {
-      this.userService.getById(userId).subscribe({
-        next: (user) => this.user.set(user),
-        error: () => this.logout(),
-      });
-    }
+      if (token && userId) {
+        this.userService.getById(userId).subscribe({
+          next: (user) => {
+            this.user.set(user);
+            this.isReady.set(true);
+            resolve();
+          },
+          error: () => {
+            this.logout();
+            this.isReady.set(true);
+            resolve();
+          },
+        });
+      } else {
+        this.isReady.set(true);
+        resolve();
+      }
+    });
+  }
+
+  waitForAuth(): Promise<void> {
+    return this.authReady;
   }
 
   login(loginDTO: LoginDTO): Observable<AuthResponse> {

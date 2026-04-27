@@ -20,7 +20,7 @@
       </app-searchbar>
     </div>
 
-    <!-- DIREITA -->
+   <!-- DIREITA -->
     <div class="font-orbitron flex items-center justify-end gap-8 text-white text-sm font-medium">
       <a
         [routerLink]="['/games']"
@@ -28,34 +28,36 @@
         Ver Jogos
       </a>
 
-      <ng-container *ngIf="!authService.user(); else logged">
+      <ng-container *ngIf="authService.isReady()">
+        <ng-container *ngIf="!authService.user(); else logged">
+          <a
+            [routerLink]="['/login']"
+            class="bg-pink-500 text-white font-bold py-2 px-6 rounded-lg text-lg
+                   hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
+          >
+            Login
+          </a>
+        </ng-container>
+
+        <ng-template #logged>
         <a
-          [routerLink]="['/login']"
-          class="bg-pink-500 text-white font-bold py-2 px-6 rounded-lg text-lg
-                 hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
-        >
-          Login
-        </a>
+            routerLink="/profile"
+            class="flex items-center gap-2 px-4 py-2 rounded-full
+                   border border-cyan-500/20
+                   bg-slate-900/70
+                   text-sm text-white
+                   hover:border-pink-500/40
+                   hover:text-pink-400
+                   transition-all duration-300"
+          >
+            <svg lucideUserRound class="w-4 h-4 text-cyan-400"></svg>
+            <span class="font-medium">
+              {{ authService.user()?.username }}
+            </span>
+          </a>
+        </ng-template>
       </ng-container>
 
-      <ng-template #logged>
-        <a
-          routerLink="/profile"
-          class="flex items-center gap-2 px-4 py-2 rounded-full
-                 border border-cyan-500/20
-                 bg-slate-900/70
-                 text-sm text-white
-                 hover:border-pink-500/40
-                 hover:text-pink-400
-                 transition-all duration-300"
-        >
-          <svg lucideUserRound class="w-4 h-4 text-cyan-400"></svg>
-
-          <span class="font-medium">
-            {{ authService.user()?.username }}
-          </span>
-        </a>
-      </ng-template>
     </div>
 
   </div>
