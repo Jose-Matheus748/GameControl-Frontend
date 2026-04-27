@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { GameComment, GameCommentsService } from '../../services/gameComments.service';
 import { AuthService } from '../../services/auth.service';
 import { GenreService, Genre } from '../../services/genre.service';
+import { PlaylistService, Playlist } from '../../services/playlist.service';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -22,12 +24,16 @@ export class GameComponent implements OnInit {
   comments: GameComment[] = [];
   newCommentContent: string = '';
   genreNames: string[] = [];
-
+  showPlaylistModal = false;
+  userPlaylists: Playlist[] = [];
+  selectedPlaylists = new Set<string>();
   stars = Array(5).fill(0);
   averageRating = 4;
+  saving = false;
 
-  get currentUserId(): string | number | undefined {
-    return this.authService.user()?.id;
+  get currentUserId(): string | undefined {
+    const id = this.authService.user()?.id;
+    return id != null ? String(id) : undefined;
   }
 
   get isLoggedIn(): boolean {
@@ -41,6 +47,7 @@ export class GameComponent implements OnInit {
     private authService: AuthService,
     private genreService: GenreService,
     private cdr: ChangeDetectorRef,
+    private playlistService: PlaylistService,
     private router: Router
   ) {}
 
@@ -158,11 +165,81 @@ export class GameComponent implements OnInit {
 
   goToReviews(): void {
     if (!this.gameData?.id) return;
-    
+
     this.router.navigate(['/games', this.gameData.id, 'reviews']);
   }
-  
+
   addToPlaylist(): void {
-    console.log('Adicionar jogo à playlist');
+    const userId = this.currentUserId;
+    if (!userId) return;
+
+    this.playlistService.getPlaylistsByUser(userId).subscribe({
+      next: (playlists) => {
+        this.userPlaylists = playlists;
+
+        const gameId = String(this.gameData?.id);
+
+        // 🔥 agora usa jogosIds
+        this.selectedPlaylists = new Set(
+          playlists
+            .filter(p => p.jogosIds?.includes(gameId))
+            .map(p => p.id!)
+        );
+
+        this.showPlaylistModal = true;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar playlists', err)
+    });
+  }
+
+  togglePlaylist(playlistId: string) {
+    if (this.selectedPlaylists.has(playlistId)) {
+      this.selectedPlaylists.delete(playlistId);
+    } else {
+      this.selectedPlaylists.add(playlistId);
+    }
+  }
+
+  savePlaylists() {
+    if (!this.gameData?.id) return;
+    
+    const gameId = String(this.gameData.id);
+    
+    const requests = this.userPlaylists.map(p => {
+      const playlistId = p.id!;
+      const isSelected = this.selectedPlaylists.has(playlistId);
+      const alreadyHas = p.jogosIds?.includes(gameId);
+    
+      if (isSelected && !alreadyHas) {
+        return this.playlistService.addGameToPlaylist(playlistId, gameId);
+      }
+    
+      if (!isSelected && alreadyHas) {
+        return this.playlistService.removeGameFromPlaylist(playlistId, gameId);
+      }
+    
+      return null;
+    }).filter(r => r !== null);
+  
+    if (requests.length === 0) {
+      this.showPlaylistModal = false;
+      return;
+    }
+  
+    this.saving = true;
+  
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.showPlaylistModal = false;
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar playlists', err);
+      },
+      complete: () => {
+        this.saving = false;
+        this.cdr.detectChanges(); // 🔥 garante atualização da UI
+      }
+    });
   }
 }

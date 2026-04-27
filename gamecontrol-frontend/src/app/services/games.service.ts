@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 export interface Game {
   id?: number;
@@ -19,6 +20,7 @@ export interface Game {
 })
 export class GameService {
   private apiUrl = 'http://localhost:8080/api/games';
+  private cache = new Map<number, Game>();
 
   constructor(private http: HttpClient) {}
 
@@ -27,7 +29,13 @@ export class GameService {
   }
 
   getById(id: number): Observable<Game> {
-    return this.http.get<Game>(`${this.apiUrl}/${id}`);
+    if (this.cache.has(id)) {
+      return of(this.cache.get(id)!);
+    }
+
+    return this.http.get<Game>(`${this.apiUrl}/${id}`).pipe(
+      tap(game => this.cache.set(id, game))
+    );
   }
 
   getCarousel(): Observable<Game[]> {

@@ -7,6 +7,7 @@ import { GamesListComponent } from './pages/gamesList/games.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { UserComponent } from './pages/user/user.component';
 import { SettingsComponent } from './pages/user-settings/user-settings.component';
+import { PlaylistDetailComponent } from './pages/playlist/playlist.component';
 import { PostHomePageComponent } from './pages/post-home-page/post-home-page';
 
 export const routes: Routes = [
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'games/:id', component: GameComponent },
   { path: 'games', component: GamesListComponent },
   { path: 'settings', component: SettingsComponent },
+  { path: 'playlists/:id', component: PlaylistDetailComponent },
   { path: '**', redirectTo: '' }
 ];

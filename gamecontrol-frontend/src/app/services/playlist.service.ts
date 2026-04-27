@@ -1,35 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Usuario } from './user.service';
-
-export interface Game {
-  id: number;
-  title: string;
-  description?: string;
-  coverImageUrl?: string;
-  developer?: string;
-  publisher?: string;
-  releaseDate?: string;
-  genres?: string;
-}
 
 export interface Playlist {
-  id?: number;
+  id?: string;
   nome: string;
   descricao?: string;
-  usuario?: Usuario;
-  games?: Game[];
+  usuarioId?: string;
+  jogosIds?: string[];
 }
 
 export const PLAYLISTS_API_BASE = 'http://localhost:8080/api/usuario-playlists';
-
-export function fetchPlaylistsByUserId(
-  http: HttpClient,
-  usuarioId: string | number
-): Observable<Playlist[]> {
-  return http.get<Playlist[]>(`${PLAYLISTS_API_BASE}/usuario/${usuarioId}`);
-}
 
 @Injectable({
   providedIn: 'root',
@@ -39,30 +20,39 @@ export class PlaylistService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getPlaylistsByUser = (usuarioId: string | number): Observable<Playlist[]> =>
-    fetchPlaylistsByUserId(this.http, usuarioId);
+  getPlaylistsByUser(usuarioId: string): Observable<Playlist[]> {
+    return this.http.get<Playlist[]>(`${this.apiUrl}/usuario/${usuarioId}`);
+  }
 
-  getById(id: number): Observable<Playlist> {
+  getById(id: string): Observable<Playlist> {
     return this.http.get<Playlist>(`${this.apiUrl}/${id}`);
   }
 
-  createPlaylist(usuarioId: string | number, playlist: Playlist): Observable<Playlist> {
-    return this.http.post<Playlist>(`${this.apiUrl}?usuarioId=${usuarioId}`, playlist);
+  createPlaylist(usuarioId: string, playlist: Playlist): Observable<Playlist> {
+    return this.http.post<Playlist>(
+      `${this.apiUrl}?usuarioId=${usuarioId}`,
+      playlist
+    );
   }
 
-  updatePlaylist(id: number, playlist: Playlist): Observable<Playlist> {
+  updatePlaylist(id: string, playlist: Playlist): Observable<Playlist> {
     return this.http.put<Playlist>(`${this.apiUrl}/${id}`, playlist);
   }
 
-  deletePlaylist(id: number): Observable<void> {
+  deletePlaylist(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  addGameToPlaylist(playlistId: number, gameId: number): Observable<Playlist> {
-    return this.http.post<Playlist>(`${this.apiUrl}/${playlistId}/jogos/${gameId}`, {});
+  addGameToPlaylist(playlistId: string, gameId: string): Observable<Playlist> {
+    return this.http.post<Playlist>(
+      `${this.apiUrl}/${playlistId}/jogos/${gameId}`,
+      {}
+    );
   }
 
-  removeGameFromPlaylist(playlistId: number, gameId: number): Observable<Playlist> {
-    return this.http.delete<Playlist>(`${this.apiUrl}/${playlistId}/jogos/${gameId}`);
+  removeGameFromPlaylist(playlistId: string, gameId: string): Observable<Playlist> {
+    return this.http.delete<Playlist>(
+      `${this.apiUrl}/${playlistId}/jogos/${gameId}`
+    );
   }
 }
