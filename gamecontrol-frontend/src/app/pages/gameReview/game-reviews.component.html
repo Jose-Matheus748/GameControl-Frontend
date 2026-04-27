@@ -5,7 +5,13 @@
 <div *ngIf="!loading && game" class="bg-[#050816] min-h-screen text-white p-8">
 
   <!-- GAME INFO -->
-  <h1 class="text-4xl font-orbitron mb-2">{{ game.title }}</h1>
+  <h1 (click)="goToGame()"
+      class="text-4xl md:text-5xl font-orbitron font-bold text-white leading-tight
+             drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]
+             cursor-pointer hover:text-cyan-400 transition-colors duration-200
+             hover:drop-shadow-[0_0_25px_rgba(34,211,238,0.8)]">
+    {{ game.title }}
+  </h1>
 
   <div class="flex items-center gap-2 mb-6">
     <span *ngFor="let s of [1,2,3,4,5]; let i = index"
@@ -16,7 +22,7 @@
     </span>
 
     <span class="ml-2 text-xl text-gray-400">
-      {{ averageRating }}/5
+      {{ displayRating }}/5
     </span>
   </div>
 
@@ -125,7 +131,7 @@
 
     <div class="flex gap-2 mt-3">
       <button (click)="submitReview()"
-              class="bg-yellow-500 px-4 py-2 rounded-lg">
+              class="bg-pink-500 px-4 py-2 rounded-lg">
         Salvar
       </button>
 
@@ -141,7 +147,10 @@
        class="bg-slate-900 p-4 rounded-xl mb-4">
 
     <div class="flex justify-between mb-2">
-      <strong class="text-pink-400">{{ review.userName }}</strong>
+      <a [routerLink]="['/profile', review.userId]"
+         class="text-pink-400 font-bold hover:text-pink-300 hover:underline transition-colors duration-200 cursor-pointer">
+        {{ review.userName }}
+      </a>
       <span class="text-gray-400 text-sm">
         {{ review.createdAt | date:'short' }}
       </span>

@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
@@ -59,6 +58,25 @@ export class ProfileComponent implements OnInit {
           return of([]);
         }),
       ),
+    }).subscribe({
+      next: ({ user, playlists }) => {
+        this.userData = user;
+        this.playlists = playlists;
+        this.followersCount = user.followers?.length ?? 0;
+        this.followingCount = user.following?.length ?? 0;
+        
+        if (this.loggedUserId) {
+          this.isFollowing = user.followers?.includes(this.loggedUserId) ?? false;
+        }
+
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar perfil:', err);
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -94,9 +112,7 @@ export class ProfileComponent implements OnInit {
   }
 
   get socialListIds(): string[] {
-    if (!this.userData) {
-      return [];
-    }
+    if (!this.userData) return [];
     const ids =
       this.socialModalTab === 'followers' ? this.userData.followers : this.userData.following;
     return [...(ids ?? [])];

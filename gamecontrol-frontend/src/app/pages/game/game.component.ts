@@ -10,12 +10,12 @@ import { GenreService, Genre } from '../../services/genre.service';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { ReviewService } from '../../services/review.service';
 import { firstValueFrom, forkJoin } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './game.component.html'
 })
 export class GameComponent implements OnInit {
@@ -252,5 +252,10 @@ export class GameComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  get displayRating(): string {
+    const rounded = Math.round(this.averageRating * 10) / 10;
+    return Number.isInteger(rounded) ? rounded.toString() : rounded.toFixed(1);
   }
 }

@@ -82,7 +82,7 @@
           </div>
 
           <p class="text-3xl font-bold text-gray-300 mt-4">
-            {{ averageRating | number:'1.1-1' }}/5
+            {{ displayRating }}/5
           </p>
 
           <p class="text-gray-500 mt-1">
@@ -154,9 +154,10 @@
         >
           <div class="flex justify-between items-center mb-2">
             <div>
-              <span class="text-pink-400 font-bold text-lg">
+              <a [routerLink]="['/profile', comment.user.id]"
+                 class="text-pink-400 font-bold hover:text-pink-300 hover:underline transition-colors duration-200 cursor-pointer">
                 {{ comment.user.username || 'Usuário Desconhecido' }}
-              </span>
+              </a>
               <span class="text-gray-400 text-sm ml-3">
                 {{ comment.createdAt | date: 'medium' }}
               </span>

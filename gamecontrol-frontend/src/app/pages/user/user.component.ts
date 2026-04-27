@@ -65,10 +65,8 @@ export class UserComponent implements OnInit {
 
     this.route.paramMap.subscribe((pm) => {
       const fromRoute = pm.get('id')?.trim() ?? '';
-      const fromStorage =
-        typeof globalThis !== 'undefined' && globalThis.localStorage
-          ? (globalThis.localStorage.getItem('userId')?.trim() ?? '')
-          : '';
+      const fromStorage = globalThis.localStorage?.getItem('userId')?.trim() ?? '';
+
       this.userId = fromRoute || fromStorage;
       if (!this.userId) {
         void this.router.navigate(['/login']);
@@ -181,7 +179,7 @@ export class UserComponent implements OnInit {
 
     const novaPlaylist: Playlist = {
       nome: nome,
-      descricao: 'Minha nova playlist 🎵',
+      descricao: 'Minha nova playlist 🎮',
     };
 
     const url = `${PLAYLISTS_API_BASE}?usuarioId=${encodeURIComponent(this.loggedUserId)}`;
