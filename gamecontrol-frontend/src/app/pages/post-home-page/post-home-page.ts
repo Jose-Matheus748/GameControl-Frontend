@@ -14,6 +14,7 @@ import {
 } from '@lucide/angular';
 
 import { ToastService } from '../../services/toast.service';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-post-home-page',
@@ -26,7 +27,8 @@ import { ToastService } from '../../services/toast.service';
     LucideSend,
     LucideTrash2,
     LucideUserRound,
-  ],
+    RouterLink
+],
   templateUrl: './post-home-page.html',
 })
 export class PostHomePageComponent implements OnInit {

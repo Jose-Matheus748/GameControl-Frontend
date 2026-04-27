@@ -47,9 +47,12 @@
 
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 text-sm flex-wrap">
-              <span class="font-semibold text-white truncate">
+              <a
+                [routerLink]="['/user', post.userId]"
+                class="font-semibold text-white truncate hover:text-pink-500 transition-colors cursor-pointer"
+              >
                 {{ post.username || 'Usuário' }}
-              </span>
+              </a>
 
               <span class="text-gray-500"> · {{ timeAgo(post.createdAt) }} </span>
             </div>
