@@ -17,14 +17,14 @@
     </div>
 
     <!-- Canto superior direito: Ícone de direcionamento para PostHomePage -->
-     <button
-        type="button"
-        class="absolute top-2 right-2 w-9 h-9 flex items-center justify-center bg-transparent rounded-full text-white hover:text-pink-400 transition"
-        title="Ação do feed"
-        aria-label="Ação do feed"
-     >
-        <svg lucideSquareArrowOutUpRight class="w-4 h-4"></svg>
-     </button>
+    <a
+      [routerLink]="['/posts']"
+      class="absolute top-2 right-2 w-9 h-9 flex items-center justify-center bg-transparent rounded-full text-white hover:text-pink-400 transition"
+      title="Ação do feed"
+      aria-label="Ação do feed"
+    >
+      <svg lucideSquareArrowOutUpRight class="w-4 h-4"></svg>
+    </a>
   </section>
 
   <!-- Criador de post -->
@@ -57,25 +57,27 @@
           class="w-full bg-transparent border-0 resize-none outline-none text-sm placeholder:text-gray-500 text-white"
         ></textarea>
 
-          <div class="flex items-center gap-3">
-            <span class="text-xs" [ngClass]="restantes < 20 ? 'text-red-400' : 'text-gray-400'">
-              {{ restantes }}
-            </span>
+        <div class="flex items-center gap-3">
+          <span class="text-xs" [ngClass]="restantes < 20 ? 'text-red-400' : 'text-gray-400'">
+            {{ restantes }}
+          </span>
 
-            <button
-              type="submit"
-              [disabled]="!textoCriacaoDoPost.trim()"
-              class="px-4 py-1.5 rounded-full bg-pink-500 text-white text-sm font-semibold shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
-            >
-              Postar
-            </button>
-          </div>
+          <button
+            type="submit"
+            [disabled]="enviandoPost || !textoCriacaoDoPost.trim()"
+            class="px-4 py-1.5 rounded-full bg-pink-500 text-white text-sm font-semibold shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+          >
+            {{ enviandoPost ? 'Postando...' : 'Postar' }}
+          </button>
         </div>
       </div>
+    </div>
   </form>
 
   <!-- Lista de posts -->
-  <ul class="divide-y divide-cyan-500/10 max-h-[640px] overflow-y-auto">
+  <div *ngIf="carregandoPosts" class="px-5 py-8 text-center text-gray-400">Carregando posts...</div>
+
+  <ul *ngIf="!carregandoPosts" class="divide-y divide-cyan-500/10 max-h-[640px] overflow-y-auto">
     <li
       *ngFor="let post of posts; trackBy: trackByPostId"
       class="px-5 py-4 hover:bg-white/[0.03] transition-colors"
@@ -101,10 +103,10 @@
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 text-sm flex-wrap">
             <span class="font-semibold text-white truncate">
-              {{ username }}
+              {{ post.username || 'Usuário' }}
             </span>
 
-            <span class="text-gray-500"> @{{ userHandle }} </span>
+            <span class="text-gray-500"> @{{ (post.username || 'usuario').toLowerCase() }} </span>
 
             <span class="text-gray-500">·</span>
 
@@ -114,15 +116,8 @@
           </div>
 
           <p class="mt-1 text-sm text-gray-100 whitespace-pre-wrap leading-relaxed">
-            {{ post.content }}
+            {{ post.text }}
           </p>
-
-          <span
-            *ngIf="post.game"
-            class="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-300 text-xs font-medium border border-pink-500/30"
-          >
-            🎮 {{ post.game }}
-          </span>
 
           <div class="flex items-center justify-start mt-3 gap-5 max-w-md text-gray-400">
             <button
@@ -133,23 +128,32 @@
               <span class="p-1.5 rounded-full group-hover:bg-cyan-500/10">
                 <svg lucideMessageCircle class="w-4 h-4"></svg>
               </span>
-              {{ post.comments }}
+              {{ quantidadeComentarios(post) }}
             </button>
 
             <button
               type="button"
               class="group flex items-center gap-1.5 text-xs transition-colors"
-              [ngClass]="post.liked ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'"
-              (click)="toggleLike(post.id)"
+              [ngClass]="
+                postEstaCurtido(post.id) ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'
+              "
+              (click)="toggleLikeLocal(post)"
             >
               <span class="p-1.5 rounded-full group-hover:bg-pink-500/10">
-                <svg lucideHeart class="w-4 h-4" [ngClass]="post.liked ? 'fill-current' : ''"></svg>
+                <svg
+                  lucideHeart
+                  class="w-4 h-4"
+                  [ngClass]="postEstaCurtido(post.id) ? 'fill-current' : ''"
+                ></svg>
               </span>
               {{ post.likes }}
             </button>
           </div>
         </div>
       </div>
+    </li>
+    <li *ngIf="posts.length === 0" class="px-5 py-8 text-center text-gray-400">
+      Nenhum post publicado ainda.
     </li>
   </ul>
 </main>
