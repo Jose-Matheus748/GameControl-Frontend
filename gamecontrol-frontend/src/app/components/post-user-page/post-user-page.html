@@ -12,7 +12,7 @@
       </div>
       <div>
         <h2 class="font-semibold text-white">Feed do jogador</h2>
-        <p class="text-xs text-gray-400">Compartilhe suas conquistas e opiniões</p>
+        <p class="text-xs text-gray-400">Posts dos usuários que você segue</p>
       </div>
     </div>
 
@@ -102,9 +102,12 @@
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 text-sm flex-wrap">
-            <span class="font-semibold text-white truncate">
+            <a
+              [routerLink]="['/user', post.userId]"
+              class="font-semibold text-white truncate hover:text-pink-400 transition-colors cursor-pointer"
+            >
               {{ post.username || 'Usuário' }}
-            </span>
+            </a>
 
             <span class="text-gray-500"> @{{ (post.username || 'usuario').toLowerCase() }} </span>
 
@@ -153,7 +156,7 @@
       </div>
     </li>
     <li *ngIf="posts.length === 0" class="px-5 py-8 text-center text-gray-400">
-      Nenhum post publicado ainda.
+      Nenhum post encontrado. Siga outros jogadores para ver publicações aqui.
     </li>
   </ul>
 </main>
