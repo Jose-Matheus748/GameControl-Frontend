@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Usuario } from '../../services/user.service';
+import { ToastService } from '../../services/toast.service';
+import { PostService, UserPostDTO } from '../../services/posts.service';
 import {
   LucideHeart,
   LucideMessageCircle,
@@ -9,10 +12,6 @@ import {
   LucideUserRound,
   LucideSquareArrowOutUpRight,
 } from '@lucide/angular';
-
-import { Usuario } from '../../services/user.service';
-import { ToastService } from '../../services/toast.service';
-import { PostService, UserPostDTO } from '../../services/posts.service';
 
 @Component({
   selector: 'app-post-user-page',
@@ -45,7 +44,7 @@ export class PostUserPageComponent implements OnInit {
   constructor(
     private toast: ToastService,
     private postService: PostService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -76,9 +75,11 @@ export class PostUserPageComponent implements OnInit {
         this.posts = [...posts].sort((postA, postB) => {
           return new Date(postB.createdAt).getTime() - new Date(postA.createdAt).getTime();
         });
-        
 
         this.carregandoPosts = false;
+
+        console.log('Posts renderizados:', this.posts);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Erro ao carregar todos os posts:', error);
@@ -110,21 +111,19 @@ export class PostUserPageComponent implements OnInit {
       })
       .subscribe({
         next: (postCriado) => {
-          setTimeout(() => {
-            this.posts = [postCriado, ...this.posts];
-            this.textoCriacaoDoPost = '';
-            this.enviandoPost = false;
+          this.posts = [postCriado, ...this.posts];
+          this.textoCriacaoDoPost = '';
+          this.enviandoPost = false;
 
-            this.toast.sucesso('Sua galera já pode ver 🚀', 'Post publicado!');
-          }, 0);
+          this.toast.sucesso('Sua galera já pode ver 🚀', 'Post publicado!');
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Erro ao publicar post:', error);
 
-          setTimeout(() => {
-            this.enviandoPost = false;
-            this.toast.erro('Não foi possível publicar o post.');
-          }, 0);
+          this.enviandoPost = false;
+          this.toast.erro('Não foi possível publicar o post.');
+          this.cdr.detectChanges();
         },
       });
   }
@@ -133,11 +132,13 @@ export class PostUserPageComponent implements OnInit {
     if (this.likedPostIds.has(post.id)) {
       this.likedPostIds.delete(post.id);
       post.likes = Math.max(0, (post.likes || 0) - 1);
-      return;
+    } else {
+      this.likedPostIds.add(post.id);
+      post.likes = (post.likes || 0) + 1;
     }
 
-    this.likedPostIds.add(post.id);
-    post.likes = (post.likes || 0) + 1;
+    this.posts = [...this.posts];
+    this.cdr.detectChanges();
   }
 
   postEstaCurtido(postId: string): boolean {

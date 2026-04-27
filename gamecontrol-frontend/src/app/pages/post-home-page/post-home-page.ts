@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { PostService, UserPostDTO } from '../../services/posts.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +37,8 @@ export class PostHomePageComponent implements OnInit {
   constructor(
     private postService: PostService,
     private toast: ToastService,
-    private cdr: ChangeDetectorRef
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -61,40 +62,32 @@ export class PostHomePageComponent implements OnInit {
   }
 
   carregarPosts(): void {
-    console.time('Carregamento /api/posts');
-
     this.carregando = true;
+    this.cdr.detectChanges();
 
     this.postService.listarTodos(true).subscribe({
       next: (posts) => {
-        console.timeEnd('Carregamento /api/posts');
+        this.ngZone.run(() => {
+          this.posts = [...posts].sort((postA, postB) => {
+            return new Date(postB.createdAt).getTime() - new Date(postA.createdAt).getTime();
+          });
 
-        console.log('Resposta bruta da API:', posts);
-        console.log('Quantidade de posts recebidos:', posts.length);
+          this.carregando = false;
 
-        this.posts = [...posts].sort((postA, postB) => {
-          return new Date(postB.createdAt).getTime() - new Date(postA.createdAt).getTime();
+          this.cdr.detectChanges();
         });
-
-        this.carregando = false;
-
-        console.log('Posts salvos no componente:', this.posts);
-        console.log('Quantidade de posts no componente:', this.posts.length);
-        console.log('Carregando depois de carregar:', this.carregando);
-        
-        this.cdr.detectChanges(); // Para forçar o angular a detectar mudanças e renderizar novamente;
-
       },
 
       error: (error) => {
-        console.timeEnd('Carregamento /api/posts');
+        this.ngZone.run(() => {
+          console.error('Erro ao carregar posts:', error);
 
-        console.error('Erro ao carregar posts:', error);
-        this.toast.erro('Não foi possível carregar os posts.');
+          this.posts = [];
+          this.carregando = false;
 
-        this.carregando = false;
-
-        console.log('Carregando depois do erro:', this.carregando);
+          this.toast.erro('Não foi possível carregar os posts.');
+          this.cdr.detectChanges();
+        });
       },
     });
   }
