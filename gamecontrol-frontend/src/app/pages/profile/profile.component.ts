@@ -3,7 +3,9 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
+import { ToastService } from '../../services/toast.service';
 import { Playlist, PlaylistService } from '../../services/playlist.service';
+import { Toast } from 'ngx-toastr';
 
 @Component({
   selector: 'app-profile',
@@ -31,7 +33,8 @@ export class ProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UsuarioService,
     private playlistService: PlaylistService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -64,7 +67,7 @@ export class ProfileComponent implements OnInit {
         this.playlists = playlists;
         this.followersCount = user.followers?.length ?? 0;
         this.followingCount = user.following?.length ?? 0;
-        
+
         if (this.loggedUserId) {
           this.isFollowing = user.followers?.includes(this.loggedUserId) ?? false;
         }
@@ -120,7 +123,7 @@ export class ProfileComponent implements OnInit {
 
   toggleFollow() {
     if (this.loggedUserId == null) {
-      alert('Você precisa estar logado para seguir usuários!');
+      this.toast.alerta('Você precisa estar logado para seguir usuários!');
       return;
     }
 

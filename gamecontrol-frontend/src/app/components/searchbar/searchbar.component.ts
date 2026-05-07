@@ -16,14 +16,12 @@ export class SearchbarComponent {
   constructor(private router: Router) {}
 
   onInputChange() {
-    // Busca automática somente na página de jogos
     if (this.router.url.startsWith('/games')) {
       this.search.emit(this.searchTerm);
     }
   }
 
   onEnterSearch() {
-    // Em qualquer página, Enter faz a busca
     this.search.emit(this.searchTerm);
   }
 }

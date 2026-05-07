@@ -19,7 +19,6 @@ export class AchievementsSectionComponent {
   ];
 
   constructor() {
-    // No futuro, você chamaria um serviço aqui para buscar os dados:
-    // this.userService.getAchievements(userId).subscribe(data => this.achievements = data);
+
   }
 }

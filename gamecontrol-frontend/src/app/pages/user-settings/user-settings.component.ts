@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Usuario, UsuarioService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 import { LucideDoorOpen, LucideUserRound } from '@lucide/angular';
 
 @Component({
@@ -13,7 +14,7 @@ import { LucideDoorOpen, LucideUserRound } from '@lucide/angular';
     CommonModule,
     FormsModule,
     LucideDoorOpen,
-    LucideUserRound,
+    LucideUserRound
   ],
   templateUrl: './user-settings.component.html'
 })
@@ -31,6 +32,8 @@ export class SettingsComponent implements OnInit {
   currentUserId = '';
   previewUrl: string | null = null;
   loading = true;
+
+  constructor(private toast: ToastService) {}
 
   private userService = inject(UsuarioService);
   private authService = inject(AuthService);
@@ -119,12 +122,12 @@ export class SettingsComponent implements OnInit {
       next: (updatedUser) => {
         this.setUserData(updatedUser);
         this.authService.user.set(updatedUser);
-        alert('Perfil atualizado com sucesso!');
+        this.toast.sucesso('Perfil atualizado com sucesso!');
         this.router.navigate(['/profile']);
       },
       error: (err) => {
         console.error('Erro ao atualizar perfil:', err);
-        alert('Não foi possível atualizar o perfil!');
+        this.toast.erro('Não foi possível atualizar o perfil!');
       }
     });
   }

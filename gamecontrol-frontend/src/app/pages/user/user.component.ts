@@ -8,6 +8,7 @@ import { Playlist, PLAYLISTS_API_BASE, PlaylistService } from '../../services/pl
 import { CollabFormComponent } from '../../components/collab-form/collab-form.component';
 import { AddGameComponent } from '../../components/add-game/add-game.component';
 import { ToastService } from '../../services/toast.service';
+import { FormsModule } from '@angular/forms';
 import { PlaylistSectionComponent } from '../../components/playlist-section/playlist-section';
 import { LucideUserRound, LucideUsers, LucideMapPin, LucideSettings } from '@lucide/angular';
 import { PostUserPageComponent } from "../../components/post-user-page/post-user-page";
@@ -17,6 +18,7 @@ import { PostUserPageComponent } from "../../components/post-user-page/post-user
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     AddGameComponent,
     LucideUserRound,
@@ -38,10 +40,18 @@ export class UserComponent implements OnInit {
   isAdmin = false;
   addJogoAberto = false;
 
+  creating = false;
+  saving = false;
+
+  editNome = '';
+
   previewUrl: string | null = null;
   selectedProfileFile: File | null = null;
 
   playlists: Playlist[] = [];
+
+  deleteModalOpen = false;
+  playlistToDelete: string | null = null;
 
   socialModalOpen = false;
   socialModalTab: 'followers' | 'following' = 'followers';
@@ -174,41 +184,90 @@ export class UserComponent implements OnInit {
   }
 
   criarPlaylist() {
-    const nome = prompt('Digite o nome da playlist:');
-    if (!nome || !this.loggedUserId) return;
+    this.editNome = '';
+    this.creating = true;
+  }
+
+  cancelCreate(): void {
+    this.creating = false;
+    this.editNome = '';
+  }
+
+  saveCreate(): void {
+    if (!this.editNome.trim() || !this.loggedUserId) {
+      return;
+    }
+
+    this.saving = true;
 
     const novaPlaylist: Playlist = {
-      nome: nome,
+      nome: this.editNome.trim(),
       descricao: 'Minha nova playlist 🎮',
     };
 
     const url = `${PLAYLISTS_API_BASE}?usuarioId=${encodeURIComponent(this.loggedUserId)}`;
+
     this.http.post<Playlist>(url, novaPlaylist).subscribe({
       next: (playlist) => {
         this.playlists.push(playlist);
+
         this.toast.sucesso('Playlist criada!');
+
+        this.saving = false;
+        this.creating = false;
+        this.editNome = '';
+
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Erro ao criar playlist:', err),
+
+      error: (err) => {
+        console.error('Erro ao criar playlist:', err);
+
+        this.toast.erro('Erro ao criar playlist.');
+
+        this.saving = false;
+
+        this.cdr.detectChanges();
+      },
     });
   }
 
   deletarPlaylist(playlistId: string): void {
-    const confirmar = confirm('Tem certeza de que deseja excluir esta playlist?');
+    this.playlistToDelete = playlistId;
+    this.deleteModalOpen = true;
+  }
 
-    if (!confirmar) return;
+  confirmDeletePlaylist(): void {
+    if (!this.playlistToDelete) return;
 
-    this.http.delete<void>(`${PLAYLISTS_API_BASE}/${playlistId}`).subscribe({
+    this.http.delete<void>(`${PLAYLISTS_API_BASE}/${this.playlistToDelete}`).subscribe({
       next: () => {
-        this.playlists = this.playlists.filter((playlist) => playlist.id !== playlistId);
+        this.playlists = this.playlists.filter(
+          (playlist) => playlist.id !== this.playlistToDelete
+        );
+
         this.toast.sucesso('Playlist excluída com sucesso!');
+
+        this.deleteModalOpen = false;
+        this.playlistToDelete = null;
+
         this.cdr.detectChanges();
       },
+
       error: (err) => {
         console.error('Erro ao excluir playlist:', err);
-        this.toast.erro('Não foi possivel excluir a playlist.');
+
+        this.toast.erro('Não foi possível excluir a playlist.');
+
+        this.deleteModalOpen = false;
+        this.playlistToDelete = null;
       },
     });
+  }
+
+  cancelDeletePlaylist(): void {
+    this.deleteModalOpen = false;
+    this.playlistToDelete = null;
   }
 
   toggleAddGame() {

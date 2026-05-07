@@ -10,7 +10,6 @@ import { UserCarouselComponent } from '../../components/user-carousel/user-carou
   standalone: true,
   imports: [HeroBannerComponent, HrDividerComponent, CarouselComponent, GameOfWeekComponent, UserCarouselComponent],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
 

@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ReviewService, Review } from '../../services/review.service';
 import { AuthService } from '../../services/auth.service';
 import { forkJoin } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,6 +24,9 @@ export class GameReviewsComponent implements OnInit {
   gameId!: string;
   averageRating = 0;
 
+  deleteModalOpen = false;
+  reviewToDeleteId: string | null = null;
+
   newRating = 0;
   newComment = '';
 
@@ -31,6 +35,7 @@ export class GameReviewsComponent implements OnInit {
     private gameService: GameService,
     private reviewService: ReviewService,
     private authService: AuthService,
+    private toast: ToastService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {}
@@ -106,21 +111,12 @@ export class GameReviewsComponent implements OnInit {
       rating: this.newRating,
       description: this.newComment
     }).subscribe({
-      next: () => {
+      next: (createdReview) => {
         if (this.userReview) {
           this.userReview.rating = this.newRating;
           this.userReview.description = this.newComment;
         } else {
-          const newReview: Review = {
-            userId,
-            userName: this.authService.user()?.username || 'Você',
-            gameId: this.gameId,
-            rating: this.newRating,
-            description: this.newComment,
-            createdAt: new Date().toISOString()
-          };
-
-          this.reviews = [newReview, ...this.reviews];
+          this.reviews = [createdReview, ...this.reviews];
         }
 
         this.editing = false;
@@ -142,16 +138,38 @@ export class GameReviewsComponent implements OnInit {
     return this.reviews.find(r => r.userId === this.currentUserId);
   }
 
-  deleteReview(id: string) {
-    if (!confirm('Deseja deletar sua avaliação?')) return;
+  openDeleteReviewModal(id: string): void {
+    this.reviewToDeleteId = id;
+    this.deleteModalOpen = true;
+  }
 
-    this.reviewService.delete(id).subscribe({
+  closeDeleteReviewModal(): void {
+    this.deleteModalOpen = false;
+    this.reviewToDeleteId = null;
+  }
+
+  confirmDeleteReview(): void {
+    if (!this.reviewToDeleteId) return;
+
+    this.reviewService.delete(this.reviewToDeleteId).subscribe({
       next: () => {
-        this.reviews = this.reviews.filter(r => r.id !== id);
+        this.reviews = this.reviews.filter(
+          r => r.id !== this.reviewToDeleteId
+        );
+
         this.calculateAverageLocal();
+
+        this.closeDeleteReviewModal();
+
+        this.toast.sucesso('Avaliação excluída com sucesso!');
+
         this.cdr.detectChanges();
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+        this.toast.erro('Erro ao deletar avaliação')
+        this.closeDeleteReviewModal();
+      }
     });
   }
 
@@ -175,7 +193,7 @@ export class GameReviewsComponent implements OnInit {
     }
 
     const sum = this.reviews.reduce((acc, r) => acc + r.rating, 0);
-    this.averageRating = Math.round((sum / this.reviews.length) * 10) / 10; // ← 1 casa decimal
+    this.averageRating = Math.round((sum / this.reviews.length) * 10) / 10;
   }
 
   get displayRating(): string {

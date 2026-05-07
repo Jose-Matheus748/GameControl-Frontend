@@ -32,6 +32,9 @@ export class GameComponent implements OnInit {
   averageRating = 0;
   saving = false;
 
+  deleteCommentModalOpen = false;
+  commentToDelete: string | number | null = null;
+
   get currentUserId(): string | undefined {
     const id = this.authService.user()?.id;
     return id != null ? String(id) : undefined;
@@ -131,21 +134,39 @@ export class GameComponent implements OnInit {
   }
 
   deleteComment(deletedCommentId: string | number): void {
-    if (!confirm('Tem certeza que deseja deletar este comentário?')) {
+    this.commentToDelete = deletedCommentId;
+    this.deleteCommentModalOpen = true;
+  }
+
+  confirmDeleteComment(): void {
+    if (!this.commentToDelete) {
       return;
     }
 
-    this.commentsService.deleteComment(deletedCommentId).subscribe({
+    this.commentsService.deleteComment(this.commentToDelete).subscribe({
       next: () => {
         this.comments = this.comments.filter(
-          (comment) => String(comment.id) !== String(deletedCommentId),
+          (comment) => String(comment.id) !== String(this.commentToDelete)
         );
+
+        this.deleteCommentModalOpen = false;
+        this.commentToDelete = null;
+
         this.cdr.detectChanges();
       },
+
       error: (error) => {
         console.error('Erro ao deletar comentário:', error);
+
+        this.deleteCommentModalOpen = false;
+        this.commentToDelete = null;
       },
     });
+  }
+
+  cancelDeleteComment(): void {
+    this.deleteCommentModalOpen = false;
+    this.commentToDelete = null;
   }
 
   canDelete(comment: GameComment): boolean {

@@ -4,7 +4,6 @@
 
 <div *ngIf="!loading && game" class="bg-[#050816] min-h-screen text-white p-8">
 
-  <!-- GAME INFO -->
   <h1 (click)="goToGame()"
       class="text-4xl md:text-5xl font-orbitron font-bold text-white leading-tight
              drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]
@@ -26,7 +25,6 @@
     </span>
   </div>
 
-  <!-- NÃO TEM REVIEW -->
   <div *ngIf="!userReview" class="bg-slate-900 p-5 rounded-xl mb-8">
 
     <h2 class="text-xl mb-3">Sua avaliação</h2>
@@ -52,7 +50,6 @@
     </button>
   </div>
 
-  <!-- TEM REVIEW -->
   <div *ngIf="userReview && !editing" class="bg-slate-900 p-5 rounded-xl mb-8">
 
     <h2 class="text-xl mb-3">Sua avaliação</h2>
@@ -81,7 +78,7 @@
                        hover:bg-yellow-500/10 hover:border-yellow-400
                        hover:shadow-[0_0_12px_rgba(234,179,8,0.4)]
                        transition-all duration-200">
-          <!-- ícone lápis -->
+
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
                fill="none" stroke="currentColor" stroke-width="2"
                stroke-linecap="round" stroke-linejoin="round">
@@ -90,14 +87,14 @@
           </svg>
         </button>
 
-        <button (click)="deleteReview(userReview.id!)"
+        <button (click)="openDeleteReviewModal(userReview.id!)"
                 title="Deletar avaliação"
                 class="w-9 h-9 flex items-center justify-center rounded-lg
                        border border-pink-500/40 text-pink-400
                        hover:bg-pink-500/10 hover:border-pink-400
                        hover:shadow-[0_0_12px_rgba(236,72,153,0.4)]
                        transition-all duration-200">
-          <!-- ícone lixeira -->
+
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
                fill="none" stroke="currentColor" stroke-width="2"
                stroke-linecap="round" stroke-linejoin="round">
@@ -111,7 +108,6 @@
     </div>
   </div>
 
-  <!-- EDITANDO -->
   <div *ngIf="editing" class="bg-slate-900 p-5 rounded-xl mb-8">
 
     <h2 class="text-xl mb-3">Editar avaliação</h2>
@@ -142,7 +138,6 @@
     </div>
   </div>
 
-  <!-- LISTA -->
   <div *ngFor="let review of reviews"
        class="bg-slate-900 p-4 rounded-xl mb-4">
 
@@ -169,5 +164,60 @@
       {{ review.description }}
     </p>
   </div>
+</div>
 
+<div
+  *ngIf="deleteModalOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center
+         bg-black/70 backdrop-blur-sm p-4"
+  (click)="closeDeleteReviewModal()"
+>
+
+  <div
+    class="w-full max-w-md rounded-2xl border border-pink-500/20
+           bg-slate-900 shadow-2xl shadow-pink-950/30"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="flex items-center justify-between px-5 py-4
+                border-b border-pink-500/10">
+
+      <h2 class="text-lg font-orbitron text-white">
+        Excluir avaliação
+      </h2>
+    </div>
+
+    <div class="px-5 py-6">
+      <p class="text-gray-300 leading-7">
+        Tem certeza que deseja excluir sua avaliação?
+      </p>
+
+      <p class="text-pink-400 text-sm mt-2">
+        Esta ação não poderá ser desfeita.
+      </p>
+    </div>
+
+    <div class="flex justify-end gap-3 px-5 py-4
+                border-t border-pink-500/10">
+
+      <button
+        (click)="closeDeleteReviewModal()"
+        class="px-5 py-2 rounded-lg border border-slate-600
+               text-gray-300 hover:border-slate-400"
+      >
+        Cancelar
+      </button>
+
+      <button
+        (click)="confirmDeleteReview()"
+        class="px-5 py-2 rounded-lg bg-pink-500
+               hover:bg-pink-400 text-white font-bold
+               shadow-[0_0_14px_rgba(236,72,153,0.45)]
+               transition-all duration-200"
+      >
+        Excluir
+      </button>
+
+    </div>
+  </div>
 </div>
