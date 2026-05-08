@@ -8,7 +8,6 @@
 <div *ngIf="!loading"
      class="w-full min-h-screen bg-[#050816] px-6 md:px-16 lg:px-24 py-10">
 
-  <!-- INFO DA PLAYLIST -->
   <div class="mb-12">
     <div class="flex items-start justify-between gap-4">
       <div>
@@ -25,7 +24,6 @@
         </p>
       </div>
 
-      <!-- BOTÃO EDITAR -->
       <button *ngIf="isOwner"
         (click)="startEdit()"
         title="Editar playlist"
@@ -44,7 +42,6 @@
     </div>
   </div>
 
-  <!-- PAGINAÇÃO -->
   <div class="flex items-center justify-center gap-6 mb-10">
     <button (click)="prev()"
             [disabled]="page === 0"
@@ -63,13 +60,11 @@
     </button>
   </div>
 
-  <!-- LISTA VAZIA -->
   <div *ngIf="games.length === 0"
        class="text-center text-white text-2xl mt-20">
     Essa playlist ainda não tem jogos 😢
   </div>
 
-  <!-- GRID -->
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
 
     <div *ngFor="let game of paginated"
@@ -100,7 +95,6 @@
   </div>
 </div>
 
-<!-- MODAL DE EDIÇÃO -->
 <div *ngIf="editing"
      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
      (click)="cancelEdit()"
@@ -113,7 +107,6 @@
        aria-modal="true"
        aria-label="Editar playlist">
 
-    <!-- CABEÇALHO -->
     <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20">
       <h3 class="text-lg font-orbitron font-semibold text-white tracking-wide">
         Editar playlist
@@ -127,10 +120,8 @@
       </button>
     </div>
 
-    <!-- CORPO -->
     <div class="px-5 py-5 flex flex-col gap-4">
 
-      <!-- NOME -->
       <div>
         <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
           Nome
@@ -146,7 +137,6 @@
         />
       </div>
 
-      <!-- DESCRIÇÃO -->
       <div>
         <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
           Descrição
@@ -163,7 +153,6 @@
       </div>
     </div>
 
-    <!-- RODAPÉ -->
     <div class="flex justify-end gap-3 px-5 py-4 border-t border-cyan-500/15">
       <button
         (click)="cancelEdit()"

@@ -6,13 +6,11 @@
 
 <div *ngIf="!loading && gameData" class="w-full min-h-screen bg-[#050816] text-white">
 
-  <!-- CARD PRINCIPAL -->
   <div
     class="bg-slate-900/90 border border-cyan-500/20 overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.15)] backdrop-blur-sm"
   >
     <div class="flex flex-col lg:flex-row">
 
-      <!-- CAPA -->
       <div class="lg:w-1/3 w-full">
         <img
           [src]="gameData.coverImageUrl || 'assets/default-cover.jpg'"
@@ -21,9 +19,7 @@
         />
       </div>
 
-      <!-- DETALHES -->
       <div class="w-full px-8 md:px-20 lg:px-32 py-10 flex flex-col justify-between">
-        <!-- TOPO -->
         <div>
           <div class="flex items-center justify-between mb-3">
             <h2 class="font-orbitron text-4xl font-bold text-white">
@@ -65,7 +61,6 @@
           </div>
         </div>
 
-        <!-- ESTRELAS GRANDES -->
         <div
           class="mt-16 flex flex-col items-center lg:items-start cursor-pointer"
           (click)="goToReviews()"
@@ -92,7 +87,6 @@
       </div>
     </div>
 
-    <!-- DESCRIÇÃO -->
     <div class="p-8 border-t border-slate-700 bg-slate-950/70 text-white">
       <h3 class="font-orbitron text-2xl text-cyan-400 mb-4">
         Descrição
@@ -102,13 +96,11 @@
       </p>
     </div>
 
-    <!-- COMENTÁRIOS -->
     <div class="p-8 border-t border-slate-700 bg-slate-900">
       <h3 class="font-orbitron text-2xl text-pink-400 mb-6">
         Comentários ({{ comments.length }})
       </h3>
 
-      <!-- FORM -->
       <div
         *ngIf="isLoggedIn; else loginPrompt"
         class="mb-8 bg-slate-800 rounded-xl p-5 border border-pink-500/20"
@@ -137,7 +129,6 @@
         </form>
       </div>
 
-      <!-- LOGIN ALERT -->
       <ng-template #loginPrompt>
         <div
           class="mb-6 p-4 bg-yellow-500/10 border border-yellow-500 rounded-lg text-yellow-300"
@@ -146,7 +137,6 @@
         </div>
       </ng-template>
 
-      <!-- LISTA -->
       <div *ngIf="comments.length > 0; else noComments" class="space-y-4">
         <div
           *ngFor="let comment of comments"
@@ -200,7 +190,6 @@
       Adicionar à playlist
     </h2>
 
-    <!-- LISTA -->
     <div class="max-h-80 overflow-y-auto space-y-3">
 
       <div *ngFor="let playlist of userPlaylists"
@@ -217,7 +206,6 @@
 
     </div>
 
-    <!-- BOTÕES -->
     <div class="flex justify-end gap-3 mt-6">
 
       <button
@@ -236,6 +224,63 @@
           {{ saving ? 'Salvando...' : 'Salvar' }}
       </button>
 
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="deleteCommentModalOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center
+         bg-black/70 backdrop-blur-sm p-4"
+  (click)="cancelDeleteComment()"
+>
+
+  <div
+    class="w-full max-w-md rounded-2xl border border-red-500/20
+           bg-slate-900 shadow-2xl shadow-red-950/40"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-red-500/15">
+
+      <h3 class="text-lg font-orbitron font-bold text-red-400 tracking-wide">
+        Excluir comentário
+      </h3>
+    </div>
+
+    <div class="px-5 py-6">
+
+      <p class="text-gray-300 leading-relaxed">
+        Tem certeza que deseja excluir este comentário?
+      </p>
+
+      <p class="text-sm text-red-400 mt-3">
+        Esta ação não poderá ser desfeita.
+      </p>
+
+    </div>
+
+    <div class="flex justify-end gap-3 px-5 py-4 border-t border-red-500/10">
+
+      <button
+        (click)="cancelDeleteComment()"
+        class="px-5 py-2 rounded-lg border border-slate-600
+               text-gray-300 hover:border-slate-400
+               hover:text-white transition-all"
+      >
+        Cancelar
+      </button>
+
+      <button
+        (click)="confirmDeleteComment()"
+        class="px-6 py-2 rounded-lg bg-red-500 hover:bg-red-400
+               text-white font-bold
+               shadow-[0_0_12px_rgba(239,68,68,0.35)]
+               hover:shadow-[0_0_18px_rgba(239,68,68,0.5)]
+               transition-all duration-300"
+      >
+        Excluir
+      </button>
     </div>
   </div>
 </div>

@@ -36,10 +36,8 @@ export class ReviewService {
     return this.http.get<number>(`${this.apiUrl}/game/${gameId}/average`);
   }
 
-  create(review: CreateReviewRequest) {
-    return this.http.post(this.apiUrl, review, {
-      responseType: 'text'
-    });
+  create(review: CreateReviewRequest): Observable<Review> {
+    return this.http.post<Review>(this.apiUrl, review);
   }
 
   delete(id: string): Observable<string> {

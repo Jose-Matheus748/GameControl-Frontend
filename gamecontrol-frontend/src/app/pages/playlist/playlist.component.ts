@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlaylistService, Playlist } from '../../services/playlist.service';
 import { GameService, Game } from '../../services/games.service';
+import { ToastService } from '../../services/toast.service';
 import { catchError, of, forkJoin } from 'rxjs';
 
 @Component({
@@ -32,7 +33,8 @@ export class PlaylistDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private playlistService: PlaylistService,
     private gameService: GameService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -147,9 +149,10 @@ export class PlaylistDetailComponent implements OnInit {
         this.editing = false;
         this.saving = false;
         this.cdr.detectChanges();
+        this.toast.sucesso('Playlist atualizada com sucesso!');
       },
       error: (err) => {
-        console.error('Erro ao atualizar playlist', err);
+        this.toast.erro('Erro ao atualizar playlist', err);
         this.saving = false;
         this.cdr.detectChanges();
       }

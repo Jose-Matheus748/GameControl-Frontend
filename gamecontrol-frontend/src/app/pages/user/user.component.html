@@ -3,11 +3,9 @@
 </div>
 
 <div *ngIf="!loading && userData" class="max-w-6xl mx-auto m-5 px-3 py-3 space-y-4">
-  <!-- Seção de foto de perfil -->
   <section class="bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl p-4 shadow-lg">
     <div class="p-2 md:p-4">
       <div class="flex flex-col sm:flex-row gap-6">
-        <!-- Avatar -->
         <div class="shrink-0">
           <label
             for="profileUpload"
@@ -42,7 +40,6 @@
           />
         </div>
 
-        <!-- Info -->
         <div class="flex-1 min-w-0">
           <div class="flex items-start gap-4">
             <div class="min-w-0">
@@ -108,15 +105,12 @@
     </div>
   </section>
 
-  <!-- Grid inferior -->
   <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_450px] gap-4 items-stretch">
-    <!-- Chamada ao componente de postagens do usuário -->
-    <app-post-user-page 
+    <app-post-user-page
       [user]="userData"
       [userId]="userId"
     ></app-post-user-page>
 
-    <!-- Modal de adicionar jogo ao catálogo  -->
     <div class="mt-20 flex flex-col text-center" *ngIf="isAdmin">
       <h2 class="text-2xl font-bold text-pink-500">Olá, Jovem Padawan (ADMIN)</h2>
 
@@ -134,7 +128,6 @@
       ></app-add-game-modal>
     </div>
 
-    <!-- aside onde é chamado o componente de playlists -->
     <aside class="w-full h-full">
       <app-playlist-section
         [playlists]="playlists"
@@ -145,7 +138,6 @@
   </div>
 </div>
 
-<!-- Modal seguidores / seguindo -->
 <div
   *ngIf="socialModalOpen"
   class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
@@ -233,6 +225,121 @@
           </div>
         </ng-template>
       </ng-container>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="creating"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+     (click)="cancelCreate()"
+     role="presentation">
+
+  <div class="w-full max-w-md flex flex-col rounded-2xl border border-cyan-500/25
+              bg-slate-900 shadow-2xl shadow-cyan-950/40"
+       (click)="$event.stopPropagation()"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Criar playlist">
+
+    <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20">
+      <h3 class="text-lg font-orbitron font-semibold text-white tracking-wide">
+        Criar playlist
+      </h3>
+    </div>
+
+    <div class="px-5 py-5 flex flex-col gap-4">
+
+      <div>
+        <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
+          Nome
+        </label>
+        <input
+          [(ngModel)]="editNome"
+          type="text"
+          maxlength="60"
+          class="w-full p-3 bg-slate-800 border border-slate-600/50 rounded-lg text-white
+                 focus:outline-none focus:border-cyan-500/70
+                 focus:shadow-[0_0_10px_rgba(6,182,212,0.2)] transition-all"
+          placeholder="Nome da playlist"
+        />
+      </div>
+
+    </div>
+
+    <div class="flex justify-end gap-3 px-5 py-4 border-t border-cyan-500/15">
+      <button
+        (click)="cancelCreate()"
+        [disabled]="saving"
+        class="px-5 py-2 rounded-lg text-gray-400 border border-slate-600
+               hover:border-slate-400 hover:text-gray-200
+               disabled:opacity-30 disabled:cursor-not-allowed
+               transition-all duration-200">
+        Cancelar
+      </button>
+
+      <button
+        (click)="saveCreate()"
+        [disabled]="saving || !editNome.trim()"
+        class="px-6 py-2 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-bold
+               shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944]
+               hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988]
+               disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none
+               transition-all duration-300">
+        {{ saving ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="deleteModalOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+  (click)="cancelDeletePlaylist()"
+>
+
+  <div
+    class="w-full max-w-md rounded-2xl border border-red-500/20
+           bg-slate-900 shadow-2xl shadow-red-950/40"
+    (click)="$event.stopPropagation()"
+  >
+
+    <div class="flex items-center justify-between px-5 py-4 border-b border-red-500/15">
+      <h3 class="text-lg font-bold text-red-400">
+        Excluir playlist
+      </h3>
+    </div>
+
+    <div class="px-5 py-6">
+      <p class="text-gray-300 leading-relaxed">
+        Tem certeza que deseja excluir esta playlist?
+      </p>
+
+      <p class="text-sm text-red-400 mt-3">
+        Esta ação não poderá ser desfeita.
+      </p>
+    </div>
+
+    <div class="flex justify-end gap-3 px-5 py-4 border-t border-red-500/10">
+
+      <button
+        (click)="cancelDeletePlaylist()"
+        class="px-5 py-2 rounded-lg border border-slate-600 text-gray-300
+               hover:border-slate-400 hover:text-white transition-all"
+      >
+        Cancelar
+      </button>
+
+      <button
+        (click)="confirmDeletePlaylist()"
+        class="px-6 py-2 rounded-lg bg-red-500 hover:bg-red-400
+               text-white font-bold
+               shadow-[0_0_12px_rgba(239,68,68,0.35)]
+               hover:shadow-[0_0_18px_rgba(239,68,68,0.5)]
+               transition-all duration-300"
+      >
+        Excluir
+      </button>
+
     </div>
   </div>
 </div>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoginDTO } from '../../models/login-dto.model';
+import { ToastService } from '../../services/toast.service';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -17,12 +18,14 @@ export class LoginComponent {
   password = '';
   isSubmitting = false;
 
+  constructor( private toast: ToastService ) {}
+
   router = inject(Router);
   private authService = inject(AuthService);
 
   onSubmit() {
     if (!this.email || !this.password) {
-      alert('Preencha todos os campos!');
+      this.toast.alerta('Preencha todos os campos!');
       return;
     }
 
@@ -32,7 +35,7 @@ export class LoginComponent {
 
     this.authService.login(loginDTO).subscribe({
       next: (res) => {
-        alert(`Bem-vindo, ${res.user.username}!`);
+        this.toast.sucesso(`Bem-vindo, ${res.user.username}!`);
 
         localStorage.setItem('token', res.token);
         if (res.user?.id != null) {
@@ -43,7 +46,7 @@ export class LoginComponent {
         this.router.navigate(['/']);
       },
       error: () => {
-        alert('Email ou senha incorretos.');
+        this.toast.erro('Email ou senha incorretos.');
         this.isSubmitting = false;
       }
     });

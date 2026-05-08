@@ -7,7 +7,6 @@
   class="max-w-6xl mx-auto bg-slate-900/90 border border-cyan-500/20 text-white rounded-2xl p-10 shadow-lg mt-8"
 >
   <section class="grid grid-cols-1 md:grid-cols-3 gap-10">
-    <!-- Seção de Perfil de outros usuários -->
     <div class="md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
       <label
         for="otherProfile"
@@ -99,7 +98,6 @@
         </button>
       </div>
 
-      <!-- Botão seguir -->
       <button
         *ngIf="!isOwnProfile"
         class="mt-6 px-6 py-2 rounded-lg transition duration-300 cursor-pointer"
@@ -113,7 +111,6 @@
       </button>
     </div>
 
-    <!-- Playlists -->
     <aside
       class="md:col-span-2 bg-[#090f1b] border border-cyan-500/20 p-10 rounded-2xl shadow-inner"
     >
@@ -125,7 +122,7 @@
             *ngFor="let playlist of playlists"
             [routerLink]="['/playlists', playlist.id]"
             class="bg-[#111111] border border-gray-700 rounded-xl p-6 hover:bg-[#292929] transition duration-300 cursor-pointer">
-          
+
             <h4 class="text-lg font-semibold text-white truncate">{{ playlist.nome }}</h4>
             <p class="text-sm text-gray-400 mt-2 line-clamp-2">
               {{ playlist.descricao || 'Sem descrição' }}
