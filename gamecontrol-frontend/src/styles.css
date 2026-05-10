@@ -11,8 +11,7 @@ body {
 
 /* PERSONALIZAÇÃO DO TOAST */
 
-.toast-container 
-.ngx-toastr {
+.toast-container .ngx-toastr {
   border-radius: 14px !important;
   padding: 16px 18px !important;
   box-shadow: none !important; /* Retirando sombra padrão do Toaster */
@@ -21,8 +20,7 @@ body {
 }
 
 /* Toast de sucesso */
-.toast-container 
-.toast-success {
+.toast-container .toast-success {
   background-image: none !important;
   background-color: #0a1609 !important;
   color: #ffffff !important;
@@ -30,14 +28,12 @@ body {
   padding-left: 16px !important;
 }
 
-.toast-success
-.toast-title {
-    color: #22da66 !important;
+.toast-success .toast-title {
+  color: #22da66 !important;
 }
 
 /** Toast de Erro*/
-.toast-container
-.toast-error {
+.toast-container .toast-error {
   background-image: none !important;
   background-color: #200b0b !important;
   color: #ffffff !important;
@@ -45,14 +41,12 @@ body {
   padding-left: 16px !important;
 }
 
-.toast-error
-.toast-title {
-    color: #d82525 !important;
+.toast-error .toast-title {
+  color: #d82525 !important;
 }
 
 /** Toast de Info */
-.toast-container
-.toast-info {
+.toast-container .toast-info {
   background-image: none !important;
   background-color: #20200b !important;
   color: #ffffff !important;
@@ -61,22 +55,35 @@ body {
 }
 
 /* Título do toast */
-.toast-container 
-.toast-title {
+.toast-container .toast-title {
   font-weight: 700 !important;
   font-size: 14px !important;
 }
 
 /* Mensagem do toast */
-.toast-container 
-.toast-message {
+.toast-container .toast-message {
   color: #e5e7eb !important;
   font-size: 13px !important;
 }
 
 /* Botão de fechar */
-.toast-container 
-.toast-close-button {
+.toast-container .toast-close-button {
   color: #ffffff !important;
   opacity: 0.9 !important;
+}
+
+/** Efeito parallax e animação nas imagens do HeroBanner */
+@keyframes hero-banner-pan {
+  0% {
+    transform: translate(-50%, -50%) translateX(-80px) scale(1.22);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) translateX(80px) scale(1.22);
+  }
+}
+
+.hero-banner-pan {
+  animation: hero-banner-pan 9s ease-in-out infinite alternate;
+  transform-origin: center;
 }

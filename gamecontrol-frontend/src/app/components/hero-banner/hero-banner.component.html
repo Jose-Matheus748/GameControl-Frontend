@@ -1,34 +1,79 @@
-<div class="relative w-full h-[500px] overflow-hidden">
-
-  <!-- Background -->
-  <img
-    src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop"
-    class="absolute inset-0 w-full h-full object-cover z-0"
+<div class="relative w-full aspect-video overflow-hidden">
+  <!-- botão para voltar ao slide anterior -->
+  <button
+    type="button"
+    (click)="previousSlide()"
+    class="absolute left-4 top-1/2 z-30 -translate-y-1/2 bg-black/50 text-white px-4 py-2 rounded-lg"
   >
+    ‹
+  </button>
+  <!-- Background -->
+  <div
+    class="absolute inset-0 z-0 overflow-hidden will-change-transform"
+    [style.transform]="'translateY(' + parallaxOffset + 'px)'"
+  >
+    <img
+      *ngFor="let slide of slides; let i = index"
+      [src]="slide.image"
+      class="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
+      [ngClass]="[
+        i === currentSlide ? 'opacity-100' : 'opacity-0',
+        i === 1 ? 'scale-110 -translate-y-20' : ''
+      ]"
+      alt="Banner de jogos"
+    />
+  </div>
 
   <!-- Overlay com gradiente neon -->
-  <div class="absolute inset-0 bg-gradient-to-r from-pink-900/70 via-black/70 to-cyan-900/70 z-10"></div>
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-pink-900/70 via-black/70 to-cyan-900/70 z-10"
+  ></div>
 
   <!-- Conteúdo -->
   <div class="font-orbitron relative z-20 flex flex-col justify-center h-full px-6 md:px-20">
-
     <h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
-      <span class="text-white">BEM-VINDO AO NOSSO</span><br>
-      <span class="text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">UNIVERSO</span>
-      <span class="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]"> DE JOGOS!</span>
+      <span class="text-white">{{ titleWhite }}</span><br />
+      <span class="text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">
+        {{ titlePink }}
+      </span>
+      <span class="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
+        {{ titleCyan }}
+      </span>
     </h1>
 
     <p class="text-lg md:text-xl text-gray-300 max-w-xl mb-8">
-      Explore um catálogo incrível, encontre seus próximos jogos favoritos e compartilhe suas aventuras.
+      {{ subtitle }}
     </p>
 
     <a
       [routerLink]="['/games']"
-      class="max-w-xs w-full inline-block bg-pink-500 text-white font-bold py-3 px-14 rounded-lg text-lg
-             hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
+      class="max-w-xs w-full inline-block bg-pink-500 text-white font-bold py-3 px-14 rounded-lg text-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
     >
       Ver Todos os Jogos
     </a>
-
   </div>
+  <!-- botão de passar para o proximo slide -->
+  <button
+    type="button"
+    (click)="nextSlide()"
+    class="absolute right-4 top-1/2 z-30 -translate-y-1/2 bg-black/50 text-white px-4 py-2 rounded-lg"
+  >
+    ›
+  </button>
+
+  <!-- bolinhas indicadoras de slide -->
+  <div class="absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 gap-2">
+    <button
+      *ngFor="let slide of slides; let i = index"
+      type="button"
+      (click)="goToSlide(i)"
+      class="h-3 rounded-full transition-all duration-500 ease-out"
+      [ngClass]="
+        i === currentSlide
+          ? 'w-8 bg-pink-500 shadow-[0_0_14px_rgba(236,72,153,0.9)]'
+          : 'w-3 bg-white/50 hover:bg-white/80'
+      "
+    ></button>
+  </div>
+
 </div>
