@@ -183,7 +183,7 @@ export class GameReviewsComponent implements OnInit {
 
   goToGame() {
     if (!this.game?.id) return;
-    this.router.navigate(['/games', this.game.id]);
+    this.router.navigate(['/game', this.game.id]);
   }
 
   calculateAverageLocal() {

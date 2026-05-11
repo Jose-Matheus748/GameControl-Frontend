@@ -20,7 +20,7 @@ export const routes: Routes = [
   { path: 'user/:id', component: ProfileComponent },
   { path: 'posts', component: PostHomePageComponent },
   { path: 'user', component: UserComponent },
-  { path: 'games/:id', component: GameComponent },
+  { path: 'game/:id', component: GameComponent },
   { path: 'games', component: GamesListComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'playlists/:id', component: PlaylistDetailComponent },
