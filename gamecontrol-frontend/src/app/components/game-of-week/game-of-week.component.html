@@ -49,7 +49,6 @@
           {{ game.description }}
         </p>
 
-        <!-- ESTRELAS -->
         <div class="flex items-center gap-1 mb-2">
           <ng-container *ngFor="let filled of stars">
             <svg *ngIf="filled" class="w-5 h-5 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.7)]"
@@ -64,9 +63,8 @@
         </div>
       </div>
 
-      <!-- BOTÃO -->
       <div class="mt-4">
-        <a [routerLink]="['/games', game.id]"
+        <a [routerLink]="['/game', game.id]"
            class="font-orbitron inline-block text-sm tracking-wider uppercase
                   bg-pink-500 hover:bg-pink-400 text-white
                   py-2 px-6 rounded-lg

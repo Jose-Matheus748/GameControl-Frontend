@@ -1,67 +1,74 @@
-<div class="relative w-full aspect-video overflow-hidden">
-  <!-- botão para voltar ao slide anterior -->
-  <button
-    type="button"
-    (click)="previousSlide()"
-    class="absolute left-4 top-1/2 z-30 -translate-y-1/2 bg-black/50 text-white px-4 py-2 rounded-lg"
-  >
-    ‹
-  </button>
-  <!-- Background -->
+<div class="relative w-full h-[420px] md:h-[500px] overflow-hidden">
   <div
-    class="absolute inset-0 z-0 overflow-hidden will-change-transform"
+    class="absolute inset-0 z-0 will-change-transform"
     [style.transform]="'translateY(' + parallaxOffset + 'px)'"
   >
     <img
       *ngFor="let slide of slides; let i = index"
       [src]="slide.image"
-      class="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
-      [ngClass]="[
-        i === currentSlide ? 'opacity-100' : 'opacity-0',
-        i === 1 ? 'scale-110 -translate-y-20' : ''
-      ]"
+      class="absolute inset-0 h-full w-full object-cover object-center"
+      [ngClass]="i === currentSlide ? 'opacity-100' : 'opacity-0'"
       alt="Banner de jogos"
     />
   </div>
 
-  <!-- Overlay com gradiente neon -->
   <div
-    class="absolute inset-0 bg-gradient-to-r from-pink-900/70 via-black/70 to-cyan-900/70 z-10"
+    class="absolute inset-0 z-10"
+    [ngClass]="slides[currentSlide].overlayClass"
   ></div>
 
-  <!-- Conteúdo -->
-  <div class="font-orbitron relative z-20 flex flex-col justify-center h-full px-6 md:px-20">
+  <div
+    class="absolute inset-0 bg-black pointer-events-none transition-opacity ease-in-out"
+    [style.opacity]="isBlackout ? 1 : 0"
+    [style.transition-duration]="TRANSITION_DURATION + 'ms'"
+    style="z-index: 50;"
+  ></div>
+
+  <div class="font-orbitron absolute inset-0 z-20 flex flex-col justify-center px-6 md:px-20">
+
+    <div
+      *ngIf="slides[currentSlide].badge"
+      class="mb-3 inline-flex items-center gap-2 w-fit bg-white/10 border border-white/20 text-white text-sm font-semibold px-4 py-1.5 rounded-full backdrop-blur-sm"
+    >
+      {{ slides[currentSlide].badge }}
+    </div>
+
     <h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
-      <span class="text-white">{{ titleWhite }}</span><br />
-      <span class="text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">
-        {{ titlePink }}
+      <span *ngIf="slides[currentSlide].titleWhite" class="text-white">
+        {{ slides[currentSlide].titleWhite }}<br />
       </span>
-      <span class="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
-        {{ titleCyan }}
+      <span [ngClass]="slides[currentSlide].titleColoredClass">
+        {{ slides[currentSlide].titleColored }}
       </span>
     </h1>
 
     <p class="text-lg md:text-xl text-gray-300 max-w-xl mb-8">
-      {{ subtitle }}
+      {{ slides[currentSlide].subtitle }}
     </p>
 
-    <a
-      [routerLink]="['/games']"
-      class="max-w-xs w-full inline-block bg-pink-500 text-white font-bold py-3 px-14 rounded-lg text-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
+      <a [routerLink]="slides[currentSlide].ctaLink"
+      class="max-w-xs w-full inline-block text-center bg-pink-500 text-white font-bold py-3 px-14 rounded-lg text-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-pink-500/30"
     >
-      Ver Todos os Jogos
+      {{ slides[currentSlide].ctaLabel }}
     </a>
   </div>
-  <!-- botão de passar para o proximo slide -->
+
+  <button
+    type="button"
+    (click)="previousSlide()"
+    class="absolute left-4 top-1/2 z-30 -translate-y-1/2 bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70 transition-colors"
+  >
+    ‹
+  </button>
+
   <button
     type="button"
     (click)="nextSlide()"
-    class="absolute right-4 top-1/2 z-30 -translate-y-1/2 bg-black/50 text-white px-4 py-2 rounded-lg"
+    class="absolute right-4 top-1/2 z-30 -translate-y-1/2 bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70 transition-colors"
   >
     ›
   </button>
 
-  <!-- bolinhas indicadoras de slide -->
   <div class="absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 gap-2">
     <button
       *ngFor="let slide of slides; let i = index"
