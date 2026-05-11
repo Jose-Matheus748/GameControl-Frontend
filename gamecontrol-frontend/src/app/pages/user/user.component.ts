@@ -173,14 +173,31 @@ export class UserComponent implements OnInit {
 
     this.selectedProfileFile = file;
 
-    if (this.previewUrl) {
-      URL.revokeObjectURL(this.previewUrl);
-    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      this.previewUrl = base64;
+      this.cdr.detectChanges();
 
-    this.previewUrl = URL.createObjectURL(file);
+      this.userService.uploadProfilePicture(this.userId, base64).subscribe({
+        next: (updatedUser: Usuario) => {
+          this.userData = updatedUser;
+          this.selectedProfileFile = null;
+          this.toast.sucesso('Foto de perfil atualizada!');
+          this.cdr.detectChanges();
+        },
+        error: (err: unknown) => {
+          console.error('Erro ao enviar foto de perfil:', err);
+          this.toast.erro('Não foi possível salvar a foto de perfil.');
+          this.previewUrl = null;
+          this.selectedProfileFile = null;
+          this.cdr.detectChanges();
+        }
+      });
+    };
+    reader.readAsDataURL(file);
 
     input.value = '';
-    this.cdr.detectChanges();
   }
 
   criarPlaylist() {
