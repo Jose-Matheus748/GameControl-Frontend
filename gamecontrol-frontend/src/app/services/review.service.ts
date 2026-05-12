@@ -19,6 +19,13 @@ export interface CreateReviewRequest {
   description: string;
 }
 
+export interface GameReviewsPage {
+  game: any;
+  reviews: Review[];
+  average: number;
+  displayAverage: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,4 +50,8 @@ export class ReviewService {
   delete(id: string): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
+
+  getReviewPage(gameId: string): Observable<GameReviewsPage> {
+  return this.http.get<GameReviewsPage>(`${this.apiUrl}/reviews/${gameId}/reviews-page`);
+}
 }
