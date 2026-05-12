@@ -30,14 +30,6 @@
               </div>
             </ng-template>
           </label>
-
-          <input
-            id="profileUpload"
-            type="file"
-            accept="image/*"
-            class="hidden"
-            (change)="onProfileImageSelected($event)"
-          />
         </div>
 
         <div class="flex-1 min-w-0">
@@ -210,7 +202,6 @@
               </div>
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-white truncate">{{ displayUsernameForId(uid) }}</p>
-                <p class="text-xs text-gray-500 truncate font-mono">{{ uid }}</p>
               </div>
             </a>
           </li>

@@ -5,12 +5,13 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { UsuarioService, Usuario } from '../../services/user.service';
 import { ToastService } from '../../services/toast.service';
 import { Playlist, PlaylistService } from '../../services/playlist.service';
+import { UserPostFeedComponent } from '../../components/user-post-feed/user-post-feed.component';
 import { Toast } from 'ngx-toastr';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, UserPostFeedComponent,],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
@@ -119,6 +120,11 @@ export class ProfileComponent implements OnInit {
     const ids =
       this.socialModalTab === 'followers' ? this.userData.followers : this.userData.following;
     return [...(ids ?? [])];
+  }
+
+  get usuarioLogadoId(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('userId');
   }
 
   toggleFollow() {

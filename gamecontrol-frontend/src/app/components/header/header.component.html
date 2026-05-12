@@ -40,7 +40,7 @@
         </ng-container>
 
         <ng-template #logged>
-        <a
+          <a
             routerLink="/profile"
             class="flex items-center gap-2 px-4 py-2 rounded-full
                    border border-cyan-500/20
@@ -50,7 +50,17 @@
                    hover:text-pink-400
                    transition-all duration-300"
           >
-            <svg lucideUserRound class="w-4 h-4 text-cyan-400"></svg>
+            <!-- Avatar condicional -->
+            <img
+              *ngIf="authService.user()?.profilePictureUrl; else defaultHeaderAvatar"
+              [src]="authService.user()?.profilePictureUrl"
+              alt="avatar"
+              class="w-6 h-6 rounded-full object-cover ring-1 ring-cyan-500/40"
+            />
+            <ng-template #defaultHeaderAvatar>
+              <svg lucideUserRound class="w-4 h-4 text-cyan-400"></svg>
+            </ng-template>
+
             <span class="font-medium">
               {{ authService.user()?.username }}
             </span>

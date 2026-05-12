@@ -10,6 +10,7 @@ export interface UserPostDTO {
   likes: number;
   commentIds?: string[];
   createdAt: string;
+  profilePictureUrl?: string;
 }
 
 export interface CreateUserPostRequest {

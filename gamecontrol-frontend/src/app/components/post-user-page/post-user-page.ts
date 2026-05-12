@@ -2,13 +2,16 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs'; // Importa forkJoin para buscar usuário e posts ao mesmo tempo.
+import { forkJoin } from 'rxjs';
+import { PostCommentService, PostCommentDTO } from '../../services/post-comment.service';
+import { LucideX, LucideSend } from '@lucide/angular';
 
 import {
   LucideHeart,
   LucideMessageCircle,
   LucideSparkles,
   LucideUserRound,
+  LucideTrash2,
   LucideSquareArrowOutUpRight,
 } from '@lucide/angular';
 
@@ -28,7 +31,9 @@ import { PostService, UserPostDTO } from '../../services/posts.service';
     LucideMessageCircle,
     LucideUserRound,
     LucideSparkles,
+    LucideTrash2,
     LucideSquareArrowOutUpRight,
+    LucideSend
   ],
   templateUrl: './post-user-page.html',
 })
@@ -41,6 +46,12 @@ export class PostUserPageComponent implements OnInit {
   carregandoPosts = false;
   enviandoPost = false;
 
+  postSelecionadoId: string | null = null;
+  comentariosPorPost: Record<string, PostCommentDTO[]> = {};
+  carregandoComentarios = false;
+  textoComentario = '';
+  enviandoComentario = false;
+
   readonly maximoDeCaracteresNoPost = 280;
   likedPostIds = new Set<string>();
 
@@ -48,6 +59,7 @@ export class PostUserPageComponent implements OnInit {
     private toast: ToastService,
     private postService: PostService,
     private usuarioService: UsuarioService,
+    private postCommentService: PostCommentService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -196,8 +208,79 @@ export class PostUserPageComponent implements OnInit {
     return post.commentIds?.length || 0;
   }
 
-  comentariosEmBreve(): void {
-    this.toast.info('Comentários em breve.');
+  abrirComentarios(postId: string): void {
+    if (this.postSelecionadoId === postId) {
+      this.postSelecionadoId = null;
+      return;
+    }
+
+    this.postSelecionadoId = postId;
+    this.textoComentario = '';
+
+    if (this.comentariosPorPost[postId]) {
+      return; // já carregados
+    }
+
+    this.carregandoComentarios = true;
+
+    this.postCommentService.listarPorPost(postId).subscribe({
+      next: (comentarios) => {
+        this.comentariosPorPost[postId] = comentarios;
+        this.carregandoComentarios = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.toast.erro('Não foi possível carregar os comentários.');
+        this.carregandoComentarios = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  enviarComentario(postId: string): void {
+    const texto = this.textoComentario.trim();
+    const loggedUserId = this.usuarioLogadoId;
+
+    if (!texto) return;
+    if (!loggedUserId) {
+      this.toast.erro('Usuário não identificado. Faça login novamente.');
+      return;
+    }
+
+    this.enviandoComentario = true;
+
+    this.postCommentService.criar({
+      userId: loggedUserId,
+      postId,
+      content: texto,
+    }).subscribe({
+      next: (comentario) => {
+        if (!this.comentariosPorPost[postId]) {
+          this.comentariosPorPost[postId] = [];
+        }
+        this.comentariosPorPost[postId] = [...this.comentariosPorPost[postId], comentario];
+
+        // Atualiza o contador local no post
+        const post = this.posts.find(p => p.id === postId);
+        if (post) {
+          post.commentIds = [...(post.commentIds || []), comentario.id];
+          this.posts = [...this.posts];
+        }
+
+        this.textoComentario = '';
+        this.enviandoComentario = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.toast.erro('Não foi possível enviar o comentário.');
+        this.enviandoComentario = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  comentariosDoPost(postId: string): PostCommentDTO[] {
+    return this.comentariosPorPost[postId] || [];
   }
 
   timeAgo(iso: string): string {
@@ -220,5 +303,30 @@ export class PostUserPageComponent implements OnInit {
 
   trackByPostId(index: number, post: UserPostDTO): string {
     return post.id;
+  }
+
+
+  deletarPost(postId: string): void {
+    this.postService.deletarPost(postId).subscribe({
+      next: () => {
+        this.posts = this.posts.filter((post) => post.id !== postId);
+        this.toast.sucesso('Post excluído com sucesso!');
+
+        // Atualiza a tela.
+        this.cdr.detectChanges();
+      },
+
+      error: (error) => {
+        console.error('Erro ao excluir post:', error);
+        this.toast.erro('Não foi possível excluir o post');
+
+        // Atualiza a tela.
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  podeDeletar(post: UserPostDTO): boolean {
+    return String(post.userId) === String(this.usuarioLogadoId);
   }
 }

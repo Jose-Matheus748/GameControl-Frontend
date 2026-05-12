@@ -1,9 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs'; // Importa forkJoin para executar duas requisições ao mesmo tempo.
 import { PostService, UserPostDTO } from '../../services/posts.service';
 import { UsuarioService } from '../../services/user.service';
+import { PostCommentService, PostCommentDTO } from '../../services/post-comment.service'; // <- adicionar
 
 import {
   LucideHeart,
@@ -36,11 +37,18 @@ export class PostHomePageComponent implements OnInit {
   textoCriacaoDoPost = '';
   carregando = false;
 
+  postSelecionadoId: string | null = null;
+  comentariosPorPost: Record<string, PostCommentDTO[]> = {};
+  carregandoComentarios = false;
+  textoComentario = '';
+  enviandoComentario = false;
+
   readonly limiteCaracteres = 280;
 
   constructor(
     private postService: PostService,
     private usuarioService: UsuarioService,
+    private postCommentService: PostCommentService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -214,5 +222,79 @@ export class PostHomePageComponent implements OnInit {
   // Ajuda o Angular a identificar cada post no *ngFor.
   trackByPostId(index: number, post: UserPostDTO): string {
     return post.id;
+  }
+
+  abrirComentarios(postId: string): void {
+    if (this.postSelecionadoId === postId) {
+      this.postSelecionadoId = null;
+      return;
+    }
+
+    this.postSelecionadoId = postId;
+    this.textoComentario = '';
+
+    if (this.comentariosPorPost[postId]) {
+      return;
+    }
+
+    this.carregandoComentarios = true;
+
+    this.postCommentService.listarPorPost(postId).subscribe({
+      next: (comentarios) => {
+        this.comentariosPorPost[postId] = comentarios;
+        this.carregandoComentarios = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.toast.erro('Não foi possível carregar os comentários.');
+        this.carregandoComentarios = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  enviarComentario(postId: string): void {
+    const texto = this.textoComentario.trim();
+    const userId = this.usuarioLogadoId;
+
+    if (!texto) return;
+    if (!userId) {
+      this.toast.erro('Usuário não identificado. Faça login novamente.');
+      return;
+    }
+
+    this.enviandoComentario = true;
+
+    this.postCommentService.criar({
+      userId,
+      postId,
+      content: texto,
+    }).subscribe({
+      next: (comentario) => {
+        if (!this.comentariosPorPost[postId]) {
+          this.comentariosPorPost[postId] = [];
+        }
+        this.comentariosPorPost[postId] = [...this.comentariosPorPost[postId], comentario];
+
+        const post = this.posts.find(p => p.id === postId);
+        if (post) {
+          post.commentIds = [...(post.commentIds || []), comentario.id];
+          this.posts = [...this.posts];
+        }
+
+        this.textoComentario = '';
+        this.enviandoComentario = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.toast.erro('Não foi possível enviar o comentário.');
+        this.enviandoComentario = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  comentariosDoPost(postId: string): PostCommentDTO[] {
+    return this.comentariosPorPost[postId] || [];
   }
 }

@@ -2,166 +2,176 @@
   Carregando usuário...
 </div>
 
-<div
-  *ngIf="!loading && userData"
-  class="max-w-6xl mx-auto bg-slate-900/90 border border-cyan-500/20 text-white rounded-2xl p-10 shadow-lg mt-8"
->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-10">
-    <div class="md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
-      <label
-        for="otherProfile"
-        class="cursor-pointer block"
-        title="Foto de perfil de outro usuário"
-      >
+<div *ngIf="!loading && userData" class="max-w-6xl mx-auto px-4 py-8 text-white">
+
+  <!-- Hero Card -->
+  <div class="bg-slate-900/90 border border-cyan-500/20 rounded-2xl p-6 shadow-lg mb-6">
+    <div class="flex flex-col sm:flex-row gap-6 items-start">
+
+      <!-- Avatar -->
+      <div class="shrink-0 mx-auto sm:mx-0">
         <img
           *ngIf="userData.profilePictureUrl; else defaultAvatar"
           [src]="userData.profilePictureUrl"
           alt="Avatar"
-          class="w-32 h-32 rounded-full border-4 border-gray-600 mb-4"
+          class="w-24 h-24 rounded-full object-cover ring-2 ring-cyan-500/30 shadow-[0_0_20px_#EB479933]"
         />
-
         <ng-template #defaultAvatar>
-          <div
-            class="w-24 h-24 rounded-full bg-slate-900/90 flex justify-center items-center shadow-[0_0_20px_#EB479933] ring-2 ring-cyan-500/15"
-          >
-            <svg
-              class="w-12 h-12 text-cyan-500/90"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
+          <div class="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center ring-2 ring-cyan-500/20 shadow-[0_0_20px_#EB479933]">
+            <svg class="w-12 h-12 text-cyan-500/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="8" r="5" />
               <path d="M20 21a8 8 0 0 0-16 0" />
             </svg>
           </div>
         </ng-template>
-      </label>
-
-      <h2 class="text-3xl font-bold mt-3">{{ userData.username }}</h2>
-      <p class="text-gray-300 mt-2">
-        {{ userData.bio || 'Sem biografia disponível.' }}
-      </p>
-
-      <div class="relative flex items-center gap-5 mt-4 pt-4 border-t border-cyan-500/20 flex-wrap">
-        <button
-          type="button"
-          class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-pink-300 transition-colors cursor-pointer rounded-lg px-1 -mx-1 py-0.5 text-left"
-          (click)="openSocialModal('followers')"
-          title="Ver seguidores"
-        >
-          <svg
-            class="w-4 h-4 text-pink-500 shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <circle cx="9" cy="7" r="4" />
-          </svg>
-          <span class="font-medium text-white">{{ followersCount }}</span>
-          <span>seguidores</span>
-        </button>
-        <span class="text-cyan-500/20">•</span>
-        <button
-          type="button"
-          class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-pink-300 transition-colors cursor-pointer rounded-lg px-1 -mx-1 py-0.5 text-left"
-          (click)="openSocialModal('following')"
-          title="Ver seguindo"
-        >
-          <svg
-            class="w-4 h-4 text-pink-500 shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-            <circle cx="9" cy="7" r="4" />
-          </svg>
-          <span class="font-medium text-white">{{ followingCount }}</span>
-          <span>seguindo</span>
-        </button>
       </div>
 
-      <button
-        *ngIf="!isOwnProfile"
-        class="mt-6 px-6 py-2 rounded-lg transition duration-300 cursor-pointer"
-        [ngClass]="{
-          'bg-pink-500 hover:bg-pink-600': !isFollowing,
-          'bg-gray-700 hover:bg-gray-600': isFollowing,
-        }"
-        (click)="toggleFollow()"
-      >
-        {{ isFollowing ? 'Seguindo' : 'Seguir' }}
-      </button>
-    </div>
+      <!-- Info -->
+      <div class="flex-1 min-w-0 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-1">
+          <h2 class="text-2xl font-bold text-white truncate">{{ userData.username }}</h2>
+          <button
+            *ngIf="!isOwnProfile"
+            class="self-center sm:self-auto px-5 py-1.5 rounded-full text-sm font-semibold transition-all duration-300 cursor-pointer"
+            [ngClass]="{
+              'bg-pink-500 hover:bg-pink-600 text-white shadow-[0_0_12px_#EB479966]': !isFollowing,
+              'bg-slate-700 hover:bg-slate-600 text-gray-300': isFollowing
+            }"
+            (click)="toggleFollow()"
+          >
+            {{ isFollowing ? 'Seguindo' : '+ Seguir' }}
+          </button>
+        </div>
 
-    <aside
-      class="md:col-span-2 bg-[#090f1b] border border-cyan-500/20 p-10 rounded-2xl shadow-inner"
-    >
-      <h3 class="text-2xl font-semibold mb-8 text-pink-400 text-center md:text-left">Playlists</h3>
+        <p class="text-gray-400 text-sm mb-4">
+          {{ userData.bio || 'Sem biografia disponível.' }}
+        </p>
 
-      <ng-container *ngIf="playlists.length; else noPlaylists">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div
-            *ngFor="let playlist of playlists"
-            [routerLink]="['/playlists', playlist.id]"
-            class="bg-[#111111] border border-gray-700 rounded-xl p-6 hover:bg-[#292929] transition duration-300 cursor-pointer">
+        <!-- Stats em linha -->
+        <div class="flex items-center justify-center sm:justify-start gap-6 pt-4 border-t border-cyan-500/10">
+          <button
+            type="button"
+            class="flex flex-col items-center sm:items-start hover:text-pink-400 transition-colors cursor-pointer"
+            (click)="openSocialModal('followers')"
+          >
+            <span class="text-lg font-bold text-white leading-none">{{ followersCount }}</span>
+            <span class="text-xs text-gray-500 mt-0.5">seguidores</span>
+          </button>
 
-            <h4 class="text-lg font-semibold text-white truncate">{{ playlist.nome }}</h4>
-            <p class="text-sm text-gray-400 mt-2 line-clamp-2">
-              {{ playlist.descricao || 'Sem descrição' }}
-            </p>
-            <p class="text-xs text-gray-500 mt-3">{{ playlist.jogosIds?.length || 0 }} jogos</p>
+          <div class="w-px h-8 bg-cyan-500/10"></div>
+
+          <button
+            type="button"
+            class="flex flex-col items-center sm:items-start hover:text-pink-400 transition-colors cursor-pointer"
+            (click)="openSocialModal('following')"
+          >
+            <span class="text-lg font-bold text-white leading-none">{{ followingCount }}</span>
+            <span class="text-xs text-gray-500 mt-0.5">seguindo</span>
+          </button>
+
+          <div class="w-px h-8 bg-cyan-500/10"></div>
+
+          <div class="flex flex-col items-center sm:items-start">
+            <span class="text-lg font-bold text-white leading-none">{{ playlists.length }}</span>
+            <span class="text-xs text-gray-500 mt-0.5">playlists</span>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid: Posts + Playlists -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+    <!-- Card: Posts -->
+    <div class="bg-slate-900/90 border border-cyan-500/20 rounded-2xl shadow-lg overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-cyan-500/15">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-pink-500/15 flex items-center justify-center ring-1 ring-pink-500/30">
+            <svg class="w-3.5 h-3.5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-semibold text-white text-sm">Posts</h3>
+        </div>
+      </div>
+
+      <app-user-post-feed [userId]="userId"></app-user-post-feed>
+    </div>
+
+    <!-- Card: Playlists -->
+    <div class="bg-slate-900/90 border border-cyan-500/20 rounded-2xl shadow-lg overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-cyan-500/15">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-pink-500/15 flex items-center justify-center ring-1 ring-pink-500/30">
+            <svg class="w-3.5 h-3.5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </div>
+          <h3 class="font-semibold text-white text-sm">Playlists</h3>
+          <span class="text-xs text-gray-500 bg-slate-800 border border-cyan-500/10 rounded-full px-2 py-0.5">
+            {{ playlists.length }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Lista de playlists -->
+      <ng-container *ngIf="playlists.length; else noPlaylists">
+        <ul class="divide-y divide-cyan-500/10 max-h-[640px] overflow-y-auto">
+          <li
+            *ngFor="let playlist of playlists"
+            [routerLink]="['/playlists', playlist.id]"
+            class="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
+          >
+            <!-- Ícone da playlist -->
+            <div class="w-10 h-10 rounded-xl bg-slate-800 border border-cyan-500/15 flex items-center justify-center shrink-0 group-hover:border-pink-500/30 transition-colors">
+              <svg class="w-5 h-5 text-cyan-500/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
+              </svg>
+            </div>
+
+            <!-- Nome e contagem -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-white truncate group-hover:text-pink-400 transition-colors">
+                {{ playlist.nome }}
+              </p>
+              <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                {{ playlist.descricao || 'Sem descrição' }}
+              </p>
+            </div>
+
+            <!-- Contagem de jogos + seta -->
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xs text-gray-500 bg-slate-800 border border-cyan-500/10 rounded-full px-2 py-0.5">
+                {{ playlist.jogosIds?.length || 0 }} jogos
+              </span>
+              <svg class="w-4 h-4 text-gray-600 group-hover:text-pink-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </div>
+          </li>
+        </ul>
       </ng-container>
 
       <ng-template #noPlaylists>
-        <div class="flex flex-col items-center justify-center py-4 text-center">
-          <div
-            class="w-16 h-16 rounded-xl bg-[#272A35]/80 border border-white/10 flex items-center justify-center mb-4"
-          >
-            <svg
-              class="w-7 h-7 text-gray-400"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="6" x2="10" y1="11" y2="11" />
-              <line x1="8" x2="8" y1="9" y2="13" />
-              <line x1="15" x2="15.01" y1="12" y2="12" />
-              <line x1="18" x2="18.01" y1="10" y2="10" />
-              <path
-                d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"
-              />
+        <div class="flex flex-col items-center justify-center px-5 py-12 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-cyan-500/10 flex items-center justify-center mb-4">
+            <svg class="w-7 h-7 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
             </svg>
           </div>
-
-          <p class="font-medium text-white mb-1">Este usuário não tem playlists</p>
+          <p class="text-sm font-medium text-white mb-1">Nenhuma playlist ainda</p>
+          <p class="text-xs text-gray-500">As playlists criadas aparecerão aqui.</p>
         </div>
       </ng-template>
-    </aside>
-  </section>
+    </div>
+
+  </div>
 </div>
 
 <!-- Modal seguidores / seguindo -->
@@ -179,7 +189,7 @@
     [attr.aria-label]="socialModalTab === 'followers' ? 'Seguidores' : 'Seguindo'"
   >
     <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20 shrink-0">
-      <h3 class="text-lg font-semibold text-white">Rede</h3>
+      <h3 class="text-lg font-semibold text-white">Rede social</h3>
       <button
         type="button"
         class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
@@ -194,73 +204,51 @@
       <button
         type="button"
         class="flex-1 py-3 text-sm font-medium transition-colors cursor-pointer"
-        [ngClass]="
-          socialModalTab === 'followers'
-            ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
-            : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'
-        "
+        [ngClass]="socialModalTab === 'followers'
+          ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
+          : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'"
         (click)="socialModalTab = 'followers'"
       >
-        Seguidores
-        <span class="text-gray-500 font-normal">({{ followersCount }})</span>
+        Seguidores <span class="text-gray-500 font-normal">({{ followersCount }})</span>
       </button>
       <button
         type="button"
         class="flex-1 py-3 text-sm font-medium transition-colors cursor-pointer"
-        [ngClass]="
-          socialModalTab === 'following'
-            ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
-            : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'
-        "
+        [ngClass]="socialModalTab === 'following'
+          ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
+          : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'"
         (click)="socialModalTab = 'following'"
       >
-        Seguindo
-        <span class="text-gray-500 font-normal">({{ followingCount }})</span>
+        Seguindo <span class="text-gray-500 font-normal">({{ followingCount }})</span>
       </button>
     </div>
 
     <div class="overflow-y-auto flex-1 min-h-0 px-2 py-2">
-      <div *ngIf="socialModalLoading" class="py-12 text-center text-gray-400 text-sm">Carregando nomes…</div>
+      <div *ngIf="socialModalLoading" class="py-12 text-center text-gray-400 text-sm">Carregando...</div>
 
       <ng-container *ngIf="!socialModalLoading">
         <ul *ngIf="socialListIds.length; else emptySocial" class="divide-y divide-cyan-500/10">
           <li *ngFor="let uid of socialListIds" class="px-3">
             <a
-              [routerLink]="['/profile', uid]"
+              [routerLink]="uid === usuarioLogadoId ? ['/profile'] : ['/user', uid]"
               class="flex items-center gap-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left no-underline"
               (click)="closeSocialModal()"
             >
-              <div
-                class="w-10 h-10 rounded-full bg-slate-800 border border-cyan-500/20 flex items-center justify-center shrink-0"
-              >
-                <svg
-                  class="w-5 h-5 text-cyan-500/80"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
+              <div class="w-10 h-10 rounded-full bg-slate-800 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-cyan-500/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <circle cx="12" cy="8" r="5" />
                   <path d="M20 21a8 8 0 0 0-16 0" />
                 </svg>
               </div>
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-white truncate">{{ displayUsernameForId(uid) }}</p>
-                <p class="text-xs text-gray-500 truncate font-mono">{{ uid }}</p>
               </div>
             </a>
           </li>
         </ul>
         <ng-template #emptySocial>
           <div class="py-14 text-center text-gray-500 text-sm">
-            {{
-              socialModalTab === 'followers'
-                ? 'Ninguém segue este perfil ainda.'
-                : 'Este perfil ainda não segue ninguém.'
-            }}
+            {{ socialModalTab === 'followers' ? 'Ninguém segue este perfil ainda.' : 'Este perfil ainda não segue ninguém.' }}
           </div>
         </ng-template>
       </ng-container>
