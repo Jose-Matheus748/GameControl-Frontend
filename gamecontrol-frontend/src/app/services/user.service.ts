@@ -41,6 +41,12 @@ export class UsuarioService {
     return this.http.put<Usuario>(`${this.apiUrl}/${id}`, usuario);
   }
 
+  uploadProfilePicture(id: string | number, base64Image: string): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}/${id}/profile-picture`, {
+      profilePictureUrl: base64Image
+    });
+  }
+
   delete(id: number): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }

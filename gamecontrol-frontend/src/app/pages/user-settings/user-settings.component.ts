@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { switchMap, of, Observable } from 'rxjs';
 import { Usuario, UsuarioService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
@@ -28,7 +29,7 @@ export class SettingsComponent implements OnInit {
     profilePictureUrl: ''
   };
 
-  selectedFile?: File;
+  selectedBase64: string | null = null;
   currentUserId = '';
   previewUrl: string | null = null;
   loading = true;
@@ -102,30 +103,40 @@ export class SettingsComponent implements OnInit {
 
     if (!input.files?.length) return;
 
-    this.selectedFile = input.files[0];
-
-    if (this.previewUrl) {
-      URL.revokeObjectURL(this.previewUrl);
-    }
-
-    this.previewUrl = URL.createObjectURL(this.selectedFile);
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.selectedBase64 = reader.result as string;
+      this.previewUrl = this.selectedBase64;
+      this.cdr.detectChanges();
+    };
+    reader.readAsDataURL(file);
   }
 
   saveChanges(): void {
-    const payload = {
-      username: this.userData.username,
-      bio: this.userData.bio,
-      country: this.userData.country
-    };
+    const upload$: Observable<unknown> = this.selectedBase64
+      ? this.userService.uploadProfilePicture(this.currentUserId, this.selectedBase64)
+      : of(null);
 
-    this.userService.update(this.currentUserId, payload).subscribe({
-      next: (updatedUser) => {
+    upload$.pipe(
+      switchMap(() => {
+        const payload = {
+          username: this.userData.username,
+          bio: this.userData.bio,
+          country: this.userData.country
+        };
+        return this.userService.update(this.currentUserId, payload);
+      })
+    ).subscribe({
+      next: (updatedUser: Usuario) => {
+        this.selectedBase64 = null;
+        this.previewUrl = null;
         this.setUserData(updatedUser);
         this.authService.user.set(updatedUser);
         this.toast.sucesso('Perfil atualizado com sucesso!');
-        this.router.navigate(['/profile']);
+        this.router.navigate(['/profile', this.currentUserId]);
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('Erro ao atualizar perfil:', err);
         this.toast.erro('Não foi possível atualizar o perfil!');
       }
