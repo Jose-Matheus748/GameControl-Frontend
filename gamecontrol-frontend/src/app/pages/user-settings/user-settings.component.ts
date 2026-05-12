@@ -134,7 +134,7 @@ export class SettingsComponent implements OnInit {
         this.setUserData(updatedUser);
         this.authService.user.set(updatedUser);
         this.toast.sucesso('Perfil atualizado com sucesso!');
-        this.router.navigate(['/profile', this.currentUserId]);
+        this.router.navigate(['/profile']);
       },
       error: (err: unknown) => {
         console.error('Erro ao atualizar perfil:', err);

@@ -85,16 +85,13 @@
       <div class="flex gap-3">
         <div class="shrink-0">
           <img
-            *ngIf="user?.profilePictureUrl; else defaultPostAvatar"
-            [src]="user?.profilePictureUrl"
+            *ngIf="post.profilePictureUrl; else defaultPostAvatar"
+            [src]="post.profilePictureUrl"
             alt="avatar"
             class="w-10 h-10 rounded-full object-cover ring-1 ring-cyan-500/20"
           />
-
           <ng-template #defaultPostAvatar>
-            <div
-              class="w-10 h-10 rounded-full bg-slate-950 flex items-center justify-center ring-1 ring-cyan-500/20"
-            >
+            <div class="w-10 h-10 rounded-full bg-slate-950 flex items-center justify-center ring-1 ring-cyan-500/20">
               <svg lucideUserRound class="w-5 h-5 text-cyan-500/80"></svg>
             </div>
           </ng-template>
@@ -103,9 +100,9 @@
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 text-sm flex-wrap">
             <a
-              [routerLink]="['/user', post.userId]"
-              class="font-semibold text-white truncate hover:text-pink-400 transition-colors cursor-pointer"
-            >
+              [routerLink]="post.userId === usuarioLogadoId ? ['/profile'] : ['/user', post.userId]"
+                class="font-semibold text-white truncate hover:text-pink-500 transition-colors cursor-pointer"
+              >
               {{ post.username || 'Usuário' }}
             </a>
 
@@ -126,7 +123,8 @@
             <button
               type="button"
               class="group flex items-center gap-1 text-xs hover:text-cyan-300 transition-colors"
-              (click)="comentariosEmBreve()"
+              (click)="abrirComentarios(post.id)"
+              [ngClass]="postSelecionadoId === post.id ? 'text-cyan-300' : 'text-gray-400'"
             >
               <span class="p-1.5 rounded-full group-hover:bg-cyan-500/10">
                 <svg lucideMessageCircle class="w-4 h-4"></svg>
@@ -151,6 +149,57 @@
               </span>
               {{ post.likes }}
             </button>
+            <button
+                *ngIf="podeDeletar(post)"
+                type="button"
+                class="group flex items-center gap-1 text-xs hover:text-red-400 transition-colors"
+                (click)="deletarPost(post.id)"
+              >
+                <span class="p-1.5 rounded-full group-hover:bg-red-500/10">
+                  <svg lucideTrash2 class="w-4 h-4"></svg>
+                </span>
+              </button>
+          </div>
+
+          <div *ngIf="postSelecionadoId === post.id" class="mt-3 border-t border-cyan-500/10 pt-3">
+
+            <!-- Loading -->
+            <p *ngIf="carregandoComentarios" class="text-xs text-gray-500 mb-2">Carregando comentários...</p>
+
+            <!-- Lista de comentários -->
+            <ul class="space-y-2 mb-3">
+              <li
+                *ngFor="let c of comentariosDoPost(post.id)"
+                class="flex gap-2 text-xs text-gray-300"
+              >
+                <span class="font-semibold text-white shrink-0">{{ c.username }}</span>
+                <span class="text-gray-400">{{ c.content }}</span>
+              </li>
+              <li *ngIf="!carregandoComentarios && comentariosDoPost(post.id).length === 0"
+                  class="text-xs text-gray-500">
+                Nenhum comentário ainda. Seja o primeiro!
+              </li>
+            </ul>
+
+            <!-- Input de novo comentário -->
+            <div class="flex gap-2 items-center">
+              <input
+                type="text"
+                [(ngModel)]="textoComentario"
+                placeholder="Escreva um comentário..."
+                maxlength="280"
+                (keyup.enter)="enviarComentario(post.id)"
+                class="flex-1 bg-slate-800 border border-cyan-500/20 rounded-full px-3 py-1.5 text-xs text-white placeholder:text-gray-500 outline-none focus:border-cyan-500/50"
+              />
+              <button
+                type="button"
+                [disabled]="enviandoComentario || !textoComentario.trim()"
+                (click)="enviarComentario(post.id)"
+                class="p-1.5 rounded-full bg-pink-500/20 text-pink-400 hover:bg-pink-500/30 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <svg lucideSend class="w-3.5 h-3.5"></svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

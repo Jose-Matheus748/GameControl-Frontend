@@ -23,19 +23,22 @@ export class UserCarouselComponent {
   visibleItems = 5;
 
   userCards$ = this.usuarioService.getAll().pipe(
-    map((users: Usuario[]) =>
-      users.map((user) => ({
-        id: user.id!,
-        nickname: user.username,
-        image: user.profilePictureUrl || 'https://i.pravatar.cc/150?img=1',
-      }))
-    ),
+    map((users: Usuario[]) => {
+      const loggedUserId = localStorage.getItem('userId');
+      return users
+        .filter((user) => String(user.id) !== String(loggedUserId))
+        .map((user) => ({
+          id: user.id!,
+          nickname: user.username,
+          image: user.profilePictureUrl || 'https://i.pravatar.cc/150?img=1',
+        }));
+    }),
     catchError((err) => {
       console.error('Erro ao carregar usuários', err);
       return of<UserCard[]>([]);
     })
   );
-
+  
   next(length: number) {
     if (this.index < length - this.visibleItems) {
       this.index++;

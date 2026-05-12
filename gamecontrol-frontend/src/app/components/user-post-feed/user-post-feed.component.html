@@ -1,0 +1,98 @@
+<div class="bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl shadow-lg overflow-hidden h-full">
+
+  <div class="px-5 py-4 border-b border-cyan-500/15">
+    <h2 class="font-semibold text-white">Posts</h2>
+    <p class="text-xs text-gray-400">Publicações deste jogador</p>
+  </div>
+
+  <div *ngIf="carregando" class="px-5 py-8 text-center text-gray-400">Carregando posts...</div>
+
+  <ul *ngIf="!carregando" class="divide-y divide-cyan-500/10 max-h-[640px] overflow-y-auto">
+    <li
+      *ngFor="let post of posts; trackBy: trackByPostId"
+      class="px-5 py-4 hover:bg-white/[0.03] transition-colors"
+    >
+      <div class="flex gap-3">
+        <div class="shrink-0">
+          <img
+            *ngIf="post.profilePictureUrl; else defaultAvatar"
+            [src]="post.profilePictureUrl"
+            alt="avatar"
+            class="w-10 h-10 rounded-full object-cover ring-1 ring-cyan-500/20"
+          />
+          <ng-template #defaultAvatar>
+            <div class="w-10 h-10 rounded-full bg-slate-950 flex items-center justify-center ring-1 ring-cyan-500/20">
+              <svg lucideUserRound class="w-5 h-5 text-cyan-500/80"></svg>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 text-sm flex-wrap">
+            <span class="font-semibold text-white">{{ post.username || 'Usuário' }}</span>
+            <span class="text-gray-500">·</span>
+            <span class="text-gray-500">{{ timeAgo(post.createdAt) }}</span>
+          </div>
+
+          <p class="mt-1 text-sm text-gray-100 whitespace-pre-wrap leading-relaxed">
+            {{ post.text }}
+          </p>
+
+          <div class="flex items-center mt-3 gap-5 text-gray-400">
+            <button type="button"
+              class="group flex items-center gap-1 text-xs hover:text-cyan-300 transition-colors"
+              (click)="abrirComentarios(post.id)"
+              [ngClass]="postSelecionadoId === post.id ? 'text-cyan-300' : 'text-gray-400'"
+            >
+              <span class="p-1.5 rounded-full group-hover:bg-cyan-500/10">
+                <svg lucideMessageCircle class="w-4 h-4"></svg>
+              </span>
+              {{ quantidadeComentarios(post) }}
+            </button>
+
+            <button type="button"
+              class="group flex items-center gap-1.5 text-xs transition-colors"
+              [ngClass]="likedPostIds.has(post.id) ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'"
+              (click)="toggleLikeLocal(post)"
+            >
+              <span class="p-1.5 rounded-full group-hover:bg-pink-500/10">
+                <svg lucideHeart class="w-4 h-4" [ngClass]="likedPostIds.has(post.id) ? 'fill-current' : ''"></svg>
+              </span>
+              {{ post.likes }}
+            </button>
+          </div>
+
+          <div *ngIf="postSelecionadoId === post.id" class="mt-3 border-t border-cyan-500/10 pt-3">
+            <p *ngIf="carregandoComentarios" class="text-xs text-gray-500 mb-2">Carregando comentários...</p>
+            <ul class="space-y-2 mb-3">
+              <li *ngFor="let c of comentariosDoPost(post.id)" class="flex gap-2 text-xs text-gray-300">
+                <span class="font-semibold text-white shrink-0">{{ c.username }}</span>
+                <span class="text-gray-400">{{ c.content }}</span>
+              </li>
+              <li *ngIf="!carregandoComentarios && comentariosDoPost(post.id).length === 0" class="text-xs text-gray-500">
+                Nenhum comentário ainda. Seja o primeiro!
+              </li>
+            </ul>
+            <div class="flex gap-2 items-center">
+              <input type="text" [(ngModel)]="textoComentario"
+                placeholder="Escreva um comentário..." maxlength="280"
+                (keyup.enter)="enviarComentario(post.id)"
+                class="flex-1 bg-slate-800 border border-cyan-500/20 rounded-full px-3 py-1.5 text-xs text-white placeholder:text-gray-500 outline-none focus:border-cyan-500/50"
+              />
+              <button type="button"
+                [disabled]="enviandoComentario || !textoComentario.trim()"
+                (click)="enviarComentario(post.id)"
+                class="p-1.5 rounded-full bg-pink-500/20 text-pink-400 hover:bg-pink-500/30 transition disabled:opacity-40"
+              >
+                <svg lucideSend class="w-3.5 h-3.5"></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li *ngIf="posts.length === 0" class="px-5 py-8 text-center text-gray-400">
+      Este jogador ainda não fez nenhum post.
+    </li>
+  </ul>
+</div>

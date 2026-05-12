@@ -4,11 +4,12 @@ import { HrDividerComponent } from '../../components/hr-divider/hr-divider.compo
 import { CarouselComponent } from '../../components/games-carousel/carousel.component';
 import { GameOfWeekComponent } from '../../components/game-of-week/game-of-week.component';
 import { UserCarouselComponent } from '../../components/user-carousel/user-carousel.component';
+import { PostFeedCarouselComponent } from '../../components/postFeedCarousel/post-feed-carousel.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroBannerComponent, HrDividerComponent, CarouselComponent, GameOfWeekComponent, UserCarouselComponent],
+  imports: [HeroBannerComponent, HrDividerComponent, CarouselComponent, GameOfWeekComponent, UserCarouselComponent, PostFeedCarouselComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
