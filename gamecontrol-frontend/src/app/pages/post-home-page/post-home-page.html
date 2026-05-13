@@ -84,14 +84,14 @@
 
               <button
                 type="button"
-                class="group flex items-center gap-1 text-xs hover:text-pink-400 transition-colors"
-                (click)="toggleLikeLocal(post)"
+                class="group flex items-center gap-1 text-xs transition-colors"
+                [ngClass]="jaGostei(post) ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'"
+                (click)="toggleLike(post)"
               >
                 <span class="p-1.5 rounded-full group-hover:bg-pink-500/10">
                   <svg lucideHeart class="w-4 h-4"></svg>
                 </span>
-
-                {{ post.likes || 0 }}
+                {{ post.likesCount || 0 }}
               </button>
 
               <button

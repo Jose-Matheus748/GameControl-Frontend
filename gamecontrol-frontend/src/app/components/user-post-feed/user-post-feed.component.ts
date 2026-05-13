@@ -53,6 +53,17 @@ export class UserPostFeedComponent implements OnInit {
         this.posts = posts.sort((a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+
+        // Inicializa quais posts o usuário logado já curtiu
+        const loggedUserId = this.usuarioLogadoId;
+        if (loggedUserId) {
+          this.posts.forEach(post => {
+            if (post.likedUserIds?.includes(loggedUserId)) {
+              this.likedPostIds.add(post.id);
+            }
+          });
+        }
+
         this.carregando = false;
         this.cdr.detectChanges();
       },
@@ -113,18 +124,43 @@ export class UserPostFeedComponent implements OnInit {
     return this.comentariosPorPost[postId] || [];
   }
 
-  toggleLikeLocal(post: UserPostDTO): void {
-    if (this.likedPostIds.has(post.id)) {
+  toggleLike(post: UserPostDTO): void {
+    const userId = this.usuarioLogadoId;
+    if (!userId) return;
+    
+    const jaGostei = post.likedUserIds?.includes(userId);
+    
+    // Atualização otimista
+    if (jaGostei) {
+      post.likedUserIds = post.likedUserIds.filter(id => id !== userId);
       this.likedPostIds.delete(post.id);
-      post.likes = Math.max(0, (post.likes || 0) - 1);
     } else {
+      post.likedUserIds = [...(post.likedUserIds || []), userId];
       this.likedPostIds.add(post.id);
-      post.likes = (post.likes || 0) + 1;
     }
+    post.likesCount = post.likedUserIds.length;
     this.posts = [...this.posts];
     this.cdr.detectChanges();
+  
+    // Persiste no backend
+    this.postService.toggleLike(post.id, userId).subscribe({
+      error: () => {
+        // Reverte se falhar
+        if (jaGostei) {
+          post.likedUserIds = [...(post.likedUserIds || []), userId];
+          this.likedPostIds.add(post.id);
+        } else {
+          post.likedUserIds = post.likedUserIds.filter(id => id !== userId);
+          this.likedPostIds.delete(post.id);
+        }
+        post.likesCount = post.likedUserIds.length;
+        this.posts = [...this.posts];
+        this.toast.erro('Não foi possível registrar a curtida.');
+        this.cdr.detectChanges();
+      }
+    });
   }
-
+  
   quantidadeComentarios(post: UserPostDTO): number {
     return post.commentIds?.length || 0;
   }

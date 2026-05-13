@@ -1,283 +1,378 @@
-<div *ngIf="loading" class="flex items-center justify-center py-16">
-  <p class="text-cyan-400 text-3xl font-orbitron animate-pulse drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]">
-    Carregando jogo...
-  </p>
+<div *ngIf="loading" class="w-full min-h-screen flex items-center justify-center bg-[#050816]">
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-10 h-10 rounded-full border-2 border-cyan-500/30 border-t-pink-500 animate-spin"></div>
+    <p class="text-cyan-400 font-orbitron text-sm tracking-widest animate-pulse">CARREGANDO JOGO</p>
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="w-full min-h-screen flex items-center justify-center bg-[#050816]">
+  <div class="text-center">
+    <p class="font-orbitron text-red-400 text-xl mb-2">Ops!</p>
+    <p class="text-gray-500">{{ errorMessage }}</p>
+  </div>
 </div>
 
 <div *ngIf="!loading && gameData" class="w-full min-h-screen bg-[#050816] text-white">
 
-  <div
-    class="bg-slate-900/90 border border-cyan-500/20 overflow-hidden shadow-[0_0_30px_rgba(34,211,238,0.15)] backdrop-blur-sm"
-  >
-    <div class="flex flex-col lg:flex-row">
+  <div class="relative overflow-hidden">
 
-      <div class="lg:w-1/3 w-full">
-        <img
-          [src]="gameData.coverImageUrl || 'assets/default-cover.jpg'"
-          alt="Capa do jogo"
-          class="w-full aspect-[2/3] object-cover hover:opacity-85 transition duration-300"
-        />
+    <!-- Fundo: capa do jogo com blur pesado -->
+    <div
+      class="absolute inset-0 scale-110"
+      [style.background-image]="'url(' + (gameData.coverImageUrl || 'assets/default-cover.jpg') + ')'"
+      style="background-size: cover; background-position: center;"
+    ></div>
+    <div class="absolute inset-0 bg-[#050816]/75 backdrop-blur-xl"></div>
+
+    <!-- Gradiente para o conteúdo abaixo -->
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#050816] to-transparent"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-10 py-12 flex flex-col lg:flex-row gap-10 items-start">
+
+      <!-- Capa do jogo -->
+      <div class="shrink-0 mx-auto lg:mx-0">
+        <div class="relative group">
+          <img
+            [src]="gameData.coverImageUrl || 'assets/default-cover.jpg'"
+            [alt]="gameData.title"
+            class="w-48 md:w-56 aspect-[2/3] object-cover rounded-2xl
+                   shadow-[0_0_40px_rgba(236,72,153,0.25)]
+                   group-hover:shadow-[0_0_55px_rgba(236,72,153,0.4)]
+                   group-hover:scale-[1.02]
+                   transition-all duration-400 border border-white/10"
+          />
+          <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none"></div>
+        </div>
       </div>
 
-      <div class="w-full px-8 md:px-20 lg:px-32 py-10 flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="font-orbitron text-4xl font-bold text-white">
-              {{ gameData.title }}
-            </h2>
+      <div class="flex-1 min-w-0 flex flex-col gap-5">
 
-            <button
-              (click)="addToPlaylist()"
-              class="w-12 h-12 rounded-full bg-pink-500 hover:bg-pink-600
-                     text-white text-3xl font-bold flex items-center
-                     justify-center transition-all duration-300
-                     shadow-lg shadow-pink-500/30 hover:scale-110"
-            >
-              <span class="leading-none relative -top-[1px]">+</span>
-            </button>
-          </div>
-
-          <p
-            class="text-pink-400 font-semibold uppercase tracking-widest mb-6"
+        <!-- Gêneros -->
+        <div class="flex flex-wrap gap-2">
+          <span
+            *ngFor="let genre of genreNames"
+            class="px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase
+                   bg-pink-500/15 text-pink-300 ring-1 ring-pink-500/30"
           >
-            {{ genreNames.join(', ') }}
-          </p>
+            {{ genre }}
+          </span>
+        </div>
 
-          <div class="grid md:grid-cols-2 gap-4 text-gray-300 text-lg">
-            <p>
-              <strong class="text-cyan-400">Desenvolvedora:</strong>
-              {{ gameData.developer }}
-            </p>
+        <!-- Título -->
+        <h1 class="font-orbitron text-3xl md:text-5xl font-bold text-white leading-tight">
+          {{ gameData.title }}
+        </h1>
 
-            <p>
-              <strong class="text-cyan-400">Publicadora:</strong>
-              {{ gameData.publisher }}
-            </p>
-
-            <p>
-              <strong class="text-cyan-400">Lançamento:</strong>
-              {{ gameData.releaseDate | date: 'dd/MM/yyyy' }}
-            </p>
+        <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-gray-400">
+          <div *ngIf="gameData.developer" class="flex items-center gap-2">
+            <span class="text-cyan-500/60">✦</span>
+            <span class="text-gray-500">Dev</span>
+            <span class="text-white font-medium">{{ gameData.developer }}</span>
+          </div>
+          <div *ngIf="gameData.publisher" class="flex items-center gap-2">
+            <span class="text-cyan-500/60">✦</span>
+            <span class="text-gray-500">Publisher</span>
+            <span class="text-white font-medium">{{ gameData.publisher }}</span>
+          </div>
+          <div *ngIf="gameData.releaseDate" class="flex items-center gap-2">
+            <span class="text-cyan-500/60">✦</span>
+            <span class="text-gray-500">Lançamento</span>
+            <span class="text-white font-medium">{{ gameData.releaseDate | date: 'dd/MM/yyyy' }}</span>
           </div>
         </div>
 
+        <!-- Avaliação -->
         <div
-          class="mt-16 flex flex-col items-center lg:items-start cursor-pointer"
+          class="flex items-center gap-4 cursor-pointer group/stars"
           (click)="goToReviews()"
+          title="Ver avaliações"
         >
-          <div class="flex gap-3">
+          <div class="flex gap-1">
             <span
               *ngFor="let star of stars; let i = index"
-              class="text-7xl transition-all duration-300 hover:scale-110"
+              class="text-2xl transition-all duration-200 group-hover/stars:scale-110"
               [class.text-yellow-400]="i < averageRating"
+              [class.drop-shadow-[0_0_6px_rgba(250,204,21,0.7)]]="i < averageRating"
               [class.text-gray-700]="i >= averageRating"
-            >
-              ★
-            </span>
+            >★</span>
           </div>
+          <span class="text-xl font-bold text-white">{{ displayRating }}<span class="text-gray-500 text-sm font-normal">/5</span></span>
+          <span class="text-xs text-gray-500 group-hover/stars:text-pink-400 transition-colors">
+            ver avaliações →
+          </span>
+        </div>
 
-          <p class="text-3xl font-bold text-gray-300 mt-4">
-            {{ displayRating }}/5
-          </p>
-
-          <p class="text-gray-500 mt-1">
-            Clique para ver avaliações
-          </p>
+        <!-- Botão adicionar à playlist -->
+        <div class="pt-2">
+          <button
+            (click)="addToPlaylist()"
+            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold
+                   bg-pink-500 hover:bg-pink-400 text-white
+                   shadow-[0_0_16px_rgba(236,72,153,0.4)]
+                   hover:shadow-[0_0_26px_rgba(236,72,153,0.6)]
+                   transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            Adicionar à playlist
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="p-8 border-t border-slate-700 bg-slate-950/70 text-white">
-      <h3 class="font-orbitron text-2xl text-cyan-400 mb-4">
-        Descrição
-      </h3>
-      <p class="text-gray-300 leading-8 text-lg">
-        {{ gameData.description }}
-      </p>
+  <div class="max-w-7xl mx-auto px-6 md:px-10 pb-16 flex flex-col gap-6">
+
+    <!-- Descrição -->
+    <div class="bg-slate-900/60 border border-cyan-500/10 rounded-2xl p-6 md:p-8
+                shadow-[0_0_30px_rgba(0,0,0,0.4)]">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1 h-6 rounded-full bg-gradient-to-b from-cyan-400 to-pink-500"></div>
+        <h2 class="font-orbitron text-lg font-bold text-white tracking-wide">Descrição</h2>
+      </div>
+      <p class="text-gray-300 leading-8 text-base">{{ gameData.description }}</p>
     </div>
 
-    <div class="p-8 border-t border-slate-700 bg-slate-900">
-      <h3 class="font-orbitron text-2xl text-pink-400 mb-6">
-        Comentários ({{ comments.length }})
-      </h3>
+    <!-- Comentários -->
+    <div class="bg-slate-900/60 border border-cyan-500/10 rounded-2xl p-6 md:p-8
+                shadow-[0_0_30px_rgba(0,0,0,0.4)]">
 
-      <div
-        *ngIf="isLoggedIn; else loginPrompt"
-        class="mb-8 bg-slate-800 rounded-xl p-5 border border-pink-500/20"
-      >
-        <h4 class="text-xl font-semibold text-white mb-3">
-          Deixe seu comentário
-        </h4>
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-1 h-6 rounded-full bg-gradient-to-b from-pink-500 to-cyan-400"></div>
+        <h2 class="font-orbitron text-lg font-bold text-white tracking-wide">
+          Comentários
+          <span class="font-normal text-gray-500 text-sm ml-2">({{ comments.length }})</span>
+        </h2>
+      </div>
 
+      <!-- Form de comentário -->
+      <div *ngIf="isLoggedIn; else loginPrompt" class="mb-8">
         <form (ngSubmit)="submitComment(); $event.preventDefault()">
           <textarea
             [(ngModel)]="newCommentContent"
             name="newCommentContent"
-            rows="4"
-            class="w-full p-4 bg-slate-900 text-white border border-slate-600 rounded-lg focus:ring-2 focus:ring-pink-500 resize-none"
-            placeholder="Escreva seu comentário aqui..."
-            required
+            rows="3"
+            class="w-full p-4 bg-slate-800/80 text-white text-sm
+                   border border-cyan-500/15 rounded-xl
+                   focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30
+                   placeholder:text-gray-600 resize-none transition-all"
+            placeholder="O que você achou desse jogo?"
           ></textarea>
 
-          <button
-            type="submit"
-            [disabled]="!newCommentContent.trim()"
-            class="mt-4 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-lg transition-all shadow-lg shadow-cyan-500/30"
-          >
-            Enviar Comentário
-          </button>
+          <div class="flex justify-end mt-3">
+            <button
+              type="submit"
+              [disabled]="!newCommentContent.trim()"
+              class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold
+                     bg-cyan-500/15 text-cyan-400 ring-1 ring-cyan-500/30
+                     hover:bg-cyan-500/25 hover:shadow-[0_0_12px_rgba(34,211,238,0.3)]
+                     disabled:opacity-30 disabled:cursor-not-allowed
+                     transition-all duration-200"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+              Enviar
+            </button>
+          </div>
         </form>
       </div>
 
       <ng-template #loginPrompt>
-        <div
-          class="mb-6 p-4 bg-yellow-500/10 border border-yellow-500 rounded-lg text-yellow-300"
-        >
-          Faça login para comentar.
+        <div class="mb-6 flex items-center gap-3 p-4 rounded-xl bg-yellow-500/8 border border-yellow-500/20 text-yellow-300/80 text-sm">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Faça login para deixar um comentário.
         </div>
       </ng-template>
 
-      <div *ngIf="comments.length > 0; else noComments" class="space-y-4">
+      <!-- Lista de comentários -->
+      <div *ngIf="comments.length > 0; else noComments" class="space-y-3">
         <div
           *ngFor="let comment of comments"
-          class="bg-slate-800 border border-slate-700 rounded-xl p-4"
+          class="group flex gap-4 p-4 rounded-xl bg-slate-800/50 border border-cyan-500/8
+                 hover:border-cyan-500/20 hover:bg-slate-800/70 transition-all duration-200"
         >
-          <div class="flex justify-between items-center mb-2">
-            <div>
-              <a [routerLink]="['/profile', comment.user.id]"
-                 class="text-pink-400 font-bold hover:text-pink-300 hover:underline transition-colors duration-200 cursor-pointer">
-                {{ comment.user.username || 'Usuário Desconhecido' }}
-              </a>
-              <span class="text-gray-400 text-sm ml-3">
-                {{ comment.createdAt | date: 'medium' }}
-              </span>
+          <img
+            *ngIf="comment.user.profilePictureUrl; else defaultCommentAvatar"
+            [src]="comment.user.profilePictureUrl"
+            alt="avatar"
+            class="shrink-0 w-9 h-9 rounded-full object-cover border border-cyan-500/20"
+          />
+          <ng-template #defaultCommentAvatar>
+            <div class="shrink-0 w-9 h-9 rounded-full bg-slate-700 border border-cyan-500/20
+                        flex items-center justify-center text-cyan-500/70">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+              </svg>
+            </div>
+          </ng-template>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <a
+                  [routerLink]="['/profile', comment.user.id]"
+                  class="text-sm font-semibold text-pink-400 hover:text-pink-300 transition-colors"
+                >
+                  {{ comment.user.username || 'Usuário' }}
+                </a>
+                <span class="text-xs text-gray-600">·</span>
+                <span class="text-xs text-gray-500">{{ comment.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+
+              <button
+                *ngIf="canDelete(comment)"
+                (click)="deleteComment(comment.id)"
+                class="opacity-0 group-hover:opacity-100 text-xs text-gray-600
+                       hover:text-red-400 transition-all duration-200 shrink-0"
+              >
+                Excluir
+              </button>
             </div>
 
-            <button
-              *ngIf="canDelete(comment)"
-              (click)="deleteComment(comment.id)"
-              class="text-red-400 hover:text-red-500"
-            >
-              Deletar
-            </button>
+            <p class="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+              {{ comment.content }}
+            </p>
           </div>
-
-          <p class="text-gray-300 leading-7 whitespace-pre-wrap">
-            {{ comment.content }}
-          </p>
         </div>
       </div>
 
       <ng-template #noComments>
-        <p class="text-gray-400 italic">
-          Seja o primeiro a comentar!
-        </p>
+        <div class="flex flex-col items-center justify-center py-12 gap-3 text-center">
+          <div class="w-12 h-12 rounded-xl bg-slate-800 border border-cyan-500/10 flex items-center justify-center">
+            <svg class="w-6 h-6 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <p class="text-sm font-medium text-white">Nenhum comentário ainda</p>
+          <p class="text-xs text-gray-500">Seja o primeiro a comentar!</p>
+        </div>
       </ng-template>
     </div>
   </div>
 </div>
 
-<div *ngIf="errorMessage" class="text-red-400 text-center py-10">
-  <p class="text-2xl">{{ errorMessage }}</p>
-</div>
-
-<div *ngIf="showPlaylistModal"
-     class="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-
-  <div class="bg-slate-900 border border-cyan-500/30 rounded-xl w-full max-w-md p-6">
-
-    <h2 class="text-xl font-orbitron text-white mb-4">
-      Adicionar à playlist
-    </h2>
-
-    <div class="max-h-80 overflow-y-auto space-y-3">
-
-      <div *ngFor="let playlist of userPlaylists"
-           (click)="togglePlaylist(playlist.id!)"
-           class="text-white flex items-center justify-between p-3 rounded-lg
-                  bg-slate-800 hover:bg-slate-700 cursor-pointer">
-
-        <span>{{ playlist.nome }}</span>
-
-        <input type="checkbox"
-               [checked]="selectedPlaylists.has(playlist.id!)"
-               class="accent-pink-500 pointer-events-none"/>
-      </div>
-
+<div
+  *ngIf="showPlaylistModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+  (click)="showPlaylistModal = false"
+  role="presentation"
+>
+  <div
+    class="w-full max-w-md flex flex-col rounded-2xl border border-cyan-500/25 bg-slate-900 shadow-2xl shadow-cyan-950/40"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20">
+      <h3 class="font-orbitron text-base font-bold text-white">Adicionar à playlist</h3>
+      <button
+        type="button"
+        class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+        (click)="showPlaylistModal = false"
+      >
+        <span class="text-xl leading-none">&times;</span>
+      </button>
     </div>
 
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="px-4 py-3 max-h-72 overflow-y-auto space-y-2">
+      <div
+        *ngFor="let playlist of userPlaylists"
+        (click)="togglePlaylist(playlist.id!)"
+        class="flex items-center justify-between p-3 rounded-xl cursor-pointer
+               border border-cyan-500/10 bg-slate-800/60
+               hover:border-pink-500/30 hover:bg-slate-800
+               transition-all duration-200"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-slate-700 border border-cyan-500/15 flex items-center justify-center">
+            <svg class="w-4 h-4 text-cyan-500/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </div>
+          <span class="text-sm text-white font-medium">{{ playlist.nome }}</span>
+        </div>
 
+        <div
+          class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200"
+          [ngClass]="selectedPlaylists.has(playlist.id!)
+            ? 'bg-pink-500 border-pink-500 shadow-[0_0_8px_#EB479966]'
+            : 'border-slate-600'"
+        >
+          <svg *ngIf="selectedPlaylists.has(playlist.id!)" class="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <div *ngIf="userPlaylists.length === 0" class="py-8 text-center text-gray-500 text-sm">
+        Você não tem playlists criadas.
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 px-5 py-4 border-t border-cyan-500/15">
       <button
         (click)="showPlaylistModal = false"
-        class="text-white px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-700">
+        class="px-5 py-2 rounded-lg text-gray-400 border border-slate-600 hover:border-slate-400 hover:text-gray-200 transition-all"
+      >
         Cancelar
       </button>
-
       <button
         (click)="savePlaylists()"
         [disabled]="saving"
-        class="px-6 py-3 bg-pink-500 hover:bg-pink-600
-         disabled:bg-gray-600 disabled:cursor-not-allowed
-         text-white font-bold rounded-lg transition-all"
-        >
-          {{ saving ? 'Salvando...' : 'Salvar' }}
+        class="px-6 py-2 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-bold
+               shadow-[0_0_12px_#EB479966] hover:shadow-[0_0_20px_#EB4799AA]
+               disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none
+               transition-all duration-200"
+      >
+        {{ saving ? 'Salvando...' : 'Salvar' }}
       </button>
-
     </div>
   </div>
 </div>
 
 <div
   *ngIf="deleteCommentModalOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center
-         bg-black/70 backdrop-blur-sm p-4"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
   (click)="cancelDeleteComment()"
+  role="presentation"
 >
-
   <div
-    class="w-full max-w-md rounded-2xl border border-red-500/20
-           bg-slate-900 shadow-2xl shadow-red-950/40"
+    class="w-full max-w-md rounded-2xl border border-red-500/20 bg-slate-900 shadow-2xl shadow-red-950/40"
     (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
   >
-
-    <div class="flex items-center justify-between px-5 py-4 border-b border-red-500/15">
-
-      <h3 class="text-lg font-orbitron font-bold text-red-400 tracking-wide">
-        Excluir comentário
-      </h3>
+    <div class="px-5 py-4 border-b border-red-500/15">
+      <h3 class="font-orbitron text-base font-bold text-red-400">Excluir comentário</h3>
     </div>
-
     <div class="px-5 py-6">
-
-      <p class="text-gray-300 leading-relaxed">
-        Tem certeza que deseja excluir este comentário?
-      </p>
-
-      <p class="text-sm text-red-400 mt-3">
-        Esta ação não poderá ser desfeita.
-      </p>
-
+      <p class="text-gray-300 leading-relaxed">Tem certeza que deseja excluir este comentário?</p>
+      <p class="text-sm text-red-400 mt-2">Esta ação não poderá ser desfeita.</p>
     </div>
-
     <div class="flex justify-end gap-3 px-5 py-4 border-t border-red-500/10">
-
       <button
         (click)="cancelDeleteComment()"
-        class="px-5 py-2 rounded-lg border border-slate-600
-               text-gray-300 hover:border-slate-400
-               hover:text-white transition-all"
+        class="px-5 py-2 rounded-lg border border-slate-600 text-gray-300 hover:border-slate-400 hover:text-white transition-all"
       >
         Cancelar
       </button>
-
       <button
         (click)="confirmDeleteComment()"
-        class="px-6 py-2 rounded-lg bg-red-500 hover:bg-red-400
-               text-white font-bold
-               shadow-[0_0_12px_rgba(239,68,68,0.35)]
-               hover:shadow-[0_0_18px_rgba(239,68,68,0.5)]
-               transition-all duration-300"
+        class="px-6 py-2 rounded-lg bg-red-500 hover:bg-red-400 text-white font-bold
+               shadow-[0_0_12px_rgba(239,68,68,0.35)] hover:shadow-[0_0_18px_rgba(239,68,68,0.5)]
+               transition-all duration-200"
       >
         Excluir
       </button>

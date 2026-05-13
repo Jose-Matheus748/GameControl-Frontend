@@ -53,12 +53,12 @@
             <button type="button"
               class="group flex items-center gap-1.5 text-xs transition-colors"
               [ngClass]="likedPostIds.has(post.id) ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'"
-              (click)="toggleLikeLocal(post)"
+              (click)="toggleLike(post)"
             >
               <span class="p-1.5 rounded-full group-hover:bg-pink-500/10">
                 <svg lucideHeart class="w-4 h-4" [ngClass]="likedPostIds.has(post.id) ? 'fill-current' : ''"></svg>
               </span>
-              {{ post.likes }}
+              {{ post.likesCount || 0 }}
             </button>
           </div>
 

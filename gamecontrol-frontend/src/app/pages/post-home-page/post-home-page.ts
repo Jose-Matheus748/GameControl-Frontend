@@ -192,12 +192,36 @@ export class PostHomePageComponent implements OnInit {
     this.toast.info('Comentários em breve.');
   }
 
-  // Curtida local, sem persistência no backend.
-  toggleLikeLocal(post: UserPostDTO): void {
-    post.likes = (post.likes || 0) + 1;
+  toggleLike(post: UserPostDTO): void {
+    const userId = this.usuarioLogadoId;
+    if (!userId) return;
+
+    const jaGostei = post.likedUserIds?.includes(userId);
+
+    // Atualização otimista (RNF13)
+    if (jaGostei) {
+      post.likedUserIds = post.likedUserIds.filter(id => id !== userId);
+    } else {
+      post.likedUserIds = [...(post.likedUserIds || []), userId];
+    }
+    post.likesCount = post.likedUserIds.length;
     this.posts = [...this.posts];
-    this.toast.info('Curtida local. Ainda falta endpoint de like no backend');
-    this.cdr.detectChanges();
+
+    // Persiste no backend
+    this.postService.toggleLike(post.id, userId).subscribe({
+      error: () => {
+        // Reverte se falhar
+        if (jaGostei) {
+          post.likedUserIds = [...(post.likedUserIds || []), userId];
+        } else {
+          post.likedUserIds = post.likedUserIds.filter(id => id !== userId);
+        }
+        post.likesCount = post.likedUserIds.length;
+        this.posts = [...this.posts];
+        this.toast.erro('Não foi possível registrar a curtida.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // Calcula há quanto tempo o post foi criado.
@@ -296,5 +320,9 @@ export class PostHomePageComponent implements OnInit {
 
   comentariosDoPost(postId: string): PostCommentDTO[] {
     return this.comentariosPorPost[postId] || [];
+  }
+
+  jaGostei(post: UserPostDTO): boolean {
+    return post.likedUserIds?.includes(this.usuarioLogadoId ?? '') ?? false;
   }
 }

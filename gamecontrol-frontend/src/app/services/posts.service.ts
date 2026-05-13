@@ -7,7 +7,8 @@ export interface UserPostDTO {
   userId: string;
   username: string;
   text: string;
-  likes: number;
+  likedUserIds: string[];
+  likesCount: number;
   commentIds?: string[];
   createdAt: string;
   profilePictureUrl?: string;
@@ -46,5 +47,9 @@ export class PostService {
 
   limparCache(): void {
     this.postsCache$ = undefined;
+  }
+
+  toggleLike(postId: string, userId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${postId}/like/${userId}`, {});
   }
 }
