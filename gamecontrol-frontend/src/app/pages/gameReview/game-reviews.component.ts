@@ -23,7 +23,7 @@ export class GameReviewsComponent implements OnInit {
   editing = false;
   gameId!: string;
   averageRating = 0;
-
+  averageRatingDisplay: string = '0';
   deleteModalOpen = false;
   reviewToDeleteId: string | null = null;
 
@@ -52,32 +52,29 @@ export class GameReviewsComponent implements OnInit {
     this.loadPage(id);
   }
 
-  loadPage(gameId: string) {
-    this.loading = true;
 
-    forkJoin({
-      game: this.gameService.getById(Number(gameId)),
-      reviews: this.reviewService.getByGame(gameId),
-      average: this.reviewService.getAverage(gameId)
-    }).subscribe({
-      next: ({ game, reviews, average }) => {
-        this.game = game;
-        this.reviews = reviews;
-        this.averageRating = average;
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erro na página:', err);
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
+  loadPage(gameId: string) {
+  this.loading = true;
+
+  this.reviewService.getReviewPage(gameId).subscribe({
+    next: (data) => {
+      this.game = data.game;
+      this.reviews = data.reviews;
+      this.averageRating = data.average;
+      this.averageRatingDisplay = data.displayAverage; 
+      this.loading = false;
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Erro ao carregar página de reviews:', err);
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   loadReviews(gameId: string) {
     this.loading = true;
-
     this.reviewService.getByGame(gameId).subscribe({
       next: (reviews) => {
         this.reviews = reviews;
@@ -91,6 +88,7 @@ export class GameReviewsComponent implements OnInit {
       }
     });
   }
+
 
   loadAverage(gameId: string) {
     this.reviewService.getAverage(gameId).subscribe({
@@ -112,21 +110,38 @@ export class GameReviewsComponent implements OnInit {
       description: this.newComment
     }).subscribe({
       next: (createdReview) => {
-        if (this.userReview) {
-          this.userReview.rating = this.newRating;
-          this.userReview.description = this.newComment;
-        } else {
-          this.reviews = [createdReview, ...this.reviews];
-        }
 
-        this.editing = false;
-        this.newComment = '';
-        this.newRating = 0;
+      this.loadPage(this.gameId); 
 
-        this.calculateAverageLocal();
+      this.editing = false;
+      this.newComment = '';
+      this.newRating = 0;
+      this.toast.sucesso('Avaliação salva com sucesso!');
+      this.cdr.detectChanges();
+    },
+      error: (err) => {
+        console.error(err);
+        this.toast.erro('Erro ao enviar avaliação');
+      }
+    });
+  }
+
+  confirmDeleteReview(): void {
+    if (!this.reviewToDeleteId) return;
+
+    this.reviewService.delete(this.reviewToDeleteId).subscribe({
+      next: () => {
+        this.loadPage(this.gameId); 
+
+        this.closeDeleteReviewModal();
+        this.toast.sucesso('Avaliação excluída com sucesso!');
         this.cdr.detectChanges();
-      },
-      error: (err) => console.error(err)
+     },
+      error: (err) => {
+        console.error(err);
+        this.toast.erro('Erro ao deletar avaliação');
+        this.closeDeleteReviewModal();
+      }
     });
   }
 
@@ -148,34 +163,8 @@ export class GameReviewsComponent implements OnInit {
     this.reviewToDeleteId = null;
   }
 
-  confirmDeleteReview(): void {
-    if (!this.reviewToDeleteId) return;
-
-    this.reviewService.delete(this.reviewToDeleteId).subscribe({
-      next: () => {
-        this.reviews = this.reviews.filter(
-          r => r.id !== this.reviewToDeleteId
-        );
-
-        this.calculateAverageLocal();
-
-        this.closeDeleteReviewModal();
-
-        this.toast.sucesso('Avaliação excluída com sucesso!');
-
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error(err);
-        this.toast.erro('Erro ao deletar avaliação')
-        this.closeDeleteReviewModal();
-      }
-    });
-  }
-
   startEdit() {
     if (!this.userReview) return;
-
     this.editing = true;
     this.newRating = this.userReview.rating;
     this.newComment = this.userReview.description;
@@ -184,16 +173,6 @@ export class GameReviewsComponent implements OnInit {
   goToGame() {
     if (!this.game?.id) return;
     this.router.navigate(['/game', this.game.id]);
-  }
-
-  calculateAverageLocal() {
-    if (this.reviews.length === 0) {
-      this.averageRating = 0;
-      return;
-    }
-
-    const sum = this.reviews.reduce((acc, r) => acc + r.rating, 0);
-    this.averageRating = Math.round((sum / this.reviews.length) * 10) / 10;
   }
 
   get displayRating(): string {
