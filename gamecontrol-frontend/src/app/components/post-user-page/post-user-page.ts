@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { PostCommentService, PostCommentDTO } from '../../services/post-comment.service';
-import { LucideX, LucideSend } from '@lucide/angular';
+import { LucideSend } from '@lucide/angular';
 
 import {
   LucideHeart,
@@ -89,7 +89,7 @@ export class PostUserPageComponent implements OnInit {
   onDraftChange(value: string): void {
     this.textoCriacaoDoPost = value.slice(0, this.maximoDeCaracteresNoPost);
   }
-
+  
   carregarPostsDeQuemEuSigo(): void {
     const loggedUserId = this.usuarioLogadoId;
 
@@ -109,36 +109,30 @@ export class PostUserPageComponent implements OnInit {
         const idsPermitidos = new Set<string>(idsSeguidos.map(String));
         idsPermitidos.add(String(loggedUserId));
 
-        // Filtra somente posts dos usuários seguidos ou do próprio usuário.
         const postsFiltrados = todosOsPosts.filter((post) => {
           return idsPermitidos.has(String(post.userId));
         });
 
-        // Ordena os posts do mais recente ao mais antigo.
         this.posts = [...postsFiltrados].sort((postA, postB) => {
           return new Date(postB.createdAt).getTime() - new Date(postA.createdAt).getTime();
         });
 
-        this.carregandoPosts = false;
+        // Inicializa quais posts o usuário logado já curtiu
+        this.posts.forEach(post => {
+          if (post.likedUserIds?.includes(loggedUserId)) {
+            this.likedPostIds.add(post.id);
+          }
+        });
 
-        // Atualiza a tela.
+        this.carregandoPosts = false;
         this.cdr.detectChanges();
       },
 
       error: (error) => {
-        // Mostra erro no console.
         console.error('Erro ao carregar posts de quem sigo:', error);
-
-        // Mostra mensagem amigável.
         this.toast.erro('Não foi possível carregar os posts.');
-
-        // Limpa os posts.
         this.posts = [];
-
-        // Desativa loading.
         this.carregandoPosts = false;
-
-        // Atualiza a tela.
         this.cdr.detectChanges();
       },
     });
@@ -185,19 +179,41 @@ export class PostUserPageComponent implements OnInit {
       });
   }
 
-  toggleLikeLocal(post: UserPostDTO): void {
-    if (this.likedPostIds.has(post.id)) {
-      this.likedPostIds.delete(post.id);
-      post.likes = Math.max(0, (post.likes || 0) - 1);
-      this.posts = [...this.posts];
-      this.cdr.detectChanges();
-      return
-    }
+  toggleLike(post: UserPostDTO): void {
+    const userId = this.usuarioLogadoId;
+    if (!userId) return;
 
-    this.likedPostIds.add(post.id);
-    post.likes = (post.likes || 0) + 1;
+    const jaGostei = post.likedUserIds?.includes(userId);
+
+    // Atualização otimista
+    if (jaGostei) {
+      post.likedUserIds = post.likedUserIds.filter(id => id !== userId);
+      this.likedPostIds.delete(post.id);
+    } else {
+      post.likedUserIds = [...(post.likedUserIds || []), userId];
+      this.likedPostIds.add(post.id);
+    }
+    post.likesCount = post.likedUserIds.length;
     this.posts = [...this.posts];
     this.cdr.detectChanges();
+
+    // Persiste no backend
+    this.postService.toggleLike(post.id, userId).subscribe({
+      error: () => {
+        // Reverte se falhar
+        if (jaGostei) {
+          post.likedUserIds = [...(post.likedUserIds || []), userId];
+          this.likedPostIds.add(post.id);
+        } else {
+          post.likedUserIds = post.likedUserIds.filter(id => id !== userId);
+          this.likedPostIds.delete(post.id);
+        }
+        post.likesCount = post.likedUserIds.length;
+        this.posts = [...this.posts];
+        this.toast.erro('Não foi possível registrar a curtida.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   postEstaCurtido(postId: string): boolean {

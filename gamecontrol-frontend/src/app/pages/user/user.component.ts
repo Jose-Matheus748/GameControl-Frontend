@@ -22,10 +22,8 @@ import { PostUserPageComponent } from "../../components/post-user-page/post-user
     RouterModule,
     AddGameComponent,
     LucideUserRound,
-    LucideUsers,
     LucideMapPin,
     LucideSettings,
-    PlaylistSectionComponent,
     PostUserPageComponent
 ],
   templateUrl: './user.component.html'

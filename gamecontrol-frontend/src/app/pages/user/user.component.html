@@ -1,135 +1,266 @@
-<div *ngIf="loading" class="text-center text-white py-8 text-lg animate-pulse">
-  Carregando usuário...
+<div *ngIf="loading" class="text-center text-white py-10 text-lg animate-pulse">
+  Carregando perfil...
 </div>
 
-<div *ngIf="!loading && userData" class="max-w-6xl mx-auto m-5 px-3 py-3 space-y-4">
-  <section class="bg-slate-900/90 border border-cyan-500/20 text-white rounded-xl p-4 shadow-lg">
-    <div class="p-2 md:p-4">
-      <div class="flex flex-col sm:flex-row gap-6">
-        <div class="shrink-0">
-          <label
-            for="profileUpload"
-            class="cursor-pointer group block"
-            title="Alterar foto de perfil"
-          >
-            <img
-              *ngIf="previewUrl || userData.profilePictureUrl; else defaultAvatar"
-              [src]="previewUrl || userData.profilePictureUrl"
-              alt="avatar"
-              class="w-24 h-24 rounded-full object-cover shadow-[0_0_20px_#EB479933] ring-2 ring-white/10 transition-all group-hover:ring-[#EB4799]/90"
-            />
+<div *ngIf="!loading && userData" class="max-w-6xl mx-auto px-4 py-8 text-white">
 
-            <ng-template #defaultAvatar>
-              <div
-                class="w-24 h-24 rounded-full bg-slate-900/90 flex justify-center items-center shadow-[0_0_20px_#EB479933] ring-2 ring-cyan-500/15 transition-all group-hover:ring-[#EB4799]/90"
-              >
-                <svg
-                  lucideUserRound
-                  class="w-12 h-12 text-cyan-500/90 group-hover:text-[#EB4799]/90"
-                ></svg>
-              </div>
-            </ng-template>
-          </label>
+  <!-- Hero Card -->
+  <div class="bg-slate-900/90 border border-cyan-500/20 rounded-2xl p-6 shadow-lg mb-6">
+    <div class="flex flex-col sm:flex-row gap-6 items-start">
+
+      <!-- Avatar com upload -->
+      <div class="shrink-0 mx-auto sm:mx-0">
+        <label
+          for="profileUpload"
+          class="cursor-pointer group block relative"
+          title="Alterar foto de perfil"
+        >
+          <img
+            *ngIf="previewUrl || userData.profilePictureUrl; else defaultAvatar"
+            [src]="previewUrl || userData.profilePictureUrl"
+            alt="Avatar"
+            class="w-24 h-24 rounded-full object-cover ring-2 ring-cyan-500/30 shadow-[0_0_20px_#EB479933] transition-all group-hover:ring-pink-500/70"
+          />
+          <ng-template #defaultAvatar>
+            <div class="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center ring-2 ring-cyan-500/20 shadow-[0_0_20px_#EB479933] transition-all group-hover:ring-pink-500/70">
+              <svg lucideUserRound class="w-12 h-12 text-cyan-500/80 group-hover:text-pink-400 transition-colors"></svg>
+            </div>
+          </ng-template>
+
+          <!-- Overlay de edição -->
+          <div class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+        </label>
+
+        <input
+          id="profileUpload"
+          type="file"
+          accept="image/*"
+          class="hidden"
+          (change)="onProfileImageSelected($event)"
+        />
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-1">
+          <h2 class="text-2xl font-bold text-white truncate">{{ userData.username }}</h2>
+
+          <!-- Badge admin -->
+          <span
+            *ngIf="isAdmin"
+            class="self-center sm:self-auto inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-pink-500/15 text-pink-400 ring-1 ring-pink-500/30"
+          >
+            ✦ Admin
+          </span>
+
+          <!-- Botão de configurações -->
+          <a
+            routerLink="/settings"
+            title="Configurações do perfil"
+            class="self-center sm:self-auto ml-auto p-2 rounded-full border border-cyan-500/20 text-cyan-500/80 hover:border-pink-500/60 hover:text-pink-400 hover:shadow-[0_0_12px_#EB479955] transition-all"
+          >
+            <svg lucideSettings class="w-4 h-4"></svg>
+          </a>
         </div>
 
-        <div class="flex-1 min-w-0">
-          <div class="flex items-start gap-4">
-            <div class="min-w-0">
-              <h1 class="text-2xl font-bold text-white truncate">
-                {{ userData.username }}
-              </h1>
+        <p class="text-gray-400 text-sm mb-1">
+          {{ userData.bio || 'Sem biografia disponível.' }}
+        </p>
 
-              <p class="text-sm text-gray-400 mt-1">
-                {{ userData.bio || 'Sem biografia disponível.' }}
-              </p>
+        <div class="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-gray-500 mb-4">
+          <svg lucideMapPin class="w-3.5 h-3.5"></svg>
+          <span>{{ userData.country || 'Nenhum país informado.' }}</span>
+        </div>
 
-              <div class="flex items-center gap-3 mt-2 text-xs text-gray-400 flex-wrap">
-                <div class="flex items-center gap-1">
-                  <svg lucideMapPin class="w-3.5 h-3.5"></svg>
-                  <span>
-                    {{ userData.country || 'Nenhum país informado.' }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="relative flex items-center gap-5 mt-4 pt-4 border-t border-cyan-500/20 flex-wrap"
+        <!-- Stats -->
+        <div class="flex items-center justify-center sm:justify-start gap-6 pt-4 border-t border-cyan-500/10">
+          <button
+            type="button"
+            class="flex flex-col items-center sm:items-start hover:text-pink-400 transition-colors cursor-pointer"
+            (click)="openSocialModal('followers')"
           >
-            <button
-              type="button"
-              class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-pink-300 transition-colors cursor-pointer rounded-lg px-1 -mx-1 py-0.5 text-left"
-              (click)="openSocialModal('followers')"
-              title="Ver seguidores"
-            >
-              <svg lucideUsers class="w-4 h-4 text-pink-500 shrink-0"></svg>
-              <span class="font-medium text-white">{{ followersCount }}</span>
-              <span>seguidores</span>
-            </button>
+            <span class="text-lg font-bold text-white leading-none">{{ followersCount }}</span>
+            <span class="text-xs text-gray-500 mt-0.5">seguidores</span>
+          </button>
 
-            <span class="text-cyan-500/20">•</span>
+          <div class="w-px h-8 bg-cyan-500/10"></div>
 
-            <button
-              type="button"
-              class="flex items-center gap-1.5 text-sm text-gray-400 hover:text-pink-300 transition-colors cursor-pointer rounded-lg px-1 -mx-1 py-0.5 text-left"
-              (click)="openSocialModal('following')"
-              title="Ver seguindo"
-            >
-              <svg lucideUsers class="w-4 h-4 text-pink-500 shrink-0"></svg>
-              <span class="font-medium text-white">{{ followingCount }}</span>
-              <span>seguindo</span>
-            </button>
+          <button
+            type="button"
+            class="flex flex-col items-center sm:items-start hover:text-pink-400 transition-colors cursor-pointer"
+            (click)="openSocialModal('following')"
+          >
+            <span class="text-lg font-bold text-white leading-none">{{ followingCount }}</span>
+            <span class="text-xs text-gray-500 mt-0.5">seguindo</span>
+          </button>
 
-            <div class="ml-auto">
-              <button
-                routerLink="/settings"
-                title="Configurações do perfil"
-                aria-label="Configurações do perfil"
-                class="absolute right-0 -top-24 w-10 h-10 rounded-full border border-cyan-500/20 text-cyan-500/90 flex items-center justify-center shadow-md hover:border-pink-500/60 hover:text-pink-400 hover:shadow-[0_0_12px_#EB479955] transition-all"
-              >
-                <svg lucideSettings class="w-4 h-4" style="stroke-width: 2"></svg>
-              </button>
-            </div>
+          <div class="w-px h-8 bg-cyan-500/10"></div>
+
+          <div class="flex flex-col items-center sm:items-start">
+            <span class="text-lg font-bold text-white leading-none">{{ playlists.length }}</span>
+            <span class="text-xs text-gray-500 mt-0.5">playlists</span>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_450px] gap-4 items-stretch">
-    <app-post-user-page
-      [user]="userData"
-      [userId]="userId"
-    ></app-post-user-page>
+  <!-- Grid: Posts + Playlists (+ Admin) -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-    <div class="mt-20 flex flex-col text-center" *ngIf="isAdmin">
-      <h2 class="text-2xl font-bold text-pink-500">Olá, Jovem Padawan (ADMIN)</h2>
-
-      <button
-        *ngIf="!addJogoAberto"
-        class="mt-6 px-6 py-2 bg-pink-500 hover:bg-pink-600 transition text-white rounded-lg cursor-pointer"
-        (click)="toggleAddGame()"
-      >
-        ➕ Adicionar jogo ao catálogo
-      </button>
-
-      <app-add-game-modal
-        *ngIf="addJogoAberto"
-        (close)="addJogoAberto = false"
-      ></app-add-game-modal>
+    <!-- Card: Posts (feed do próprio usuário) -->
+    <div class="bg-slate-900/90 border border-cyan-500/20 rounded-2xl shadow-lg overflow-hidden">
+      <app-post-user-page
+        [user]="userData"
+        [userId]="loggedUserId"
+      ></app-post-user-page>
     </div>
 
-    <aside class="w-full h-full">
-      <app-playlist-section
-        [playlists]="playlists"
-        (criarPlaylist)="criarPlaylist()"
-        (deletarPlaylist)="deletarPlaylist($event)"
-      ></app-playlist-section>
-    </aside>
+    <!-- Coluna direita: Playlists + Admin -->
+    <div class="flex flex-col gap-6">
+
+      <!-- Card: Playlists -->
+      <div class="bg-slate-900/90 border border-cyan-500/20 rounded-2xl shadow-lg overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-cyan-500/15">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-pink-500/15 flex items-center justify-center ring-1 ring-pink-500/30">
+              <svg class="w-3.5 h-3.5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-white text-sm">Playlists</h3>
+            <span class="text-xs text-gray-500 bg-slate-800 border border-cyan-500/10 rounded-full px-2 py-0.5">
+              {{ playlists.length }}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            (click)="criarPlaylist()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-pink-500/10 text-pink-400 ring-1 ring-pink-500/30 hover:bg-pink-500/20 hover:shadow-[0_0_10px_#EB479944] transition-all"
+          >
+            <span class="text-base leading-none">+</span> Nova
+          </button>
+        </div>
+
+        <ng-container *ngIf="playlists.length; else noPlaylists">
+          <ul class="divide-y divide-cyan-500/10 max-h-[400px] overflow-y-auto">
+            <li
+              *ngFor="let playlist of playlists"
+              [routerLink]="['/playlists', playlist.id]"
+              class="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
+            >
+              <div class="w-10 h-10 rounded-xl bg-slate-800 border border-cyan-500/15 flex items-center justify-center shrink-0 group-hover:border-pink-500/30 transition-colors">
+                <svg class="w-5 h-5 text-cyan-500/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
+                </svg>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-white truncate group-hover:text-pink-400 transition-colors">
+                  {{ playlist.nome }}
+                </p>
+                <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                  {{ playlist.descricao || 'Sem descrição' }}
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xs text-gray-500 bg-slate-800 border border-cyan-500/10 rounded-full px-2 py-0.5">
+                  {{ playlist.jogosIds?.length || 0 }} jogos
+                </span>
+
+                <button
+                  type="button"
+                  class="p-1.5 rounded-full text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                  title="Excluir playlist"
+                  (click)="$event.stopPropagation(); deletarPlaylist(playlist.id!)"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                </button>
+
+                <svg class="w-4 h-4 text-gray-600 group-hover:text-pink-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+              </div>
+            </li>
+          </ul>
+        </ng-container>
+
+        <ng-template #noPlaylists>
+          <div class="flex flex-col items-center justify-center px-5 py-12 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-cyan-500/10 flex items-center justify-center mb-4">
+              <svg class="w-7 h-7 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-white mb-1">Nenhuma playlist ainda</p>
+            <p class="text-xs text-gray-500 mb-4">Crie sua primeira playlist de jogos.</p>
+            <button
+              type="button"
+              (click)="criarPlaylist()"
+              class="px-4 py-2 rounded-full text-sm font-semibold bg-pink-500/10 text-pink-400 ring-1 ring-pink-500/30 hover:bg-pink-500/20 transition-all"
+            >
+              + Criar playlist
+            </button>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Card: Admin -->
+      <div
+        *ngIf="isAdmin"
+        class="bg-slate-900/90 border border-pink-500/20 rounded-2xl shadow-lg overflow-hidden"
+      >
+        <div class="flex items-center gap-3 px-5 py-4 border-b border-pink-500/15">
+          <div class="w-7 h-7 rounded-full bg-pink-500/15 flex items-center justify-center ring-1 ring-pink-500/30">
+            <svg class="w-3.5 h-3.5 text-pink-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white text-sm">Painel Admin</h3>
+            <p class="text-xs text-gray-500">Gerenciamento de conteúdo</p>
+          </div>
+        </div>
+
+        <div class="px-5 py-5">
+          <button
+            *ngIf="!addJogoAberto"
+            type="button"
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-pink-500/10 text-pink-400 ring-1 ring-pink-500/30 hover:bg-pink-500/20 hover:shadow-[0_0_14px_#EB479944] transition-all text-sm font-semibold"
+            (click)="toggleAddGame()"
+          >
+            <span class="text-base">➕</span> Adicionar jogo ao catálogo
+          </button>
+
+          <app-add-game-modal
+            *ngIf="addJogoAberto"
+            (close)="addJogoAberto = false"
+          ></app-add-game-modal>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
+<!-- Modal seguidores / seguindo -->
 <div
   *ngIf="socialModalOpen"
   class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
@@ -144,7 +275,7 @@
     [attr.aria-label]="socialModalTab === 'followers' ? 'Seguidores' : 'Seguindo'"
   >
     <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20 shrink-0">
-      <h3 class="text-lg font-semibold text-white">Rede</h3>
+      <h3 class="text-lg font-semibold text-white">Rede social</h3>
       <button
         type="button"
         class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
@@ -159,46 +290,41 @@
       <button
         type="button"
         class="flex-1 py-3 text-sm font-medium transition-colors cursor-pointer"
-        [ngClass]="
-          socialModalTab === 'followers'
-            ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
-            : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'
-        "
+        [ngClass]="socialModalTab === 'followers'
+          ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
+          : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'"
         (click)="socialModalTab = 'followers'"
       >
-        Seguidores
-        <span class="text-gray-500 font-normal">({{ followersCount }})</span>
+        Seguidores <span class="text-gray-500 font-normal">({{ followersCount }})</span>
       </button>
       <button
         type="button"
         class="flex-1 py-3 text-sm font-medium transition-colors cursor-pointer"
-        [ngClass]="
-          socialModalTab === 'following'
-            ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
-            : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'
-        "
+        [ngClass]="socialModalTab === 'following'
+          ? 'text-pink-400 border-b-2 border-pink-500 bg-pink-500/5'
+          : 'text-gray-400 hover:text-gray-200 border-b-2 border-transparent'"
         (click)="socialModalTab = 'following'"
       >
-        Seguindo
-        <span class="text-gray-500 font-normal">({{ followingCount }})</span>
+        Seguindo <span class="text-gray-500 font-normal">({{ followingCount }})</span>
       </button>
     </div>
 
     <div class="overflow-y-auto flex-1 min-h-0 px-2 py-2">
-      <div *ngIf="socialModalLoading" class="py-12 text-center text-gray-400 text-sm">Carregando nomes…</div>
+      <div *ngIf="socialModalLoading" class="py-12 text-center text-gray-400 text-sm">Carregando...</div>
 
       <ng-container *ngIf="!socialModalLoading">
         <ul *ngIf="socialListIds.length; else emptySocial" class="divide-y divide-cyan-500/10">
           <li *ngFor="let uid of socialListIds" class="px-3">
             <a
-              [routerLink]="['/profile', uid]"
+              [routerLink]="uid === loggedUserId ? ['/profile'] : ['/user', uid]"
               class="flex items-center gap-3 py-3 rounded-lg hover:bg-white/5 transition-colors text-left no-underline"
               (click)="closeSocialModal()"
             >
-              <div
-                class="w-10 h-10 rounded-full bg-slate-800 border border-cyan-500/20 flex items-center justify-center shrink-0"
-              >
-                <svg lucideUserRound class="w-5 h-5 text-cyan-500/80"></svg>
+              <div class="w-10 h-10 rounded-full bg-slate-800 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-cyan-500/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="5" />
+                  <path d="M20 21a8 8 0 0 0-16 0" />
+                </svg>
               </div>
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-white truncate">{{ displayUsernameForId(uid) }}</p>
@@ -208,11 +334,7 @@
         </ul>
         <ng-template #emptySocial>
           <div class="py-14 text-center text-gray-500 text-sm">
-            {{
-              socialModalTab === 'followers'
-                ? 'Ninguém segue este perfil ainda.'
-                : 'Este perfil ainda não segue ninguém.'
-            }}
+            {{ socialModalTab === 'followers' ? 'Ninguém segue este perfil ainda.' : 'Este perfil ainda não segue ninguém.' }}
           </div>
         </ng-template>
       </ng-container>
@@ -220,117 +342,99 @@
   </div>
 </div>
 
-<div *ngIf="creating"
-     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-     (click)="cancelCreate()"
-     role="presentation">
-
-  <div class="w-full max-w-md flex flex-col rounded-2xl border border-cyan-500/25
-              bg-slate-900 shadow-2xl shadow-cyan-950/40"
-       (click)="$event.stopPropagation()"
-       role="dialog"
-       aria-modal="true"
-       aria-label="Criar playlist">
-
+<!-- Modal: Criar playlist -->
+<div
+  *ngIf="creating"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+  (click)="cancelCreate()"
+  role="presentation"
+>
+  <div
+    class="w-full max-w-md flex flex-col rounded-2xl border border-cyan-500/25 bg-slate-900 shadow-2xl shadow-cyan-950/40"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Criar playlist"
+  >
     <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20">
-      <h3 class="text-lg font-orbitron font-semibold text-white tracking-wide">
-        Criar playlist
-      </h3>
+      <h3 class="text-lg font-semibold text-white">Nova playlist</h3>
+      <button
+        type="button"
+        class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+        (click)="cancelCreate()"
+        aria-label="Fechar"
+      >
+        <span class="text-xl leading-none">&times;</span>
+      </button>
     </div>
 
     <div class="px-5 py-5 flex flex-col gap-4">
-
       <div>
-        <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
-          Nome
-        </label>
+        <label class="block text-xs text-cyan-400 tracking-widest uppercase mb-2">Nome</label>
         <input
           [(ngModel)]="editNome"
           type="text"
           maxlength="60"
-          class="w-full p-3 bg-slate-800 border border-slate-600/50 rounded-lg text-white
-                 focus:outline-none focus:border-cyan-500/70
-                 focus:shadow-[0_0_10px_rgba(6,182,212,0.2)] transition-all"
+          class="w-full p-3 bg-slate-800 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:border-cyan-500/70 focus:shadow-[0_0_10px_rgba(6,182,212,0.2)] transition-all"
           placeholder="Nome da playlist"
         />
       </div>
-
     </div>
 
     <div class="flex justify-end gap-3 px-5 py-4 border-t border-cyan-500/15">
       <button
         (click)="cancelCreate()"
         [disabled]="saving"
-        class="px-5 py-2 rounded-lg text-gray-400 border border-slate-600
-               hover:border-slate-400 hover:text-gray-200
-               disabled:opacity-30 disabled:cursor-not-allowed
-               transition-all duration-200">
+        class="px-5 py-2 rounded-lg text-gray-400 border border-slate-600 hover:border-slate-400 hover:text-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      >
         Cancelar
       </button>
-
       <button
         (click)="saveCreate()"
         [disabled]="saving || !editNome.trim()"
-        class="px-6 py-2 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-bold
-               shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944]
-               hover:shadow-[0_0_16px_#EB4799AA,0_0_28px_#EB479988]
-               disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none
-               transition-all duration-300">
+        class="px-6 py-2 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-bold shadow-[0_0_12px_#EB479966,0_0_24px_#EB479944] hover:shadow-[0_0_16px_#EB4799AA] disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all"
+      >
         {{ saving ? 'Salvando...' : 'Salvar' }}
       </button>
     </div>
   </div>
 </div>
 
+<!-- Modal: Confirmar exclusão de playlist -->
 <div
   *ngIf="deleteModalOpen"
   class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
   (click)="cancelDeletePlaylist()"
+  role="presentation"
 >
-
   <div
-    class="w-full max-w-md rounded-2xl border border-red-500/20
-           bg-slate-900 shadow-2xl shadow-red-950/40"
+    class="w-full max-w-md rounded-2xl border border-red-500/20 bg-slate-900 shadow-2xl shadow-red-950/40"
     (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
   >
-
     <div class="flex items-center justify-between px-5 py-4 border-b border-red-500/15">
-      <h3 class="text-lg font-bold text-red-400">
-        Excluir playlist
-      </h3>
+      <h3 class="text-lg font-bold text-red-400">Excluir playlist</h3>
     </div>
 
     <div class="px-5 py-6">
-      <p class="text-gray-300 leading-relaxed">
-        Tem certeza que deseja excluir esta playlist?
-      </p>
-
-      <p class="text-sm text-red-400 mt-3">
-        Esta ação não poderá ser desfeita.
-      </p>
+      <p class="text-gray-300 leading-relaxed">Tem certeza que deseja excluir esta playlist?</p>
+      <p class="text-sm text-red-400 mt-3">Esta ação não poderá ser desfeita.</p>
     </div>
 
     <div class="flex justify-end gap-3 px-5 py-4 border-t border-red-500/10">
-
       <button
         (click)="cancelDeletePlaylist()"
-        class="px-5 py-2 rounded-lg border border-slate-600 text-gray-300
-               hover:border-slate-400 hover:text-white transition-all"
+        class="px-5 py-2 rounded-lg border border-slate-600 text-gray-300 hover:border-slate-400 hover:text-white transition-all"
       >
         Cancelar
       </button>
-
       <button
         (click)="confirmDeletePlaylist()"
-        class="px-6 py-2 rounded-lg bg-red-500 hover:bg-red-400
-               text-white font-bold
-               shadow-[0_0_12px_rgba(239,68,68,0.35)]
-               hover:shadow-[0_0_18px_rgba(239,68,68,0.5)]
-               transition-all duration-300"
+        class="px-6 py-2 rounded-lg bg-red-500 hover:bg-red-400 text-white font-bold shadow-[0_0_12px_rgba(239,68,68,0.35)] hover:shadow-[0_0_18px_rgba(239,68,68,0.5)] transition-all"
       >
         Excluir
       </button>
-
     </div>
   </div>
 </div>
