@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Review {
@@ -20,6 +20,7 @@ export interface CreateReviewRequest {
 }
 
 export interface GameReviewsPage {
+  userReview: Review | null;
   game: any;
   reviews: Review[];
   average: number;
@@ -44,14 +45,25 @@ export class ReviewService {
   }
 
   create(review: CreateReviewRequest): Observable<Review> {
-    return this.http.post<Review>(this.apiUrl, review);
-  }
-
-  delete(id: string): Observable<string> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
-  }
-
-  getReviewPage(gameId: string): Observable<GameReviewsPage> {
-  return this.http.get<GameReviewsPage>(`${this.apiUrl}/reviews/${gameId}/reviews-page`);
+  return this.http.post<Review>(this.apiUrl, review, {
+    params: { userId: review.userId }
+  });
 }
+
+  delete(id: string, userId: string): Observable<string> {
+  return this.http.delete(`${this.apiUrl}/${id}`, { 
+    params: { userId },
+    responseType: 'text' 
+  });
+}
+
+  getReviewPage(gameId: string, userId?: string): Observable<GameReviewsPage> {
+    let params = new HttpParams();
+    
+    if (userId) {
+      params = params.set('userId', userId);
+    }
+
+    return this.http.get<GameReviewsPage>(`${this.apiUrl}/${gameId}/reviews-page`, { params });
+  }
 }
