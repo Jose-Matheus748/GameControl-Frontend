@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 export interface User {
   id: string | number;
   username: string;
+  profilePictureUrl?: string;
 }
 
 export interface GameComment {
@@ -15,11 +16,11 @@ export interface GameComment {
   user: User;
 }
 
-/** JSON plano do backend (GameCommentDTO) — sem objeto aninhado `user`. */
 interface GameCommentDto {
   id: string;
   userId: string;
   username?: string | null;
+  profilePictureUrl?: string | null;
   gameId?: string;
   content: string;
   createdAt: string;
@@ -68,6 +69,7 @@ export class GameCommentsService {
       user: {
         id: dto.userId,
         username: dto.username ?? '',
+        profilePictureUrl: dto.profilePictureUrl ?? undefined, // ← adicionar
       },
     };
   }

@@ -138,7 +138,7 @@
               [ngClass]="
                 postEstaCurtido(post.id) ? 'text-pink-400' : 'text-gray-400 hover:text-pink-400'
               "
-              (click)="toggleLikeLocal(post)"
+              (click)="toggleLike(post)"
             >
               <span class="p-1.5 rounded-full group-hover:bg-pink-500/10">
                 <svg
@@ -147,7 +147,7 @@
                   [ngClass]="postEstaCurtido(post.id) ? 'fill-current' : ''"
                 ></svg>
               </span>
-              {{ post.likes }}
+              {{ post.likesCount || 0 }}
             </button>
             <button
                 *ngIf="podeDeletar(post)"

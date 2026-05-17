@@ -5,7 +5,6 @@ import { GameService, Game } from '../../services/games.service';
 import { FormsModule } from '@angular/forms';
 import { ReviewService, Review } from '../../services/review.service';
 import { AuthService } from '../../services/auth.service';
-import { forkJoin } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
 import { Router } from '@angular/router';
 
@@ -19,6 +18,7 @@ export class GameReviewsComponent implements OnInit {
 
   game?: Game;
   reviews: Review[] = [];
+  userReview: Review | null = null; 
   loading = true;
   editing = false;
   gameId!: string;
@@ -52,48 +52,22 @@ export class GameReviewsComponent implements OnInit {
     this.loadPage(id);
   }
 
-
   loadPage(gameId: string) {
-  this.loading = true;
-
-  this.reviewService.getReviewPage(gameId).subscribe({
-    next: (data) => {
-      this.game = data.game;
-      this.reviews = data.reviews;
-      this.averageRating = data.average;
-      this.averageRatingDisplay = data.displayAverage; 
-      this.loading = false;
-      this.cdr.detectChanges();
-    },
-    error: (err) => {
-      console.error('Erro ao carregar página de reviews:', err);
-      this.loading = false;
-      this.cdr.detectChanges();
-    }
-  });
-}
-
-  loadReviews(gameId: string) {
     this.loading = true;
-    this.reviewService.getByGame(gameId).subscribe({
-      next: (reviews) => {
-        this.reviews = reviews;
+
+    this.reviewService.getReviewPage(gameId, this.currentUserId).subscribe({
+      next: (data) => {
+        this.game = data.game;
+        this.reviews = data.reviews;
+        this.userReview = data.userReview; // Armazena a review individualizada vinda do Back
+        this.averageRating = data.average;
+        this.averageRatingDisplay = data.displayAverage; 
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Erro ao carregar reviews', err);
+        console.error('Erro ao carregar página de reviews:', err);
         this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-
-  loadAverage(gameId: string) {
-    this.reviewService.getAverage(gameId).subscribe({
-      next: (avg) => {
-        this.averageRating = avg;
         this.cdr.detectChanges();
       }
     });
@@ -110,15 +84,14 @@ export class GameReviewsComponent implements OnInit {
       description: this.newComment
     }).subscribe({
       next: (createdReview) => {
+        this.loadPage(this.gameId); 
 
-      this.loadPage(this.gameId); 
-
-      this.editing = false;
-      this.newComment = '';
-      this.newRating = 0;
-      this.toast.sucesso('Avaliação salva com sucesso!');
-      this.cdr.detectChanges();
-    },
+        this.editing = false;
+        this.newComment = '';
+        this.newRating = 0;
+        this.toast.sucesso('Avaliação salva com sucesso!');
+        this.cdr.detectChanges();
+      },
       error: (err) => {
         console.error(err);
         this.toast.erro('Erro ao enviar avaliação');
@@ -129,14 +102,14 @@ export class GameReviewsComponent implements OnInit {
   confirmDeleteReview(): void {
     if (!this.reviewToDeleteId) return;
 
-    this.reviewService.delete(this.reviewToDeleteId).subscribe({
+    this.reviewService.delete(this.reviewToDeleteId, this.currentUserId!).subscribe({
       next: () => {
         this.loadPage(this.gameId); 
 
         this.closeDeleteReviewModal();
         this.toast.sucesso('Avaliação excluída com sucesso!');
         this.cdr.detectChanges();
-     },
+      },
       error: (err) => {
         console.error(err);
         this.toast.erro('Erro ao deletar avaliação');
@@ -147,10 +120,6 @@ export class GameReviewsComponent implements OnInit {
 
   get currentUserId(): string | undefined {
     return this.authService.user()?.id?.toString();
-  }
-
-  get userReview(): Review | undefined {
-    return this.reviews.find(r => r.userId === this.currentUserId);
   }
 
   openDeleteReviewModal(id: string): void {
@@ -173,10 +142,5 @@ export class GameReviewsComponent implements OnInit {
   goToGame() {
     if (!this.game?.id) return;
     this.router.navigate(['/game', this.game.id]);
-  }
-
-  get displayRating(): string {
-    const rounded = Math.round(this.averageRating * 10) / 10;
-    return Number.isInteger(rounded) ? rounded.toString() : rounded.toFixed(1);
   }
 }

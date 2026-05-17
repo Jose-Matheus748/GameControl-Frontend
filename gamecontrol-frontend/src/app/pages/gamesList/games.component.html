@@ -1,105 +1,170 @@
-<div
-  *ngIf="loading"
-  class="w-full min-h-screen flex items-center justify-center bg-[#050816]"
->
-  <p class="text-white text-3xl font-orbitron animate-pulse">
-    Carregando jogos...
-  </p>
+<!-- LOADING -->
+<div *ngIf="loading" class="w-full min-h-screen flex items-center justify-center bg-[#050816]">
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-10 h-10 rounded-full border-2 border-cyan-500/30 border-t-pink-500 animate-spin"></div>
+    <p class="text-cyan-400 font-orbitron text-sm tracking-widest animate-pulse">CARREGANDO JOGOS</p>
+  </div>
 </div>
 
-<div
-  *ngIf="!loading"
-  class="w-full min-h-screen bg-[#050816] px-6 md:px-16 lg:px-24 py-10"
->
-  <!-- Paginação superior -->
-  <div class="flex items-center justify-center gap-6 mb-10">
-    <button
-      (click)="prev()"
-      [disabled]="page === 0"
-      class="text-5xl font-bold text-pink-500 disabled:text-gray-600
-             hover:scale-110 transition duration-300 cursor-pointer"
-    >
-      ‹
-    </button>
+<!-- PÁGINA -->
+<div *ngIf="!loading" class="w-full min-h-screen bg-[#050816]">
 
-    <p class="text-lg text-white font-orbitron tracking-wider">
-      Página {{ page + 1 }}
-    </p>
+  <!-- Header da página -->
+  <div class="border-b border-cyan-500/10 bg-[#050816]/95 backdrop-blur-sm sticky top-0 z-20">
+    <div class="max-w-screen-2xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between gap-4">
 
-    <button
-      (click)="next()"
-      [disabled]="(page + 1) * pageSize >= filteredGames.length"
-      class="text-5xl font-bold text-cyan-400 disabled:text-gray-600
-             hover:scale-110 transition duration-300 cursor-pointer"
-    >
-      ›
-    </button>
-  </div>
-
-  <div
-    *ngIf="!loading && filteredGames.length === 0"
-    class="text-center text-white text-2xl font-orbitron mt-20"
-  >
-    Nenhum jogo encontrado.
-  </div>
-
-  <!-- Grid dos jogos -->
-  <div
-    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5"
-  >
-    <div
-      *ngFor="let game of paginated"
-      class="group flex flex-col items-center"
-    >
-      <a [routerLink]="'/game/' + game.id" class="w-full">
-        <div
-          class="bg-[#111827] rounded-2xl overflow-hidden
-                 shadow-lg shadow-pink-500/10
-                 hover:shadow-pink-500/30
-                 hover:-translate-y-2
-                 transition-all duration-300"
-        >
-          <img
-            [src]="getCoverUrl(game)"
-            [alt]="game.title"
-            class="w-full aspect-[2/3] object-cover
-                   group-hover:scale-105
-                   transition duration-300"
-          />
+      <!-- Título -->
+      <div class="flex items-center gap-3">
+        <div class="w-1 h-7 rounded-full bg-gradient-to-b from-cyan-400 to-pink-500"></div>
+        <div>
+          <h1 class="font-orbitron text-lg font-bold text-white tracking-wide leading-none">Catálogo</h1>
+          <p class="text-xs text-gray-500 mt-0.5">{{ filteredGames.length }} jogos encontrados</p>
         </div>
-      </a>
+      </div>
 
-      <h3
-        class="font-orbitron mt-3 text-center text-white font-semibold
-               text-sm md:text-base truncate w-full"
-      >
-        {{ game.title }}
-      </h3>
+      <!-- Paginação compacta no header -->
+      <div class="flex items-center gap-2">
+        <button
+          (click)="prev()"
+          [disabled]="page === 0"
+          class="w-8 h-8 flex items-center justify-center rounded-full
+                 border border-cyan-500/20 bg-slate-900 text-cyan-400
+                 hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_10px_#EB479933]
+                 disabled:opacity-25 disabled:cursor-not-allowed
+                 transition-all duration-200"
+          aria-label="Página anterior"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+
+        <span class="font-orbitron text-xs text-white tabular-nums px-1">
+          <span class="text-pink-400">{{ page + 1 }}</span>
+          <span class="text-gray-600 mx-1">/</span>
+          <span class="text-gray-400">{{ totalPages }}</span>
+        </span>
+
+        <button
+          (click)="next()"
+          [disabled]="(page + 1) * pageSize >= filteredGames.length"
+          class="w-8 h-8 flex items-center justify-center rounded-full
+                 border border-cyan-500/20 bg-slate-900 text-cyan-400
+                 hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_10px_#EB479933]
+                 disabled:opacity-25 disabled:cursor-not-allowed
+                 transition-all duration-200"
+          aria-label="Próxima página"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Paginação inferior -->
-  <div class="flex items-center justify-center gap-6 mt-12">
-    <button
-      (click)="prev()"
-      [disabled]="page === 0"
-      class="text-5xl font-bold text-pink-500 disabled:text-gray-600
-             hover:scale-110 transition duration-300 cursor-pointer"
-    >
-      ‹
-    </button>
+  <!-- Sem resultados -->
+  <div
+    *ngIf="filteredGames.length === 0"
+    class="flex flex-col items-center justify-center min-h-[60vh] gap-4"
+  >
+    <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-cyan-500/10 flex items-center justify-center">
+      <svg class="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+    </div>
+    <p class="font-orbitron text-white text-lg font-bold">Nenhum jogo encontrado</p>
+    <p class="text-gray-500 text-sm">Tente buscar por outro termo.</p>
+  </div>
 
-    <p class="text-lg text-white font-orbitron tracking-wider">
-      Página {{ page + 1 }}
-    </p>
+  <!-- Grid -->
+  <div *ngIf="filteredGames.length > 0" class="max-w-screen-2xl mx-auto px-6 md:px-10 py-8">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
+      <div *ngFor="let game of paginated" class="group">
+        <a [routerLink]="'/game/' + game.id" class="block">
 
-    <button
-      (click)="next()"
-      [disabled]="(page + 1) * pageSize >= filteredGames.length"
-      class="text-5xl font-bold text-cyan-400 disabled:text-gray-600
-             hover:scale-110 transition duration-300 cursor-pointer"
-    >
-      ›
-    </button>
+          <!-- Card da capa -->
+          <div class="relative rounded-xl overflow-hidden
+                      border border-cyan-500/10
+                      shadow-[0_4px_20px_rgba(0,0,0,0.5)]
+                      group-hover:border-pink-500/40
+                      group-hover:shadow-[0_0_20px_rgba(236,72,153,0.18)]
+                      transition-all duration-300">
+
+            <img
+              [src]="getCoverUrl(game)"
+              [alt]="game.title"
+              class="w-full aspect-[2/3] object-cover
+                     group-hover:scale-105
+                     transition-transform duration-500 ease-out"
+            />
+
+            <!-- Gradiente base -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/10 to-transparent"></div>
+
+            <!-- Glow no hover -->
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                        bg-gradient-to-br from-pink-500/8 via-transparent to-cyan-500/6"></div>
+
+            <!-- Título sobre a capa -->
+            <div class="absolute bottom-0 left-0 right-0 p-2.5">
+              <div class="h-px w-0 group-hover:w-full bg-gradient-to-r from-pink-500 to-cyan-400
+                          transition-all duration-300 ease-out rounded-full mb-1.5"></div>
+              <h3 class="font-orbitron text-[10px] font-bold text-white truncate leading-tight
+                         drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]
+                         group-hover:text-pink-300 transition-colors duration-200">
+                {{ game.title }}
+              </h3>
+            </div>
+          </div>
+
+        </a>
+      </div>
+    </div>
+
+    <!-- Paginação inferior -->
+    <div class="flex items-center justify-center gap-3 mt-12">
+      <button
+        (click)="prev()"
+        [disabled]="page === 0"
+        class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold
+               border border-cyan-500/20 bg-slate-900 text-cyan-400
+               hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_14px_#EB479933]
+               disabled:opacity-25 disabled:cursor-not-allowed
+               transition-all duration-200"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        Anterior
+      </button>
+
+      <!-- Indicadores de página -->
+      <div class="flex items-center gap-1.5">
+        <span
+          *ngFor="let p of pageRange; let i = index"
+          class="block rounded-full transition-all duration-300 cursor-pointer"
+          [ngClass]="p === page
+            ? 'w-6 h-1.5 bg-pink-500 shadow-[0_0_6px_#EB4799]'
+            : 'w-1.5 h-1.5 bg-slate-600 hover:bg-slate-400'"
+          (click)="goToPage(p)"
+        ></span>
+      </div>
+
+      <button
+        (click)="next()"
+        [disabled]="(page + 1) * pageSize >= filteredGames.length"
+        class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold
+               border border-cyan-500/20 bg-slate-900 text-cyan-400
+               hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_14px_#EB479933]
+               disabled:opacity-25 disabled:cursor-not-allowed
+               transition-all duration-200"
+      >
+        Próxima
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
