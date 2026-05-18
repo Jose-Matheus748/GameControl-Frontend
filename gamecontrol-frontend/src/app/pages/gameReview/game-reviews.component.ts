@@ -18,7 +18,7 @@ export class GameReviewsComponent implements OnInit {
 
   game?: Game;
   reviews: Review[] = [];
-  userReview: Review | null = null; 
+  userReview: Review | null = null;
   loading = true;
   editing = false;
   gameId!: string;
@@ -49,7 +49,10 @@ export class GameReviewsComponent implements OnInit {
     }
 
     this.gameId = id;
-    this.loadPage(id);
+
+    this.authService.waitForAuth().then(() => {
+      this.loadPage(id);
+    });
   }
 
   loadPage(gameId: string) {
@@ -59,9 +62,9 @@ export class GameReviewsComponent implements OnInit {
       next: (data) => {
         this.game = data.game;
         this.reviews = data.reviews;
-        this.userReview = data.userReview; // Armazena a review individualizada vinda do Back
+        this.userReview = data.userReview;
         this.averageRating = data.average;
-        this.averageRatingDisplay = data.displayAverage; 
+        this.averageRatingDisplay = data.displayAverage;
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -83,9 +86,8 @@ export class GameReviewsComponent implements OnInit {
       rating: this.newRating,
       description: this.newComment
     }).subscribe({
-      next: (createdReview) => {
-        this.loadPage(this.gameId); 
-
+      next: () => {
+        this.loadPage(this.gameId);
         this.editing = false;
         this.newComment = '';
         this.newRating = 0;
@@ -104,8 +106,7 @@ export class GameReviewsComponent implements OnInit {
 
     this.reviewService.delete(this.reviewToDeleteId, this.currentUserId!).subscribe({
       next: () => {
-        this.loadPage(this.gameId); 
-
+        this.loadPage(this.gameId);
         this.closeDeleteReviewModal();
         this.toast.sucesso('Avaliação excluída com sucesso!');
         this.cdr.detectChanges();
@@ -142,5 +143,10 @@ export class GameReviewsComponent implements OnInit {
   goToGame() {
     if (!this.game?.id) return;
     this.router.navigate(['/game', this.game.id]);
+  }
+
+  // Retorna a rota correta: próprio perfil ou perfil de outro usuário
+  profileRoute(userId: string): string[] {
+    return userId === this.currentUserId ? ['/profile'] : ['/profile', userId];
   }
 }

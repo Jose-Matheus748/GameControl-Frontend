@@ -6,6 +6,7 @@ export interface Review {
   id?: string;
   userId: string;
   userName: string;
+  profilePictureUrl?: string;
   gameId: string;
   rating: number;
   description: string;
@@ -51,15 +52,15 @@ export class ReviewService {
 }
 
   delete(id: string, userId: string): Observable<string> {
-  return this.http.delete(`${this.apiUrl}/${id}`, { 
+  return this.http.delete(`${this.apiUrl}/${id}`, {
     params: { userId },
-    responseType: 'text' 
+    responseType: 'text'
   });
 }
 
   getReviewPage(gameId: string, userId?: string): Observable<GameReviewsPage> {
     let params = new HttpParams();
-    
+
     if (userId) {
       params = params.set('userId', userId);
     }

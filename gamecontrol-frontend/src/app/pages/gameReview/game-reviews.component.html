@@ -1,223 +1,328 @@
-<div *ngIf="loading" class="text-center py-16 text-cyan-400 text-2xl">
-  Carregando avaliações...
+<div *ngIf="loading" class="w-full min-h-screen flex items-center justify-center bg-[#050816]">
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-10 h-10 rounded-full border-2 border-cyan-500/30 border-t-pink-500 animate-spin"></div>
+    <p class="text-cyan-400 font-orbitron text-sm tracking-widest animate-pulse">CARREGANDO AVALIAÇÕES</p>
+  </div>
 </div>
 
-<div *ngIf="!loading && game" class="bg-[#050816] min-h-screen text-white p-8">
+<div *ngIf="!loading && game" class="w-full min-h-screen bg-[#050816] text-white">
 
-  <h1 (click)="goToGame()"
-      class="text-4xl md:text-5xl font-orbitron font-bold text-white leading-tight
-             drop-shadow-[0_0_20px_rgba(34,211,238,0.5)]
-             cursor-pointer hover:text-cyan-400 transition-colors duration-200
-             hover:drop-shadow-[0_0_25px_rgba(34,211,238,0.8)]">
-    {{ game.title }}
-  </h1>
+  <!-- Header -->
+  <div class="relative overflow-hidden border-b border-cyan-500/10">
+    <div class="absolute inset-0 bg-gradient-to-r from-pink-500/5 via-transparent to-cyan-500/5"></div>
+    <div class="relative max-w-4xl mx-auto px-6 md:px-10 py-8 flex items-center gap-4">
 
-  <div class="flex items-center gap-2 mb-6">
-    <span *ngFor="let s of [1,2,3,4,5]; let i = index"
-          class="text-3xl"
-          [class.text-yellow-400]="i < averageRating"
-          [class.text-gray-700]="i >= averageRating">
-      ★
-    </span>
+      <button
+        (click)="goToGame()"
+        class="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl
+               border border-cyan-500/20 text-cyan-500/60
+               hover:border-cyan-400/50 hover:text-cyan-400
+               hover:bg-cyan-500/10 transition-all duration-200"
+        title="Voltar ao jogo"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
 
-    <span class="ml-2 text-xl text-gray-400">
-      {{ averageRatingDisplay }}/5
-    </span>
-  </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500 font-orbitron tracking-widest uppercase mb-1">Avaliações</p>
+        <h1
+          (click)="goToGame()"
+          class="font-orbitron text-2xl md:text-3xl font-bold text-white leading-tight
+                 cursor-pointer hover:text-cyan-400 transition-colors duration-200 truncate"
+        >
+          {{ game.title }}
+        </h1>
+      </div>
 
-  <div *ngIf="!userReview" class="bg-slate-900 p-5 rounded-xl mb-8">
-
-    <h2 class="text-xl mb-3">Sua avaliação</h2>
-
-    <div class="flex gap-2 mb-3">
-      <span *ngFor="let s of [1,2,3,4,5]; let i = index"
-            (click)="newRating = i + 1"
-            class="cursor-pointer text-3xl"
-            [class.text-yellow-400]="i < newRating"
-            [class.text-gray-700]="i >= newRating">
-        ★
-      </span>
-    </div>
-
-    <textarea [(ngModel)]="newComment"
-              class="w-full p-3 bg-slate-800 rounded-lg"
-              placeholder="Escreva sua avaliação..."></textarea>
-
-    <button (click)="submitReview()"
-            [disabled]="newRating === 0"
-            class="mt-3 bg-pink-500 px-4 py-2 rounded-lg">
-      Enviar avaliação
-    </button>
-  </div>
-
-  <div *ngIf="userReview && !editing" class="bg-slate-900 p-5 rounded-xl mb-8">
-
-    <h2 class="text-xl mb-3">Sua avaliação</h2>
-
-    <div class="flex justify-between items-center">
-      <div>
-        <div>
-          <span *ngFor="let s of [1,2,3,4,5]; let i = index"
-                class="text-xl"
-                [class.text-yellow-400]="i < userReview.rating"
-                [class.text-gray-700]="i >= userReview.rating">
-            ★
-          </span>
+      <!-- Média geral -->
+      <div class="shrink-0 flex flex-col items-center gap-1">
+        <span class="font-orbitron text-3xl font-bold text-white leading-none">
+          {{ averageRatingDisplay }}
+        </span>
+        <div class="flex gap-0.5">
+          <span
+            *ngFor="let s of [1,2,3,4,5]; let i = index"
+            class="text-base"
+            [class.text-yellow-400]="i < averageRating"
+            [class.text-gray-700]="i >= averageRating"
+          >★</span>
         </div>
-
-        <p class="text-gray-300 mt-2">
-          {{ userReview.description }}
-        </p>
-      </div>
-
-      <div class="flex gap-2">
-        <button (click)="startEdit()"
-                title="Editar avaliação"
-                class="w-9 h-9 flex items-center justify-center rounded-lg
-                       border border-yellow-500/40 text-yellow-400
-                       hover:bg-yellow-500/10 hover:border-yellow-400
-                       hover:shadow-[0_0_12px_rgba(234,179,8,0.4)]
-                       transition-all duration-200">
-
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-        </button>
-
-        <button (click)="openDeleteReviewModal(userReview.id!)"
-                title="Deletar avaliação"
-                class="w-9 h-9 flex items-center justify-center rounded-lg
-                       border border-pink-500/40 text-pink-400
-                       hover:bg-pink-500/10 hover:border-pink-400
-                       hover:shadow-[0_0_12px_rgba(236,72,153,0.4)]
-                       transition-all duration-200">
-
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-               fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            <path d="M10 11v6M14 11v6"/>
-            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-          </svg>
-        </button>
+        <span class="text-xs text-gray-500">de 5</span>
       </div>
     </div>
   </div>
 
-  <div *ngIf="editing" class="bg-slate-900 p-5 rounded-xl mb-8">
+  <div class="max-w-4xl mx-auto px-6 md:px-10 py-8 flex flex-col gap-6">
 
-    <h2 class="text-xl mb-3">Editar avaliação</h2>
+    <!-- Formulário: nova avaliação -->
+    <div *ngIf="!userReview && !editing"
+         class="bg-slate-900/60 border border-cyan-500/10 rounded-2xl p-6
+                shadow-[0_0_30px_rgba(0,0,0,0.4)]">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1 h-6 rounded-full bg-gradient-to-b from-cyan-400 to-pink-500"></div>
+        <h2 class="font-orbitron text-base font-bold text-white tracking-wide">Sua avaliação</h2>
+      </div>
 
-    <div class="flex gap-2 mb-3">
-      <span *ngFor="let s of [1,2,3,4,5]; let i = index"
-            (click)="newRating = i + 1"
-            class="cursor-pointer text-3xl"
-            [class.text-yellow-400]="i < newRating"
-            [class.text-gray-700]="i >= newRating">
-        ★
-      </span>
+      <div class="flex gap-1 mb-4">
+        <span
+          *ngFor="let s of [1,2,3,4,5]; let i = index"
+          (click)="newRating = i + 1"
+          class="cursor-pointer text-3xl transition-all duration-150 hover:scale-110"
+          [class.text-yellow-400]="i < newRating"
+          [class.drop-shadow-[0_0_6px_rgba(250,204,21,0.7)]]="i < newRating"
+          [class.text-gray-700]="i >= newRating"
+        >★</span>
+      </div>
+
+      <textarea
+        [(ngModel)]="newComment"
+        rows="3"
+        class="w-full p-4 bg-slate-800/80 text-white text-sm
+               border border-cyan-500/15 rounded-xl
+               focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30
+               placeholder:text-gray-600 resize-none transition-all"
+        placeholder="O que você achou desse jogo?"
+      ></textarea>
+
+      <div class="flex justify-end mt-3">
+        <button
+          (click)="submitReview()"
+          [disabled]="newRating === 0"
+          class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold
+                 bg-pink-500 hover:bg-pink-400 text-white
+                 shadow-[0_0_14px_rgba(236,72,153,0.4)]
+                 hover:shadow-[0_0_22px_rgba(236,72,153,0.6)]
+                 disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none
+                 transition-all duration-200"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          Enviar avaliação
+        </button>
+      </div>
     </div>
 
-    <textarea [(ngModel)]="newComment"
-              class="w-full p-3 bg-slate-800 rounded-lg"></textarea>
+    <!-- Avaliação do usuário logado: visualização -->
+    <div *ngIf="userReview && !editing"
+         class="bg-slate-900/60 border border-pink-500/20 rounded-2xl p-6
+                shadow-[0_0_30px_rgba(236,72,153,0.08)]">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1 h-6 rounded-full bg-gradient-to-b from-pink-500 to-yellow-400"></div>
+        <h2 class="font-orbitron text-base font-bold text-white tracking-wide">Sua avaliação</h2>
+        <div class="ml-auto flex gap-2">
+          <button
+            (click)="startEdit()"
+            title="Editar avaliação"
+            class="w-9 h-9 flex items-center justify-center rounded-lg
+                   border border-yellow-500/40 text-yellow-400
+                   hover:bg-yellow-500/10 hover:border-yellow-400
+                   hover:shadow-[0_0_12px_rgba(234,179,8,0.4)]
+                   transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button
+            (click)="openDeleteReviewModal(userReview.id!)"
+            title="Deletar avaliação"
+            class="w-9 h-9 flex items-center justify-center rounded-lg
+                   border border-pink-500/40 text-pink-400
+                   hover:bg-pink-500/10 hover:border-pink-400
+                   hover:shadow-[0_0_12px_rgba(236,72,153,0.4)]
+                   transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-    <div class="flex gap-2 mt-3">
-      <button (click)="submitReview()"
-              class="bg-pink-500 px-4 py-2 rounded-lg">
-        Salvar
-      </button>
+      <div class="flex gap-0.5 mb-3">
+        <span
+          *ngFor="let s of [1,2,3,4,5]; let i = index"
+          class="text-2xl"
+          [class.text-yellow-400]="i < userReview.rating"
+          [class.drop-shadow-[0_0_6px_rgba(250,204,21,0.7)]]="i < userReview.rating"
+          [class.text-gray-700]="i >= userReview.rating"
+        >★</span>
+      </div>
 
-      <button (click)="editing = false"
-              class="bg-gray-600 px-4 py-2 rounded-lg">
-        Cancelar
-      </button>
+      <p class="text-gray-300 leading-relaxed">{{ userReview.description }}</p>
     </div>
-  </div>
 
-  <div *ngFor="let review of reviews"
-       class="bg-slate-900 p-4 rounded-xl mb-4">
+    <!-- Avaliação do usuário logado: edição -->
+    <div *ngIf="editing"
+         class="bg-slate-900/60 border border-yellow-500/20 rounded-2xl p-6
+                shadow-[0_0_30px_rgba(234,179,8,0.06)]">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-1 h-6 rounded-full bg-gradient-to-b from-yellow-400 to-pink-500"></div>
+        <h2 class="font-orbitron text-base font-bold text-white tracking-wide">Editar avaliação</h2>
+      </div>
 
-    <div class="flex justify-between mb-2">
-      <a [routerLink]="['/profile', review.userId]"
-         class="text-pink-400 font-bold hover:text-pink-300 hover:underline transition-colors duration-200 cursor-pointer">
-        {{ review.userName }}
-      </a>
-      <span class="text-gray-400 text-sm">
-        {{ review.createdAt | date:'short' }}
-      </span>
+      <div class="flex gap-1 mb-4">
+        <span
+          *ngFor="let s of [1,2,3,4,5]; let i = index"
+          (click)="newRating = i + 1"
+          class="cursor-pointer text-3xl transition-all duration-150 hover:scale-110"
+          [class.text-yellow-400]="i < newRating"
+          [class.drop-shadow-[0_0_6px_rgba(250,204,21,0.7)]]="i < newRating"
+          [class.text-gray-700]="i >= newRating"
+        >★</span>
+      </div>
+
+      <textarea
+        [(ngModel)]="newComment"
+        rows="3"
+        class="w-full p-4 bg-slate-800/80 text-white text-sm
+               border border-yellow-500/20 rounded-xl
+               focus:outline-none focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20
+               resize-none transition-all"
+      ></textarea>
+
+      <div class="flex justify-end gap-3 mt-3">
+        <button
+          (click)="editing = false"
+          class="px-5 py-2 rounded-full text-sm border border-slate-600
+                 text-gray-300 hover:border-slate-400 hover:text-white transition-all"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="submitReview()"
+          class="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold
+                 bg-pink-500 hover:bg-pink-400 text-black
+                 shadow-[0_0_14px_rgba(234,179,8,0.35)]
+                 hover:shadow-[0_0_22px_rgba(234,179,8,0.55)]
+                 transition-all duration-200"
+        >
+          Salvar alterações
+        </button>
+      </div>
     </div>
 
-    <div class="mb-2">
-      <span *ngFor="let s of [1,2,3,4,5]; let i = index"
-            class="text-xl"
-            [class.text-yellow-400]="i < review.rating"
-            [class.text-gray-700]="i >= review.rating">
-        ★
-      </span>
+    <!-- Título da lista -->
+    <div *ngIf="reviews.length > 0" class="flex items-center gap-3">
+      <div class="w-1 h-5 rounded-full bg-gradient-to-b from-cyan-400 to-pink-500"></div>
+      <h2 class="font-orbitron text-base font-bold text-white tracking-wide">
+        Avaliações da comunidade
+      </h2>
+      <span class="text-gray-500 text-sm font-normal">({{ reviews.length }})</span>
     </div>
 
-    <p class="text-gray-300">
-      {{ review.description }}
-    </p>
+    <!-- Lista de avaliações -->
+    <div
+      *ngFor="let review of reviews"
+      class="group bg-slate-900/60 border border-cyan-500/10 rounded-2xl p-5
+             hover:border-cyan-500/20 hover:bg-slate-900/80
+             shadow-[0_0_20px_rgba(0,0,0,0.3)] transition-all duration-200"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <a [routerLink]="profileRoute(review.userId)" class="flex items-center gap-3 group/link">
+          <img
+            *ngIf="review.profilePictureUrl; else defaultAvatar"
+            [src]="review.profilePictureUrl"
+            alt="avatar"
+            class="w-10 h-10 rounded-full object-cover ring-1 ring-cyan-500/30
+                   group-hover/link:ring-pink-500/50 transition-all duration-200"
+          />
+          <ng-template #defaultAvatar>
+            <div class="w-10 h-10 rounded-full bg-slate-800 ring-1 ring-cyan-500/20
+                        group-hover/link:ring-pink-500/40
+                        flex items-center justify-center text-cyan-500/60 transition-all duration-200">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+              </svg>
+            </div>
+          </ng-template>
+          <span class="text-sm font-semibold text-pink-400
+                       group-hover/link:text-pink-300 transition-colors duration-200">
+            {{ review.userName }}
+          </span>
+        </a>
+
+        <span class="text-xs text-gray-600">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+
+      <div class="flex gap-0.5 mb-3">
+        <span
+          *ngFor="let s of [1,2,3,4,5]; let i = index"
+          class="text-lg"
+          [class.text-yellow-400]="i < review.rating"
+          [class.drop-shadow-[0_0_4px_rgba(250,204,21,0.6)]]="i < review.rating"
+          [class.text-gray-700]="i >= review.rating"
+        >★</span>
+      </div>
+
+      <p class="text-gray-300 text-sm leading-relaxed">{{ review.description }}</p>
+    </div>
+
+    <!-- Estado vazio -->
+    <div *ngIf="reviews.length === 0 && !userReview"
+         class="flex flex-col items-center justify-center py-16 gap-3 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-slate-900/60 border border-cyan-500/10
+                  flex items-center justify-center">
+        <svg class="w-7 h-7 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <p class="text-sm font-medium text-white">Nenhuma outra avaliação ainda</p>
+      <p class="text-xs text-gray-500">Seja o primeiro da comunidade a avaliar!</p>
+    </div>
+
   </div>
 </div>
 
+<!-- Modal de exclusão -->
 <div
   *ngIf="deleteModalOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center
-         bg-black/70 backdrop-blur-sm p-4"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
   (click)="closeDeleteReviewModal()"
 >
-
   <div
     class="w-full max-w-md rounded-2xl border border-pink-500/20
            bg-slate-900 shadow-2xl shadow-pink-950/30"
     (click)="$event.stopPropagation()"
   >
-
-    <div class="flex items-center justify-between px-5 py-4
-                border-b border-pink-500/10">
-
-      <h2 class="text-lg font-orbitron text-white">
-        Excluir avaliação
-      </h2>
+    <div class="px-5 py-4 border-b border-pink-500/10">
+      <h2 class="font-orbitron text-base font-bold text-pink-400">Excluir avaliação</h2>
     </div>
-
     <div class="px-5 py-6">
-      <p class="text-gray-300 leading-7">
-        Tem certeza que deseja excluir sua avaliação?
-      </p>
-
-      <p class="text-pink-400 text-sm mt-2">
-        Esta ação não poderá ser desfeita.
-      </p>
+      <p class="text-gray-300 leading-relaxed">Tem certeza que deseja excluir sua avaliação?</p>
+      <p class="text-pink-400 text-sm mt-2">Esta ação não poderá ser desfeita.</p>
     </div>
-
-    <div class="flex justify-end gap-3 px-5 py-4
-                border-t border-pink-500/10">
-
+    <div class="flex justify-end gap-3 px-5 py-4 border-t border-pink-500/10">
       <button
         (click)="closeDeleteReviewModal()"
         class="px-5 py-2 rounded-lg border border-slate-600
-               text-gray-300 hover:border-slate-400"
+               text-gray-300 hover:border-slate-400 hover:text-white transition-all"
       >
         Cancelar
       </button>
-
       <button
         (click)="confirmDeleteReview()"
-        class="px-5 py-2 rounded-lg bg-pink-500
-               hover:bg-pink-400 text-white font-bold
+        class="px-5 py-2 rounded-lg bg-pink-500 hover:bg-pink-400 text-white font-bold
                shadow-[0_0_14px_rgba(236,72,153,0.45)]
+               hover:shadow-[0_0_20px_rgba(236,72,153,0.65)]
                transition-all duration-200"
       >
         Excluir
       </button>
-
     </div>
   </div>
 </div>

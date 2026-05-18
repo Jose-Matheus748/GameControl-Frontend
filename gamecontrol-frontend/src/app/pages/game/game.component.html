@@ -221,7 +221,7 @@
             <div class="flex items-center justify-between gap-2 mb-1.5">
               <div class="flex items-center gap-2 flex-wrap">
                 <a
-                  [routerLink]="['/profile', comment.user.id]"
+                  [routerLink]="comment.user.id === currentUserId ? ['/profile'] : ['/profile', comment.user.id]"
                   class="text-sm font-semibold text-pink-400 hover:text-pink-300 transition-colors"
                 >
                   {{ comment.user.username || 'Usuário' }}

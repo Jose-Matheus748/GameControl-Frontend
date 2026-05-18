@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 export interface Game {
-  id?: number;
+  id?: string;
   title: string;
   description?: string;
   developer?: string;
@@ -20,7 +20,7 @@ export interface Game {
 })
 export class GameService {
   private apiUrl = 'http://localhost:8080/api/games';
-  private cache = new Map<number, Game>();
+  private cache = new Map<string, Game>();
 
   constructor(private http: HttpClient) {}
 
@@ -28,11 +28,10 @@ export class GameService {
     return this.http.get<Game[]>(`${this.apiUrl}`);
   }
 
-  getById(id: number): Observable<Game> {
+  getById(id: string): Observable<Game> {
     if (this.cache.has(id)) {
       return of(this.cache.get(id)!);
     }
-
     return this.http.get<Game>(`${this.apiUrl}/${id}`).pipe(
       tap(game => this.cache.set(id, game))
     );
@@ -46,11 +45,11 @@ export class GameService {
     return this.http.post<Game>(`${this.apiUrl}`, formData);
   }
 
-  update(id: number, game: Game): Observable<Game> {
+  update(id: string, game: Game): Observable<Game> {
     return this.http.put<Game>(`${this.apiUrl}/${id}`, game);
   }
 
-  delete(id: number): Observable<string> {
+  delete(id: string): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
 }
