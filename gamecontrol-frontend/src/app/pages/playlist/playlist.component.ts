@@ -10,7 +10,7 @@ import { catchError, of, forkJoin } from 'rxjs';
 @Component({
   selector: 'app-playlist-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // ✅ FormsModule para [(ngModel)]
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './playlist.component.html',
 })
 export class PlaylistDetailComponent implements OnInit {
@@ -77,7 +77,7 @@ export class PlaylistDetailComponent implements OnInit {
     }
 
     const requests = ids.map(id =>
-      this.gameService.getById(Number(id)).pipe(
+      this.gameService.getById(id).pipe(
         catchError((err) => {
           console.warn('Erro ao carregar jogo ID:', id, err);
           return of(null);
@@ -159,11 +159,11 @@ export class PlaylistDetailComponent implements OnInit {
     });
   }
 
-  removeGame(gameId: number) {
+  removeGame(gameId: string) {
     if (!this.playlist?.id) return;
 
     this.playlistService
-      .removeGameFromPlaylist(this.playlist.id, String(gameId))
+      .removeGameFromPlaylist(this.playlist.id, gameId)
       .subscribe({
         next: (updated) => {
           this.playlist = updated;
