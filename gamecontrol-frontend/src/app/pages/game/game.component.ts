@@ -59,7 +59,7 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.route.params
       .pipe(switchMap((params) => {
-        const gameId = +params['id'];
+        const gameId = params['id'];
         return this.gameService.getById(gameId);
       }))
       .subscribe({
@@ -266,8 +266,8 @@ export class GameComponent implements OnInit {
     });
   }
 
-  loadAverage(gameId: number) {
-    this.reviewService.getAverage(String(gameId)).subscribe({
+  loadAverage(gameId: string) {
+    this.reviewService.getAverage(gameId).subscribe({
       next: (avg) => {
         this.averageRating = avg;
         this.cdr.detectChanges();

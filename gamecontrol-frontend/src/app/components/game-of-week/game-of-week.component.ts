@@ -12,7 +12,7 @@ import { forkJoin } from 'rxjs';
   templateUrl: './game-of-week.component.html',
 })
 export class GameOfWeekComponent implements OnInit {
-  private readonly GAME_ID = 115289;
+  private readonly GAME_ID = '115289';
 
   game?: Game;
   averageRating = 0;
@@ -27,12 +27,12 @@ export class GameOfWeekComponent implements OnInit {
   ngOnInit() {
     forkJoin({
       game: this.gameService.getById(this.GAME_ID),
-      average: this.reviewService.getAverage(String(this.GAME_ID))
+      average: this.reviewService.getAverage(this.GAME_ID)
     }).subscribe({
       next: ({ game, average }) => {
         this.game = game;
         this.averageRating = Math.round(average);
-        this.loading = true;
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar jogo da semana:', err)

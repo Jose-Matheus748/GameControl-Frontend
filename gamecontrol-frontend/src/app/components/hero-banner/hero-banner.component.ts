@@ -22,7 +22,7 @@ interface HeroSlide {
 })
 export class HeroBannerComponent implements OnInit, OnDestroy {
 
-  readonly TRANSITION_DURATION = 200;
+  readonly TRANSITION_DURATION = 50;
   readonly SLIDE_INTERVAL = 7000;
 
   currentSlide = 0;
