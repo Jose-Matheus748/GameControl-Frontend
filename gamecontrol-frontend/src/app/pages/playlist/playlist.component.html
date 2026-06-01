@@ -1,100 +1,204 @@
+<!-- LOADING -->
 <div *ngIf="loading"
      class="w-full min-h-screen flex items-center justify-center bg-[#050816]">
-  <p class="text-white text-3xl font-orbitron animate-pulse">
-    Carregando playlist...
-  </p>
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-10 h-10 rounded-full border-2 border-cyan-500/30 border-t-pink-500 animate-spin"></div>
+    <p class="text-cyan-400 font-orbitron text-sm tracking-widest animate-pulse">CARREGANDO PLAYLIST</p>
+  </div>
 </div>
 
-<div *ngIf="!loading"
-     class="w-full min-h-screen bg-[#050816] px-6 md:px-16 lg:px-24 py-10">
+<!-- PÁGINA -->
+<div *ngIf="!loading" class="w-full min-h-screen bg-[#050816]">
 
-  <div class="mb-12">
-    <div class="flex items-start justify-between gap-4">
-      <div>
-        <h1 class="text-4xl font-orbitron text-white mb-2">
-          {{ playlist?.nome }}
-        </h1>
+  <!-- Header sticky -->
+  <div class="border-b border-cyan-500/10 bg-[#050816]/95 backdrop-blur-sm sticky top-0 z-20">
+    <div class="max-w-screen-2xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between gap-4">
 
-        <p class="text-gray-400 max-w-2xl">
-          {{ playlist?.descricao || 'Sem descrição.' }}
-        </p>
-
-        <p class="text-sm text-cyan-400 mt-2">
-          {{ games.length }} jogos
-        </p>
+      <!-- Info da playlist -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-1 h-7 rounded-full bg-gradient-to-b from-cyan-400 to-pink-500 flex-shrink-0"></div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="font-orbitron text-lg font-bold text-white tracking-wide leading-none truncate">
+              {{ playlist?.nome }}
+            </h1>
+            <button *ngIf="isOwner"
+              (click)="startEdit()"
+              title="Editar playlist"
+              aria-label="Editar playlist"
+              class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded
+                     text-gray-500 hover:text-cyan-400
+                     transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 mt-0.5">{{ games.length }} jogos</p>
+        </div>
       </div>
 
-      <button *ngIf="isOwner"
-        (click)="startEdit()"
-        title="Editar playlist"
-        class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg
-               border border-cyan-500/40 text-cyan-400
-               hover:bg-cyan-500/10 hover:border-cyan-400
-               hover:shadow-[0_0_12px_rgba(6,182,212,0.4)]
-               transition-all duration-200 mt-1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      <!-- Paginação compacta -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button
+          (click)="prev()"
+          [disabled]="page === 0"
+          class="w-8 h-8 flex items-center justify-center rounded-full
+                 border border-cyan-500/20 bg-slate-900 text-cyan-400
+                 hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_10px_#EB479933]
+                 disabled:opacity-25 disabled:cursor-not-allowed
+                 transition-all duration-200"
+          aria-label="Página anterior">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+
+        <span class="font-orbitron text-xs text-white tabular-nums px-1">
+          <span class="text-pink-400">{{ page + 1 }}</span>
+          <span class="text-gray-600 mx-1">/</span>
+          <span class="text-gray-400">{{ totalPages }}</span>
+        </span>
+
+        <button
+          (click)="next()"
+          [disabled]="(page + 1) * pageSize >= games.length"
+          class="w-8 h-8 flex items-center justify-center rounded-full
+                 border border-cyan-500/20 bg-slate-900 text-cyan-400
+                 hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_10px_#EB479933]
+                 disabled:opacity-25 disabled:cursor-not-allowed
+                 transition-all duration-200"
+          aria-label="Próxima página">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Descrição abaixo do header (se existir) -->
+    <div *ngIf="playlist?.descricao"
+         class="max-w-screen-2xl mx-auto px-6 md:px-10 pb-3">
+      <p class="text-xs text-gray-500 truncate max-w-xl">{{ playlist?.descricao }}</p>
+    </div>
+  </div>
+
+  <!-- Sem jogos -->
+  <div *ngIf="games.length === 0"
+       class="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+    <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-cyan-500/10 flex items-center justify-center">
+      <svg class="w-8 h-8 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <path d="M8 12h8M12 8v8"/>
+      </svg>
+    </div>
+    <p class="font-orbitron text-white text-lg font-bold">Playlist vazia</p>
+    <p class="text-gray-500 text-sm">Adicione jogos para começar.</p>
+  </div>
+
+  <!-- Grid de jogos -->
+  <div *ngIf="games.length > 0" class="max-w-screen-2xl mx-auto px-6 md:px-10 py-8">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
+
+      <div *ngFor="let game of paginated" class="group flex flex-col">
+        <a [routerLink]="'/game/' + game.id" class="block">
+
+          <div class="relative rounded-xl overflow-hidden
+                      border border-cyan-500/10
+                      shadow-[0_4px_20px_rgba(0,0,0,0.5)]
+                      group-hover:border-pink-500/40
+                      group-hover:shadow-[0_0_20px_rgba(236,72,153,0.18)]
+                      transition-all duration-300">
+
+            <img
+              [src]="getCoverUrl(game)"
+              [alt]="game.title"
+              class="w-full aspect-[2/3] object-cover
+                     group-hover:scale-105
+                     transition-transform duration-500 ease-out"
+            />
+
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/10 to-transparent"></div>
+
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                        bg-gradient-to-br from-pink-500/8 via-transparent to-cyan-500/6"></div>
+
+            <div class="absolute bottom-0 left-0 right-0 p-2.5">
+              <div class="h-px w-0 group-hover:w-full bg-gradient-to-r from-pink-500 to-cyan-400
+                          transition-all duration-300 ease-out rounded-full mb-1.5"></div>
+              <h3 class="font-orbitron text-[10px] font-bold text-white truncate leading-tight
+                         drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]
+                         group-hover:text-pink-300 transition-colors duration-200">
+                {{ game.title }}
+              </h3>
+            </div>
+          </div>
+
+        </a>
+
+        <button *ngIf="isOwner"
+          (click)="playlist?.id && removeGame(game.id!)"
+          class="mt-1.5 text-[11px] text-gray-600 hover:text-red-400
+                 transition-colors duration-200 text-center w-full py-0.5">
+          Remover
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Paginação inferior -->
+    <div class="flex items-center justify-center gap-3 mt-12">
+      <button
+        (click)="prev()"
+        [disabled]="page === 0"
+        class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold
+               border border-cyan-500/20 bg-slate-900 text-cyan-400
+               hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_14px_#EB479933]
+               disabled:opacity-25 disabled:cursor-not-allowed
+               transition-all duration-200">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        Anterior
+      </button>
+
+      <div class="flex items-center gap-1.5">
+        <span
+          *ngFor="let p of pageRange"
+          class="block rounded-full transition-all duration-300 cursor-pointer"
+          [ngClass]="p === page
+            ? 'w-6 h-1.5 bg-pink-500 shadow-[0_0_6px_#EB4799]'
+            : 'w-1.5 h-1.5 bg-slate-600 hover:bg-slate-400'"
+          (click)="goToPage(p)">
+        </span>
+      </div>
+
+      <button
+        (click)="next()"
+        [disabled]="(page + 1) * pageSize >= games.length"
+        class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold
+               border border-cyan-500/20 bg-slate-900 text-cyan-400
+               hover:border-pink-500/50 hover:text-pink-400 hover:shadow-[0_0_14px_#EB479933]
+               disabled:opacity-25 disabled:cursor-not-allowed
+               transition-all duration-200">
+        Próxima
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
         </svg>
       </button>
     </div>
   </div>
-
-  <div class="flex items-center justify-center gap-6 mb-10">
-    <button (click)="prev()"
-            [disabled]="page === 0"
-            class="text-5xl text-pink-500 disabled:text-gray-600">
-      ‹
-    </button>
-
-    <p class="text-white font-orbitron">
-      Página {{ page + 1 }}
-    </p>
-
-    <button (click)="next()"
-            [disabled]="(page + 1) * pageSize >= games.length"
-            class="text-5xl text-cyan-400 disabled:text-gray-600">
-      ›
-    </button>
-  </div>
-
-  <div *ngIf="games.length === 0"
-       class="text-center text-white text-2xl mt-20">
-    Essa playlist ainda não tem jogos 😢
-  </div>
-
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
-
-    <div *ngFor="let game of paginated"
-         class="group flex flex-col items-center">
-
-      <a [routerLink]="'/game/' + game.id" class="w-full">
-        <div class="bg-[#111827] rounded-2xl overflow-hidden
-                    shadow-lg shadow-pink-500/10
-                    hover:shadow-pink-500/30
-                    hover:-translate-y-2 transition">
-
-          <img [src]="getCoverUrl(game)"
-               class="w-full aspect-[2/3] object-cover
-                      group-hover:scale-105 transition"/>
-        </div>
-      </a>
-
-      <h3 class="mt-3 text-center text-white text-sm truncate w-full">
-        {{ game.title }}
-      </h3>
-
-      <button *ngIf="isOwner"
-        (click)="playlist?.id && removeGame(game.id!)"
-        class="text-xs text-red-400 mt-1 hover:text-red-600 transition">
-        Remover
-      </button>
-    </div>
-  </div>
 </div>
 
+<!-- MODAL EDITAR -->
 <div *ngIf="editing"
      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
      (click)="cancelEdit()"
@@ -108,20 +212,25 @@
        aria-label="Editar playlist">
 
     <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-cyan-500/20">
-      <h3 class="text-lg font-orbitron font-semibold text-white tracking-wide">
-        Editar playlist
-      </h3>
+      <div class="flex items-center gap-3">
+        <div class="w-1 h-5 rounded-full bg-gradient-to-b from-cyan-400 to-pink-500"></div>
+        <h3 class="text-base font-orbitron font-semibold text-white tracking-wide">
+          Editar playlist
+        </h3>
+      </div>
       <button
         type="button"
-        class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        class="p-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
         (click)="cancelEdit()"
         aria-label="Fechar">
-        <span class="text-xl leading-none">&times;</span>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
       </button>
     </div>
 
     <div class="px-5 py-5 flex flex-col gap-4">
-
       <div>
         <label class="block text-xs font-orbitron text-cyan-400 tracking-widest uppercase mb-2">
           Nome

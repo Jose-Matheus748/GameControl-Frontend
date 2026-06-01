@@ -184,6 +184,27 @@ export class PlaylistDetailComponent implements OnInit {
       });
   }
 
+  get totalPages(): number {
+    return Math.ceil(this.games.length / this.pageSize);
+  }
+  
+  get pageRange(): number[] {
+    const total = this.totalPages;
+    if (total <= 8) return Array.from({ length: total }, (_, i) => i);
+    const half = 4;
+    let start = Math.max(0, this.page - half);
+    let end = Math.min(total - 1, this.page + half);
+    if (this.page < half) end = Math.min(total - 1, 7);
+    if (this.page > total - 1 - half) start = Math.max(0, total - 8);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+  
+  goToPage(p: number): void {
+    this.page = p;
+    this.updatePage();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   getCoverUrl(game: Game): string {
     if (!game.coverImageUrl) return 'assets/default-cover.jpg';
 
