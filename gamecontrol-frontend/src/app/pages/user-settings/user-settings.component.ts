@@ -100,17 +100,38 @@ export class SettingsComponent implements OnInit {
 
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-
     if (!input.files?.length) return;
 
     const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.selectedBase64 = reader.result as string;
-      this.previewUrl = this.selectedBase64;
+    this.comprimirImagem(file).then((base64Comprimido) => {
+      this.selectedBase64 = base64Comprimido;
+      this.previewUrl = base64Comprimido;
       this.cdr.detectChanges();
-    };
-    reader.readAsDataURL(file);
+    });
+  }
+
+  private comprimirImagem(file: File, maxWidth = 300, qualidade = 0.7): Promise<string> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target!.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const scale = Math.min(maxWidth / img.width, 1);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          resolve(canvas.toDataURL('image/jpeg', qualidade));
+        };
+      };
+
+      reader.readAsDataURL(file);
+    });
   }
 
   saveChanges(): void {
